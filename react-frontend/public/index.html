@@ -9,6 +9,20 @@
       name="description"
       content="Web site created using create-react-app"
     />
+
+    //MathJax configuration
+    <script type = "text/x-mathjax-config">
+    Mathjax.Hub.Config({
+      tex2jax:{
+        inlinMath: [["$", "$"], ["\\()", "\\)"]],
+        displayMath: [["$$", "$$"], ["\\[", "\\]"]]
+      },
+      showMathMenu: false
+      messageStyle: "none"
+    })
+    </script>
+    <script type= "text/javascript" async src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?
+    config=TeX-MML_AM_CHTML"></script>
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <!--
       manifest.json provides metadata used when your web app is installed on a
