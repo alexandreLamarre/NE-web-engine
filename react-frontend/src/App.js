@@ -1,6 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import CLI from "./CLI"
 
 function App() {
   return (
@@ -8,15 +9,16 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          Non-Euclidean Computational Engine
         </p>
+        <CLI />
         <a
           className="App-link"
-          href="https://reactjs.org"
+          href="https://github.com/alexandreLamarre/Non-Euclidean-Computational-Engine-Python-source-code-#Quick-guide"
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learn React
+          Documentation
         </a>
       </header>
     </div>
