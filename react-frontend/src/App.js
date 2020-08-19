@@ -20,7 +20,12 @@ function App() {
         >
           Documentation
         </a>
+
+        <ul>
+          <p id = "ul-info" />
+        </ul>
       </header>
+
     </div>
   );
 }
