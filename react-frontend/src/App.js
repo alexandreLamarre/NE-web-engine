@@ -1,6 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import Latex from "./Latex"
 import CLI from "./CLI"
 
 function App() {
@@ -20,10 +21,10 @@ function App() {
         >
           Documentation
         </a>
+        <Latex>
+          <p  id = "ul-info"></p>
+        </Latex>
 
-        <ul>
-          <p id = "ul-info" />
-        </ul>
       </header>
 
     </div>

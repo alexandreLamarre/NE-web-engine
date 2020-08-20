@@ -9,6 +9,37 @@ function append(parent,el){
   return parent.appendChild(el);
 }
 
+function process_commands(ul,data){
+  var n;
+  var i;
+  var j;
+  var k;
+  for(n = 0; n<data.info.length;n++){
+    if(data.labels[n] != null){
+    let label = createNode("h2");
+    label.innerHTML = `${data.labels[n]}`;
+    append(ul,label);
+    }
+    if(data.labels[n] == "zeroes" || data.labels[n] == "partialderivative" || data.labels[n] == "partialintegral"){
+    for(i = 0; i <data.info[n].length;i++){
+      let sublabel = createNode("h3");
+      sublabel.innerHTML = `${data.info[n][i][0]}`;
+      append(ul,sublabel);
+      for(j = 0; j<data.info[n][i][1].length; j++){
+        let sublabel_function  = createNode("h4");
+        sublabel_function.innerHTML = `${data.info[n][i][1][j][0]}`;
+        append(ul, sublabel_function);
+        for(k=0; k<data.info[n][i][1][j][1].length; k++){
+          let solution = createNode("p");
+          solution.innerHTML = `${data.info[n][i][1][j][1][k][0]}` + " : " + `${data.info[n][i][1][j][1][k][1]}`;
+          append(ul,solution)
+        }
+      }
+    }
+  }
+  }
+}
+
 function process_input(ul, data){
   ul.style = "background-color: #1B2631"
   var length = ul.childNodes.length
@@ -27,7 +58,7 @@ function process_input(ul, data){
     interpreted_info.innerHTML = `None`
   }
   else{
-    interpreted_info.innerHTML = `${data.interpreted}$`
+    interpreted_info.innerHTML = data.interpreted
   }
   append(ul,interpreted_info)
   let uninterpreted = createNode("h3")
@@ -49,7 +80,7 @@ function process_input(ul, data){
     error_info.innerHTML = `None`
   }
   else{
-    error_info.innerHTML = `${data.interpreted}`
+    error_info.innerHTML = `${data.Errors}`
   }
   append(ul, error_info)
 }
@@ -60,7 +91,6 @@ class CLI extends React.Component{
                   interepreted: '',
                 label: ''}
 
-    this.received = null
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
 
@@ -112,9 +142,11 @@ class CLI extends React.Component{
   response.json().then(function(data) {
 
     console.log(data);
-    // process_input(ul,data)
+    process_commands(ul,data)
+    // console.log(data.info)
+    // console.log(data.info.length)
+    // console.log(data.info[0])
 
-  //  this.state.label = data.label
   });
 })
 .catch(function(error) {
