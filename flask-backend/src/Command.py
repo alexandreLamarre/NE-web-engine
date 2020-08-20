@@ -15,20 +15,23 @@ class Command():
         Process inputs into command strings and argument strings
         Then uses a dictionary to match the argument to a known DataManager Object based on the command
         """
+        # 'Static dictionary for the valid input classes inside the command given
+        # In the future should be replaced by a database
+        self.stop_execution = False
+        self.commands_dict = {'plot': ['FunctionManager'], 'IFS': ['FunctionManager', 'MarkovChain'], \
+                              'zeroes' : ['FunctionManager'], 'derivative': ['FunctionManager'], 'integral' : ['FunctionManager'],\
+                              'partialderivative' : ['FunctionManager'], 'partialintegral': ['FunctionManager']}
         self.arguments = self.process_input(command_str)
         self.command = self.process_command(command_str)
 
 
-        # 'Static dictionary for the valid input classes inside the command given
-        # In the future should be replaced by a database
-        self.commands_dict = {'plot': ['FunctionManager'], 'IFS': ['FunctionManager', 'MarkovChain'], \
-                              'zeroes' : ['FunctionManager'], 'derivative': ['FunctionManager'], 'integral' : ['FunctionManager'],\
-                              'partialderivative' : ['FunctionManager'], 'partialintegral': ['FunctionManager']}
         self.input_types = []
 
-        assert(self.command in self.commands_dict), "Command not recognized"
-        self.math_types = self.commands_dict[self.command]
-        self.math_objects = self.process_input_types()
+        if self.command != "":
+            self.math_types = self.commands_dict[self.command]
+            self.math_objects = self.process_input_types()
+        else:
+            self.stop_execution = True
 
     def run(self):
         """
@@ -52,6 +55,21 @@ class Command():
                     zeroes = calc.zeroes()
                     for z in zeroes:
                         output.append((z[0], z[1]))
+        if self.command == "partialintegral":
+            for math in self.math_objects:
+                if isinstance(math, FunctionManager):
+                    calc = Calculus(math)
+                    partial_integrals = calc.partial_integrals()
+                    for p in partial_integrals:
+                        output.append((p[0], p[1]))
+        if self.command == "partialderivative":
+            for math in self.math_objects:
+                if isinstance(math, FunctionManager):
+                    calc = Calculus(math)
+                    partial_derivatives = calc.partial_derivatives()
+                    for p in partial_derivatives:
+                        output.append((p[0], p[1]))
+
         return main_label, output
 
     def process_input(self, command_str):
@@ -81,7 +99,7 @@ class Command():
         output_str = output_str.split("{")
         output_str = output_str[0]
 
-        return output_str
+        return output_str if output_str in self.commands_dict else ""
 
     def process_input_types(self):
         """

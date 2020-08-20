@@ -43,14 +43,11 @@ class Calculus(OutputQueue, ErrorStack):
             code_list = []
             for var in f.str_vars:
                 exec("{} = symbols('{}')".format(var, var))
-            print("rangefunctions : {}".format(f.str_funcs))
             for function in f.str_funcs:
                 for var in f.str_vars:
-                    print("rangefunction, var: {} , {}".format(function,var))
                     code = parser.expr("solveset({}, {})".format(function, var)).compile()
                     code_list.append(code)
             eval_list.append(code_list)
-        print(eval_list)
         ## Eval code for computing zeroes
         output_list = []
         for i in range(len(self.Functions)):
@@ -58,13 +55,11 @@ class Calculus(OutputQueue, ErrorStack):
             all_range_functions_root_list = []
             roots_modulus = len(self.Functions[i].str_vars)
             for j in range(len(eval_list[i])):
-                print("j : {}".format(j))
                 if j%roots_modulus == 0 and j != 0:
                     range_function_var_root_tuple = (self.Functions[i].str_funcs[(j-1)//roots_modulus], function_root_list)
                     all_range_functions_root_list.append(range_function_var_root_tuple)
                     function_root_list = []
                 var_root_tuple = (self.Functions[i].str_vars[j%roots_modulus],latex(eval(eval_list[i][j])))
-                print("var_root_tuple : {}".format(var_root_tuple))
                 function_root_list.append(var_root_tuple)
             ##has only one range function and one variable
             if function_root_list != []:
@@ -119,10 +114,15 @@ class Calculus(OutputQueue, ErrorStack):
                 var_root_tuple = (self.Functions[i].str_vars[j % roots_modulus], latex(eval(eval_list[i][j])))
                 function_root_list.append(var_root_tuple)
             ##has only one range function and one variable
-            if (all_range_functions_root_list == []):
+            if function_root_list != []:
                 range_function_var_root_tuple = (
-                    self.Functions[i].str_funcs[0], function_root_list)
+                self.Functions[i].str_funcs[(len(self.Functions[i].str_funcs) - 1) // roots_modulus], function_root_list)
                 all_range_functions_root_list.append(range_function_var_root_tuple)
+                function_root_list = []
+            # if (all_range_functions_root_list == []):
+            #     range_function_var_root_tuple = (
+            #         self.Functions[i].str_funcs[0], function_root_list)
+            #     all_range_functions_root_list.append(range_function_var_root_tuple)
             function_root_tuple = (self.Functions[i].info_string, all_range_functions_root_list)
             output_list.append(function_root_tuple)
         return output_list
@@ -159,23 +159,26 @@ class Calculus(OutputQueue, ErrorStack):
                 var_root_tuple = (self.Functions[i].str_vars[j % roots_modulus], latex(eval(eval_list[i][j])))
                 function_root_list.append(var_root_tuple)
             ##has only one range function and one variable
-            if (all_range_functions_root_list == []):
+            if function_root_list != []:
                 range_function_var_root_tuple = (
-                    self.Functions[i].str_funcs[0], function_root_list)
+                self.Functions[i].str_funcs[(len(self.Functions[i].str_funcs) - 1) // roots_modulus], function_root_list)
                 all_range_functions_root_list.append(range_function_var_root_tuple)
+                function_root_list = []
+            # if (all_range_functions_root_list == []):
+            #     range_function_var_root_tuple = (
+            #         self.Functions[i].str_funcs[0], function_root_list)
+            #     all_range_functions_root_list.append(range_function_var_root_tuple)
             function_root_tuple = (self.Functions[i].info_string, all_range_functions_root_list)
             output_list.append(function_root_tuple)
         return output_list
 
 if __name__ == "__main__":
     start_time = os.times()[0]
-    funct = FunctionManager("f(x,y) = (x**2-1 , x+y, y**2+3) g(x) = (x**3)")
+    funct = FunctionManager("f(x) = (x**2,x) g(cat) = (log(cat))")
     calcs = Calculus(funct)
     zeros = calcs.zeroes()
-
     print(zeros)
-    str_output = str(zeros[0][0])
-    print(str_output)
+
 
     derivatives = calcs.partial_derivatives()
     print(derivatives)

@@ -47,20 +47,12 @@ class CommandManager(CommandInterpreter):
             # No label and no [sublabel,info] pairs
             return None,None
         next_command = self.commands_queue.pop(0)
-        main_label, sub_labels_and_info = next_command.run()
+        if next_command.stop_execution == False:
+            main_label, sub_labels_and_info = next_command.run()
+        else:
+            main_label, sub_labels_and_info = None, None
         # Output is in the form [main label, (sublabel, info)]
         return main_label,sub_labels_and_info
-
-
-    # def run_all(self):
-    #     """
-    #     None -> #TODO
-    #
-    #     Runs all commands interpreted by the command manager
-    #     """
-    #     for c in self.Commands_container:
-    #         yield c.run()
-    #     self.done = True
 
     def run_default(self):
         """
@@ -128,7 +120,8 @@ class CommandManager(CommandInterpreter):
 
 if __name__ == "__main__":
 
-    c = CommandManager("\plot{f(x) = (x**2)} \plot{laplace(x,y,z) = (x** (1/3), y**(1/3), z**(1/3)) fourrier(x) = (x^5)}")
+    c = CommandManager("partialintegral{f(x) = (x**2, x) g(cat) = (cat**3-1)}")
+    print(c.run_next())
     print(c.get_interpreted())
     print(c.get_uninterpreted())
     x = 5
