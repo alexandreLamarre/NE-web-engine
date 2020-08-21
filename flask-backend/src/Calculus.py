@@ -17,7 +17,7 @@ class Calculus(OutputQueue, ErrorStack):
 
     def convert_latex_to_base64(self,latex):
         buf = io.BytesIO()
-        plt.rc('text', usetex = True)
+        plt.rc('text')
         plt.axis('off')
         plt.text(0.05,0.5, f'${latex}$', size = 12)
         plt.savefig(buf, format = "png")
