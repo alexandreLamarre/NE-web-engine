@@ -25,9 +25,9 @@ def interpret_command():
     #
     label , sublabels_and_frame_info_tuple = new_command_manager.run_initial()
 
-    return flask.jsonify({"label": label, "interpreted": sublabels_and_frame_info_tuple[0][1],\
-                                    "uninterpreted": sublabels_and_frame_info_tuple[1][1],\
-                                    "Errors": sublabels_and_frame_info_tuple[2][1]})
+    return flask.jsonify({"label": label, "input": sublabels_and_frame_info_tuple[0][1],\
+                                    "interpreted": sublabels_and_frame_info_tuple[1][1],\
+                                    "errors": sublabels_and_frame_info_tuple[2][1]})
 
 @app.route("/input/commands", methods = ["POST"])
 def run_commands():

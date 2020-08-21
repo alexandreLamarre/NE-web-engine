@@ -13,35 +13,42 @@ class ErrorStack:
             -Contains no errors
             -The stop flag for stopping execution is set to false
         """
-        self.error_str = ""
-        self.stop = False
+        self.error_dict = {}
 
     def push_error(self, error):
         """
         (String) -> None
         """
-        self.error_str += error
+        if error not in self.error_dict:
+            self.error_dict[error] = 1
+        else:
+            self.error_dict[error] += 1
 
-    def check_errors(self):
-        """
-        None -> String
+    def get_errors(self):
+        output_str = ""
+        for (k,v) in self.error_dict.items():
+            if v == 1:
+                output_str += k + "\n"
+            else:
+                output_str += k + " (" + str(v) + ")" + "\n"
 
-        Returns a formatted string that contains errors encoutered by
-        whatever class implements this interface.
-        """
-        return self.error_str
+        return output_str[:-1] ##remove last '\n'
+    # def check_errors(self):
+    #     """
+    #     None -> String
+    #
+    #     Returns a formatted string that contains errors encoutered by
+    #     whatever class implements this interface.
+    #     """
+    #     return self.error_str
 
-    def set_stop(self):
-        """
-        None -> None
+if __name__ == "__main__":
+    e = ErrorStack()
+    for i in range(3):
+        e.push_error("Function undefined plotting 0 instead")
 
-        Sets the stop flag to true when called. Can be used to stop the program
-        after it has encountered many fatal errors, and return all the issues.
-        """
-        self.stop = True
+    print(e.get_errors())
 
-    def stop_exec(self):
-        """ If the stop flag has been called then a fatal error was encountered,
-         so we exit the program"""
-        if self.stop:
-            exit(1)
+    e.push_error("Function undefined plotting 0 instead")
+
+    print(e.get_errors())

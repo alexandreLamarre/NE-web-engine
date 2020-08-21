@@ -37,15 +37,15 @@ class FunctionManager(FunctionInterpreter):
             res.strip()
         return res
 
-    def get_uninterpreted(self):
-        """
-        None -> (String)
-
-        Returns a user friendly string that indicates which input is uninterpreted by the FunctionManager
-        """
-        output = self.uninterpreted.strip()
-
-        return "The following could not be interpreted as a function :" + output if output else ""
+    # def get_uninterpreted(self):
+    #     """
+    #     None -> (String)
+    #
+    #     Returns a user friendly string that indicates which input is uninterpreted by the FunctionManager
+    #     """
+    #     output = self.uninterpreted.strip()
+    #
+    #     return "The following could not be interpreted as a function :" + output if output else ""
 
     def get_interpreted(self):
         """
@@ -58,21 +58,26 @@ class FunctionManager(FunctionInterpreter):
             res += f
             res += ' '
         res = res.strip()
-        return "Functions:" + " " +res if res else ""
+        return res if res else ""
 
-    def get_compile_errors(self):
-        """
-        None -> (String)
-
-        Checks the container of Function objects to see if they encountered any
-        fatal errors compiling or evaluating their user-interpreted functions.
-        """
-        errors = ""
+    def get_errors(self):
+        output_str = ""
         for f in self.Functions_container:
-            input_values = [0]*f.in_dimension
-            f.evaluate(*input_values)
-            errors += f.check_errors()
-        return errors
+            output_str += f.get_errors() + " "
+        return output_str[:-1] if len(output_str)>1 else ""
+    # def get_compile_errors(self):
+    #     """
+    #     None -> (String)
+    #
+    #     Checks the container of Function objects to see if they encountered any
+    #     fatal errors compiling or evaluating their user-interpreted functions.
+    #     """
+    #     errors = ""
+    #     for f in self.Functions_container:
+    #         input_values = [0]*f.in_dimension
+    #         f.evaluate(*input_values)
+    #         errors += f.check_errors()
+    #     return errors
 
     def generate_uninterpreted_reason(self):
         """

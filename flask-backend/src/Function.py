@@ -23,9 +23,6 @@ class Function(ErrorStack):
         self.in_dimension = len(self.str_vars)
         self.out_dimension = len(self.str_funcs)
 
-        #test evaluation to check compiler errors
-        test_input = [0] * self.in_dimension
-        self.evaluate(*test_input)
 
     def _parse_input(self, function_matched_string):
         """
@@ -73,12 +70,13 @@ class Function(ErrorStack):
         code_list = []
         for f in str_funcs:
             try:
+                #TODO pre-process functions with certain symbols and lack of multiplication
                 f2 = f.replace("^", "**")
                 code = parser.expr(f2).compile()
                 code_list.append(code)
             except SyntaxError:
                 # self.push_errors("Invalid function {}".format(f))
-                self.push_error("'{}' :Could not interpret this function in the compiler. Stopping execution...\n".format(f))
+                self.push_error("'{}' :Your function caused something to go horribly wrong \n".format(f))
                 self.set_stop()
         return code_list
 
@@ -132,8 +130,6 @@ class Function(ErrorStack):
                 value = self.funcs[i](self.str_vars, *args)
                 res.append(value)
             except:
-                self.push_error("'{}' could not be evaluated as a numeric function in user defined function '{}' \n".format(self.str_funcs[i], self.name))
-                self.set_stop()
                 res.append(None)
 
         return res

@@ -17,7 +17,6 @@ class Command():
         """
         # 'Static dictionary for the valid input classes inside the command given
         # In the future should be replaced by a database
-        self.stop_execution = False
         self.commands_dict = {'plot': ['FunctionManager'], 'IFS': ['FunctionManager', 'MarkovChain'], \
                               'zeroes' : ['FunctionManager'], 'derivative': ['FunctionManager'], 'integral' : ['FunctionManager'],\
                               'partialderivative' : ['FunctionManager'], 'partialintegral': ['FunctionManager']}
@@ -31,7 +30,7 @@ class Command():
             self.math_types = self.commands_dict[self.command]
             self.math_objects = self.process_input_types()
         else:
-            self.stop_execution = True
+            pass
 
     def run(self):
         """
@@ -112,36 +111,52 @@ class Command():
                     output_list.append(FunctionManager(self.arguments))
         return output_list
 
-    def get_math_interpreted(self):
-        res = ""
-        for obj in self.math_objects:
-            res += obj.get_interpreted()
-        return res
+    def get_interpreted(self):
+        output_str = ""
+        for m in self.math_objects:
+            output_str += m.get_interpreted() + " "
 
-    def get_math_uninterpreted(self):
-        res = ""
-        for obj in self.math_objects:
-            res += obj.get_uninterpreted()
-        return res
+        return self.command + "{ " + output_str +"}"
 
-    def get_math_errors(self):
-        res = ""
-        for obj in self.math_objects:
-            res += obj.get_compile_errors()
-        return res
+    def get_errors(self):
+        output_str = ""
+        for e in self.math_objects:
+            error = e.get_errors()
+            if error != "":
+                output_str += error + "\n"
 
-    def get_math_object_information(self):
-        """
-        None -> (String)
 
-        Gets the information produced by the DataManger at dynamic compile time
-        includes errors/interpreted/uninterpreted
-        """
-        res = self.get_math_interpreted()
-        res += "\n"
-        res += self.get_math_uninterpreted()
-        res += self.get_math_errors()
-        return res
+        return output_str[:-1] if len(output_str)>1 else "" ##remove the last '\n' character
+    # def get_math_interpreted(self):
+    #     res = ""
+    #     for obj in self.math_objects:
+    #         res += obj.get_interpreted()
+    #     return res
+    #
+    # def get_math_uninterpreted(self):
+    #     res = ""
+    #     for obj in self.math_objects:
+    #         res += obj.get_uninterpreted()
+    #     return res
+    #
+    # def get_math_errors(self):
+    #     res = ""
+    #     for obj in self.math_objects:
+    #         res += obj.get_compile_errors()
+    #     return res
+    #
+    # def get_math_object_information(self):
+    #     """
+    #     None -> (String)
+    #
+    #     Gets the information produced by the DataManger at dynamic compile time
+    #     includes errors/interpreted/uninterpreted
+    #     """
+    #     res = self.get_math_interpreted()
+    #     res += "\n"
+    #     res += self.get_math_uninterpreted()
+    #     res += self.get_math_errors()
+    #     return res
 
     def get_command_name(self):
         """
@@ -153,4 +168,4 @@ class Command():
 
 if __name__ == "__main__":
     c = Command("\plot{f(x) = (x**2), g(x) = (x**2) h(x = (a+bc)}")
-    print(c.get_math_object_information())
+    # print(c.get_math_object_information())

@@ -18,8 +18,7 @@ class CommandManager(CommandInterpreter):
         Creates a list of Command Objects using those strings
         """
         super().__init__()
-        self.done = False
-        self.initial_done = False
+        self.original_input = commands_str
         self.command_str_container = self.match(commands_str)
         self.uninterpreted = self.process_uninterpreted(commands_str)
         self.Commands_container = [Command(c) for c in self.command_str_container]
@@ -35,22 +34,20 @@ class CommandManager(CommandInterpreter):
         """
         mainlabel = "Input"
         output = []
+        output.append(("Your input: ", self.original_input ))
         output.append(("Interpreted", self.get_interpreted()))
-        output.append(("Uninterpreted",self.get_uninterpreted()))
+        # output.append(("Uninterpreted",self.get_uninterpreted()))
         output.append(("Errors",self.get_errors()))
         self.initial_done = True
         return mainlabel, output
 
     async def run_next(self):
         if len(self.commands_queue) == 0:
-            self.done = True
             # No label and no [sublabel,info] pairs
             return None,None
         next_command = self.commands_queue.pop(0)
-        if next_command.stop_execution == False:
-            main_label, sub_labels_and_info = next_command.run()
-        else:
-            main_label, sub_labels_and_info = None, None
+        main_label, sub_labels_and_info = next_command.run()
+
         # Output is in the form [main label, (sublabel, info)]
         return main_label,sub_labels_and_info
 
@@ -91,32 +88,32 @@ class CommandManager(CommandInterpreter):
         """
         output_message = ""
         for c in self.Commands_container:
-            output_message += "Command" +" '"+c.get_command_name() + "' on: \n" +c.get_math_interpreted()+"\n"
+            output_message += c.get_interpreted() + "\n"
 
-        return output_message if output_message else ""
-
-
-    def get_uninterpreted(self):
-        """
-        (None) -> String
-
-        Returns the uninterpreted commands in the command line formatted to a user friendly string
-        """
-        output_message = self.uninterpreted.strip()
-        output_message = "Could not interpret the following as commands :\n" + output_message if output_message else ""
-        for c in self.Commands_container:
-            unin = c.get_math_uninterpreted()
-            if unin:
-                output_message += "In " +c.command + " : " + unin +"\n"
-        return output_message
-
+        return output_message[:-1] if output_message else ""
+    #
+    #
+    # def get_uninterpreted(self):
+    #     """
+    #     (None) -> String
+    #
+    #     Returns the uninterpreted commands in the command line formatted to a user friendly string
+    #     """
+    #     output_message = self.uninterpreted.strip()
+    #     output_message = "Could not interpret the following as commands :\n" + output_message if output_message else ""
+    #     for c in self.Commands_container:
+    #         unin = c.get_math_uninterpreted()
+    #         if unin:
+    #             output_message += "In " +c.command + " : " + unin +"\n"
+    #     return output_message
+    #
     def get_errors(self):
         output_message = ""
         for c in self.Commands_container:
-            if c.get_math_errors() != "":
-                output_message += "In " + c.command + " : \n" +c.get_math_errors() +"\n"
+            if c.get_errors() != "":
+                output_message += c.get_errors() +"\n"
 
-        return output_message
+        return output_message[:-1] if len(output_message)>1 else ""## remove last '\n' character
 
 if __name__ == "__main__":
 
