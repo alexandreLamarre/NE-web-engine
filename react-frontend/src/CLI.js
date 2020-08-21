@@ -1,7 +1,9 @@
 import React from "react"
 import "./CLI.css"
-import MathText from "./MathText"
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom'
+import Tree from "./Tree"
+
+
 
 function createNode(element){
   return document.createElement(element);
@@ -102,6 +104,9 @@ function process_input(ul, data){
   }
   append(ul, error_info)
 }
+
+// ================================================================================================
+
 class CLI extends React.Component{
   constructor(props){
     super(props)
@@ -174,8 +179,13 @@ class CLI extends React.Component{
 
   render(){
     return(
+
       <form onSubmit = {this.handleSubmit}>
         <label>
+        <Tree/>
+        <h6>
+          Non-Euclidean Computational Engine
+        </h6>
           <textarea value ={this.state.value}
             onChange = {this.handleChange} draggable = "false" cols = "70" rows = "2"/>
             <input type = "submit" value = "=" />

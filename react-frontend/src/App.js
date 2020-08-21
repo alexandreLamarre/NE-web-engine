@@ -8,10 +8,8 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Non-Euclidean Computational Engine
-        </p>
+
+
         <CLI />
         <a
           className="App-link"
@@ -21,9 +19,8 @@ function App() {
         >
           Documentation
         </a>
-        <Latex>
-          <p  id = "ul-info"></p>
-        </Latex>
+
+        <ul  id = "ul-info"></ul>
 
       </header>
 
