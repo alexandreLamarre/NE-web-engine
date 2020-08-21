@@ -1,4 +1,6 @@
 from src.FunctionManager import FunctionManager
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.pylab as pl
 import numpy as np

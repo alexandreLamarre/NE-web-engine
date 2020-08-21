@@ -7,6 +7,8 @@ import io
 import os
 import matplotlib.pyplot as plt
 import base64
+import matplotlib
+matplotlib.use("Agg")
 
 class Calculus(OutputQueue, ErrorStack):
     def __init__(self, functionManager):
@@ -17,9 +19,10 @@ class Calculus(OutputQueue, ErrorStack):
 
     def convert_latex_to_base64(self,latex):
         buf = io.BytesIO()
+        fig= plt.figure(figsize=(6,0.3))
         plt.rc('text')
         plt.axis('off')
-        plt.text(0.05,0.5, f'${latex}$', size = 12)
+        plt.text(0,0.5, f'${latex}$', size = 10)
         plt.savefig(buf, format = "png")
         plt.close()
 
