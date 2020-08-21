@@ -67,42 +67,34 @@ function process_input(ul, data){
   for(i = 0; i <length; i ++){
     ul.removeChild(ul.childNodes[0]);
   }
-  let label = createNode("h2")
-  label.innerHTML = `${data.label}`
 
-  let interpreted = createNode("h3")
-  interpreted.innerHTML = ` Interpreted`
-  append(ul,interpreted)
-  let interpreted_info = createNode("p")
-  if (data.interpreted == ""){
-    interpreted_info.innerHTML = `None`
+
+  let originalInput = createNode("p");
+  if (data.input == "" || data.input == null){
+    originalInput.innerHTML = "Your input : None";
   }
   else{
-    interpreted_info.innerHTML = data.interpreted
+    originalInput.innerHTML = "Your input : " + data.input;
   }
-  append(ul,interpreted_info)
-  let uninterpreted = createNode("h3")
-  uninterpreted.innerHTML = ` Uninterpreted`
-  append(ul,uninterpreted)
-  let uninterpreted_info = createNode("p")
-  if (data.uninterpreted == ""){
-    uninterpreted_info.innerHTML = `None`
+  append(ul, originalInput);
+  let interpreted_info = createNode("p");
+  if (data.interpreted == "" || data.interpreted == null){
+    interpreted_info.innerHTML = "Interpreted input : None";
   }
   else{
-    uninterpreted_info.innerHTML = `${data.uninterpreted}`
+    interpreted_info.innerHTML = "Interpreted input : " + data.interpreted;
   }
-  append(ul,uninterpreted_info)
-  let errors = createNode("h3")
-  errors.innerHTML = `Errors`
-  append(ul,errors)
-  let error_info = createNode("p")
-  if (data.Errors == ""){
-    error_info.innerHTML = `None`
+  append(ul,interpreted_info);
+
+  let error_info = createNode("p");
+  if (data.errors == "" || data.errors == null){
+    //do nothing
   }
   else{
-    error_info.innerHTML = `${data.Errors}`
+    error_info.innerHTML = "Errors : " + data.Errors;
+    error_info.style="background-color:tomato;";
+    append(ul, error_info);
   }
-  append(ul, error_info)
 }
 
 // ================================================================================================
