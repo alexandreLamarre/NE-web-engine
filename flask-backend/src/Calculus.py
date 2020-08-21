@@ -3,9 +3,10 @@ from src.Error_Stack import ErrorStack
 import parser
 from sympy import *
 from src.FunctionManager import FunctionManager
-from io import BytesIO
-from PIL import Image, ImageTk
+import io
 import os
+import matplotlib.pyplot as plt
+import base64
 
 class Calculus(OutputQueue, ErrorStack):
     def __init__(self, functionManager):
@@ -13,6 +14,17 @@ class Calculus(OutputQueue, ErrorStack):
         ErrorStack().__init__()
         self.function_manager = functionManager
         self.Functions = [f for f in functionManager.Functions_container]
+
+    def convert_latex_to_base64(self,latex):
+        buf = io.BytesIO()
+        plt.rc('text', usetex = True)
+        plt.axis('off')
+        plt.text(0.05,0.5, f'${latex}$', size = 12)
+        plt.savefig(buf, format = "png")
+        plt.close()
+
+        base64_string = base64.b64encode(buf.getvalue())
+        return str(base64_string)
 
     def symbolize(self):
         """
@@ -59,7 +71,7 @@ class Calculus(OutputQueue, ErrorStack):
                     range_function_var_root_tuple = (self.Functions[i].str_funcs[(j-1)//roots_modulus], function_root_list)
                     all_range_functions_root_list.append(range_function_var_root_tuple)
                     function_root_list = []
-                var_root_tuple = (self.Functions[i].str_vars[j%roots_modulus],latex(eval(eval_list[i][j])))
+                var_root_tuple = (self.Functions[i].str_vars[j%roots_modulus],self.convert_latex_to_base64(latex(eval(eval_list[i][j])))[2:-1] )
                 function_root_list.append(var_root_tuple)
             ##has only one range function and one variable
             if function_root_list != []:
@@ -111,7 +123,7 @@ class Calculus(OutputQueue, ErrorStack):
                         self.Functions[i].str_funcs[(j - 1) // roots_modulus], function_root_list)
                     all_range_functions_root_list.append(range_function_var_root_tuple)
                     function_root_list = []
-                var_root_tuple = (self.Functions[i].str_vars[j % roots_modulus], latex(eval(eval_list[i][j])))
+                var_root_tuple = (self.Functions[i].str_vars[j % roots_modulus], self.convert_latex_to_base64(latex(eval(eval_list[i][j])))[2:-1])
                 function_root_list.append(var_root_tuple)
             ##has only one range function and one variable
             if function_root_list != []:
@@ -156,7 +168,7 @@ class Calculus(OutputQueue, ErrorStack):
                         self.Functions[i].str_funcs[(j - 1) // roots_modulus], function_root_list)
                     all_range_functions_root_list.append(range_function_var_root_tuple)
                     function_root_list = []
-                var_root_tuple = (self.Functions[i].str_vars[j % roots_modulus], latex(eval(eval_list[i][j])))
+                var_root_tuple = (self.Functions[i].str_vars[j % roots_modulus], self.convert_latex_to_base64(latex(eval(eval_list[i][j])))[2:-1])
                 function_root_list.append(var_root_tuple)
             ##has only one range function and one variable
             if function_root_list != []:
