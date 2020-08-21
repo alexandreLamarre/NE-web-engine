@@ -41,7 +41,7 @@ class CommandManager(CommandInterpreter):
         self.initial_done = True
         return mainlabel, output
 
-    def run_next(self):
+    async def run_next(self):
         if len(self.commands_queue) == 0:
             self.done = True
             # No label and no [sublabel,info] pairs
