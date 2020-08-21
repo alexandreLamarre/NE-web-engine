@@ -1,5 +1,7 @@
 import React from "react"
 import "./CLI.css"
+import MathText from "./MathText"
+import ReactDOM from 'react-dom';
 
 function createNode(element){
   return document.createElement(element);
@@ -27,17 +29,24 @@ function process_commands(ul,data){
       append(ul,sublabel);
       for(j = 0; j<data.info[n][i][1].length; j++){
         let sublabel_function  = createNode("h4");
-        sublabel_function.innerHTML = `${data.info[n][i][1][j][0]}`;
+        sublabel_function.innerHTML = "function: "+ `${data.info[n][i][1][j][0]}`;
         append(ul, sublabel_function);
         for(k=0; k<data.info[n][i][1][j][1].length; k++){
-          let solution = createNode("p");
-          solution.innerHTML = `${data.info[n][i][1][j][1][k][0]}` + " : " + `${data.info[n][i][1][j][1][k][1]}`;
-          append(ul,solution)
+           let math_var = createNode("h5")
+           math_var.innerHTML = "In terms of variable: " + `${data.info[n][i][1][j][1][k][0]}`;
+           append(ul, math_var)
+           let math_info = createNode("img")
+           console.log("hello")
+           console.log(data.info[n][i][1][j][1][k][1])
+           math_info.src = "data:image/png;base64,"+ `${data.info[n][i][1][j][1][k][1]}`
+           append(ul, math_info)
+
         }
       }
     }
   }
   }
+
 }
 
 function process_input(ul, data){
