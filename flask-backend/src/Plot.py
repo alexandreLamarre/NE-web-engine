@@ -6,6 +6,8 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 from src.Function import Function
 import os
+import io
+import base64
 
 class Plot:
     """
@@ -14,6 +16,12 @@ class Plot:
     def __init__(self, functionManager, N = 10000):
         self.functionManager = functionManager
         self.num_points = N
+    def convert_plot_to_base64(self,figure):
+        buf = io.BytesIO()
+
+        figure.savefig(buf, format = "png")
+        base64_string = base64.b64encode(buf.getvalue())
+        return str(base64_string)[2:-1]
 
     def run(self):
         y_grid, x_grid = self.preprocess()
@@ -33,7 +41,7 @@ class Plot:
                 self.plot3d_two_one(f,fig,gs,i,0)
             elif f.out_dimension >1 and f.out_dimension ==2:
                 self.plot3d_two_to_two(f,fig,gs,i,0)
-            figure_list.append(fig)
+            figure_list.append(self.convert_plot_to_base64(fig))
             i += 1
         end_time = os.times()[0]
         print("Plotting took: {} seconds".format(end_time - start_time))

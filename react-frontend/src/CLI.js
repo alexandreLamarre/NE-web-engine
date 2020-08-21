@@ -45,6 +45,15 @@ function process_commands(ul,data){
       }
     }
   }
+  if(data.labels[n] == "plot"){
+    for(i = 0; i <data.info[n].length; i++){
+      let math_info = createNode("img")
+      console.log("math_info")
+      console.log(data.info[n][i][1])
+      math_info.src = "data:image/png;base64,"+ `${data.info[n][i][1]}`
+      append(ul, math_info)
+    }
+  }
   }
 
 }
