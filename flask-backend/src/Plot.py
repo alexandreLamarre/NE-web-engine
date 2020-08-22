@@ -47,11 +47,9 @@ class Plot(ErrorStack):
                 self.plot3d_two_to_two(f,fig,gs,i,0)
             figure_list.append(self.convert_plot_to_base64(fig))
             i += 1
+            plt.close()
         end_time = os.times()[0]
         print("Plotting took: {} seconds".format(end_time - start_time))
-        plt.rc('xtick', labelsize=8)
-        plt.rc('ytick', labelsize=8)
-        print(self.get_errors())
         return figure_list, self.get_errors()
 
 
@@ -146,7 +144,6 @@ class Plot(ErrorStack):
         for r in range(1,number_of_contours):
             num = 10
             angles = np.linspace(0,2*np.pi,num)
-            print(angles)
             # euclidean_norm = []
             xs = []
             ys = []
@@ -175,9 +172,9 @@ class Plot(ErrorStack):
                         self.push_error(
                             "Function {} undefined at plot value, plotting 0 instead".format(function.info_string))
                         new_ys.append(0)
-            print(len(new_xs))
+
             new_xs = np.array(new_xs)
-            print(len(new_xs))
+
             new_ys = np.array(new_ys)
 
             contour_map_values = np.linspace(r,r,num*num)#*2500)
@@ -192,9 +189,7 @@ class Plot(ErrorStack):
             total_xs = np.append(total_xs, new_xs)
             total_ys = np.append(total_ys,new_ys)
             total_contours = np.append(total_contours, contour_map_values)
-            print(len(total_xs))
-            print(len(total_ys))
-            print(len(total_contours))
+
         ax = figure.add_subplot(projection = "3d")
         ax.clear()
         ax.set_title("{}".format(function.info_string), font = "Times")
