@@ -20,27 +20,34 @@ function process_commands(ul,data){
   var k;
   for(n = 0; n<data.info.length;n++){
     if(data.labels[n] != null){
-    let label = createNode("h2");
-    label.innerHTML = `${data.labels[n]}`;
-    append(ul,label);
+      let label = createNode("h2");
+      label.innerHTML = data.labels[n];
+      append(ul,label);
+    }
+    if(data.errors[n] != null || data.errors != ""){
+      let errors = createNode("p")
+      console.log(data.errors[n])
+      errors.innerHTML = data.errors[n]
+      errors.style = "color:red;"
+      append(ul,errors)
     }
     if(data.labels[n] == "zeroes" || data.labels[n] == "partialderivative" || data.labels[n] == "partialintegral"){
     for(i = 0; i <data.info[n].length;i++){
       let sublabel = createNode("h3");
-      sublabel.innerHTML = `${data.info[n][i][0]}`;
+      sublabel.innerHTML = data.info[n][i][0];
       append(ul,sublabel);
       for(j = 0; j<data.info[n][i][1].length; j++){
         let sublabel_function  = createNode("h4");
-        sublabel_function.innerHTML = "function: "+ `${data.info[n][i][1][j][0]}`;
+        sublabel_function.innerHTML = "function: "+ data.info[n][i][1][j][0];
         append(ul, sublabel_function);
         for(k=0; k<data.info[n][i][1][j][1].length; k++){
            let math_var = createNode("h5")
-           math_var.innerHTML = "In terms of variable: " + `${data.info[n][i][1][j][1][k][0]}`;
+           math_var.innerHTML = "In terms of variable: " + data.info[n][i][1][j][1][k][0];
            append(ul, math_var)
            let math_info = createNode("img")
            console.log("hello")
            console.log(data.info[n][i][1][j][1][k][1])
-           math_info.src = "data:image/png;base64,"+ `${data.info[n][i][1][j][1][k][1]}`
+           math_info.src = "data:image/png;base64,"+ data.info[n][i][1][j][1][k][1]
            append(ul, math_info)
 
         }
@@ -61,7 +68,7 @@ function process_commands(ul,data){
 }
 
 function process_input(ul, data){
-  ul.style = "background-color: #1B2631"
+  ul.style = "background-color: #145494"
   var length = ul.childNodes.length
   var i;
   for(i = 0; i <length; i ++){
@@ -91,8 +98,8 @@ function process_input(ul, data){
     //do nothing
   }
   else{
-    error_info.innerHTML = "Errors : " + data.Errors;
-    error_info.style="background-color:tomato;";
+    error_info.innerHTML = "Errors : " + data.errors;
+    error_info.style="color:red;";
     append(ul, error_info);
   }
 }
