@@ -7,9 +7,9 @@ CACHE = {}
 app = flask.Flask("__main__")
 
 async def run_next(command_manager):
-    res1,res2 = await command_manager.run_next()
+    res1,res2,res3 = await command_manager.run_next()
 
-    return (res1,res2)
+    return (res1,res2,res3)
 
 
 @app.route("/")
@@ -37,15 +37,20 @@ def run_commands():
     new_command_manager = CommandManager(req)
     label_list = []
     sub_labels_and_info_list = []
-    label , sublabels_and_info = asyncio.run(run_next(new_command_manager))
+    error_list = []
+
+
+    label , sublabels_and_info, errors = asyncio.run(run_next(new_command_manager))
     label_list.append(label)
     sub_labels_and_info_list.append(sublabels_and_info)
-    while(label, sublabels_and_info) != (None,None):
-        label , sublabels_and_info = asyncio.run(run_next(new_command_manager))
+    error_list.append(errors)
+    while(label, sublabels_and_info, errors) != (None,None, "") and  (label, sublabels_and_info, errors) != (None,None,None) :
+        label , sublabels_and_info,errors = asyncio.run(run_next(new_command_manager))
         if(label != None and sublabels_and_info!= None):
             label_list.append(label)
             sub_labels_and_info_list.append(sublabels_and_info)
+            error_list.append(errors)
 
-    return flask.jsonify({"labels": label_list, "info": sub_labels_and_info_list})
+    return flask.jsonify({"labels": label_list, "info": sub_labels_and_info_list, "errors": error_list})
 
 app.run(debug = True)

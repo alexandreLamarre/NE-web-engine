@@ -39,12 +39,14 @@ class Command():
         Should return the tuple (sublabels, info) that should be displayed in label should be displayed in
         """
         output = []
+        all_errors = ""
         main_label = self.command
         if self.command == 'plot':
             for math in self.math_objects:
                 if isinstance(math,FunctionManager):
                     plot = Plot(math)
-                    figures = plot.run()
+                    figures, errors = plot.run()
+                    all_errors += errors + "\n"
                     for f in figures:
                         output.append((None, f))
         if self.command == "zeroes":
@@ -69,7 +71,8 @@ class Command():
                     for p in partial_derivatives:
                         output.append((p[0], p[1]))
 
-        return main_label, output
+        all_errors = all_errors[:-1] if len(all_errors)>1 else ""
+        return main_label, output, all_errors
 
     def process_input(self, command_str):
         """

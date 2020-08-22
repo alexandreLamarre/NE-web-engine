@@ -7,15 +7,17 @@ import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 from src.Function import Function
+from src.Error_Stack import ErrorStack
 import os
 import io
 import base64
 
-class Plot:
+class Plot(ErrorStack):
     """
     Class responsible for plotting functions in Function Manager
     """
     def __init__(self, functionManager, N = 10000):
+        super().__init__()
         self.functionManager = functionManager
         self.num_points = N
     def convert_plot_to_base64(self,figure):
@@ -49,7 +51,8 @@ class Plot:
         print("Plotting took: {} seconds".format(end_time - start_time))
         plt.rc('xtick', labelsize=8)
         plt.rc('ytick', labelsize=8)
-        return figure_list
+        print(self.get_errors())
+        return figure_list, self.get_errors()
 
 
     def preprocess(self):
@@ -91,6 +94,7 @@ class Plot:
                     zs_row += value
                 else:
                     # print("Adding 0")
+                    self.push_error("Function {} undefined at plot value, plotting 0 instead".format(function.info_string))
                     zs_row += [0]
 
             zs.append(zs_row)
@@ -113,9 +117,11 @@ class Plot:
                 ys.append(new_y)
             else:
                 ys.append(0)
+                self.push_error("Function {} undefined at plot value, plotting 0 instead".format(function.info_string))
             if new_z != None:
                 zs.append(new_z)
             else:
+                self.push_error("Function {} undefined at plot value, plotting 0 instead".format(function.info_string))
                 zs.append(0)
 
         ys = np.array(ys)
@@ -160,10 +166,14 @@ class Plot:
                     if new_x != None:
                         new_xs.append(new_x)
                     else:
+                        self.push_error(
+                            "Function {} undefined at plot value, plotting 0 instead".format(function.info_string))
                         new_xs.append(0)
                     if new_y != None:
                         new_ys.append(new_y)
                     else:
+                        self.push_error(
+                            "Function {} undefined at plot value, plotting 0 instead".format(function.info_string))
                         new_ys.append(0)
             print(len(new_xs))
             new_xs = np.array(new_xs)
