@@ -22,7 +22,7 @@ class Calculus(OutputQueue, ErrorStack):
         fig= plt.figure(figsize=(6,0.3))
         plt.rc('text')
         plt.axis('off')
-        plt.text(0,0.5, f'${latex}$', size = 10)
+        plt.text(0,0.3, f'${latex}$', size = 10)
         plt.savefig(buf, format = "png")
         plt.close()
 

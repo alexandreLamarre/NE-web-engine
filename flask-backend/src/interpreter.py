@@ -19,8 +19,6 @@ class Interpreter():
     def get_interpreted(self):
         pass
 
-    def get_uninterpreted(self):
-        pass
 
 class FunctionInterpreter(Interpreter):
     def __init__(self):
@@ -28,5 +26,5 @@ class FunctionInterpreter(Interpreter):
 
 class CommandInterpreter(Interpreter):
     def __init__(self):
-        super().__init__("[a-zA-Z]*\{[^\\\\\{\}]*\}")
+        super().__init__("[a-zA-Z]*(\s)*\{[^\\\\\{\}]*\}")
 

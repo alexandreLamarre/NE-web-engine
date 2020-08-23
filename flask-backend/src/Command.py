@@ -100,7 +100,8 @@ class Command():
         output_str = command_str.strip()
         output_str = output_str.split("{")
         output_str = output_str[0]
-
+        output_str= output_str.strip()
+        output_str = output_str.lower()
         return output_str if output_str in self.commands_dict else ""
 
     def process_input_types(self):
