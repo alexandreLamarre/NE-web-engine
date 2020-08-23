@@ -1,6 +1,6 @@
 from src.interpreter import CommandInterpreter
 from src.Command import Command
-
+from src.FunctionManager import FunctionManager
 
 class CommandManager(CommandInterpreter):
     """ Factory object that processes the command line input
@@ -18,11 +18,13 @@ class CommandManager(CommandInterpreter):
         Creates a list of Command Objects using those strings
         """
         super().__init__()
+        self.default = False
         self.original_input = commands_str
-        self.command_str_container = self.match(commands_str)
-        self.uninterpreted = self.process_uninterpreted(commands_str)
-        self.Commands_container = [Command(c) for c in self.command_str_container]
-        self.commands_queue = list(self.Commands_container)
+        self.command_str_container = self.process_commands(commands_str)
+        if not self.default:
+            self.uninterpreted = self.process_uninterpreted(commands_str)
+            self.Commands_container = [Command(c) for c in self.command_str_container]
+            self.commands_queue = list(self.Commands_container)
 
     def run_initial(self):
         """
@@ -32,13 +34,19 @@ class CommandManager(CommandInterpreter):
         Gets uninterpreted input
         Gets errors in input
         """
-        mainlabel = "Input"
-        output = []
-        output.append(("Your input: ", self.original_input ))
-        output.append(("Interpreted", self.get_interpreted()))
-        # output.append(("Uninterpreted",self.get_uninterpreted()))
-        output.append(("Errors",self.get_errors()))
-        self.initial_done = True
+        if not self.default:
+            mainlabel = "Input"
+            output = []
+            output.append(("Your input: ", self.original_input ))
+            output.append(("Interpreted", self.get_interpreted()))
+            output.append(("Errors",self.get_errors()))
+        else:
+            mainlabel = "Input"
+            output = []
+            temp_function_manager = FunctionManager(self.original_input)
+            output.append(("Your input: ", self.original_input ))
+            output.append(("Interpreted", temp_function_manager.get_interpreted()))
+            output.append(("Errors", temp_function_manager.get_errors()))
         return mainlabel, output
 
     async def run_next(self):
@@ -51,6 +59,16 @@ class CommandManager(CommandInterpreter):
         # Output is in the form [main label, (sublabel, info), errors]
         return main_label,sub_labels_and_info,errors
 
+    def process_commands(self, command_string):
+
+        processed_commands = self.match(command_string)
+
+        if processed_commands != []:
+            return processed_commands
+        else:
+            self.default = True
+            return ""
+
     def run_default(self):
         """
         None -> #TODO
@@ -60,14 +78,12 @@ class CommandManager(CommandInterpreter):
         #plot, zeroes, derivative, factorization, integral?
         pass
 
+    def is_default(self):
+        return self.default
 
     def process_uninterpreted(self, in_str):
         """
         (String) -> (String)
-
-        Processes uninterpreted strings entered in the command line
-        by removing the intrepretable input and separating the resulting strings
-
         Returns a string representing uninterpreted output
         """
         res = in_str
@@ -117,9 +133,7 @@ class CommandManager(CommandInterpreter):
 
 if __name__ == "__main__":
 
-    c = CommandManager("partialintegral{f(x) = (x**2, x) g(cat) = (cat**3-1)}")
-    print(c.run_next())
-    print(c.get_interpreted())
-    print(c.get_uninterpreted())
-    x = 5
-    print(x^5)
+    c = CommandManager("f(x) = (x**2)")
+    print(c.original_input)
+    print(c.run_initial())
+
