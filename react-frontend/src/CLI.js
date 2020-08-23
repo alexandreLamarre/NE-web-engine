@@ -45,8 +45,8 @@ function process_commands(ul,data){
            math_var.innerHTML = "In terms of variable: " + data.info[n][i][1][j][1][k][0];
            append(ul, math_var)
            let math_info = createNode("img")
-           console.log("hello")
-           console.log(data.info[n][i][1][j][1][k][1])
+           // console.log("hello")
+           // console.log(data.info[n][i][1][j][1][k][1])
            math_info.src = "data:image/png;base64,"+ data.info[n][i][1][j][1][k][1]
            append(ul, math_info)
 
@@ -79,6 +79,7 @@ function process_input(ul, data){
   let originalInput = createNode("p");
   if (data.input == "" || data.input == null){
     originalInput.innerHTML = "Your input : None";
+
   }
   else{
     originalInput.innerHTML = "Your input : " + data.input;
@@ -109,6 +110,7 @@ function process_input(ul, data){
 class CLI extends React.Component{
   constructor(props){
     super(props)
+    this.tree = React.createRef();
     this.state = {value: '',
                   interepreted: '',
                 label: ''}
@@ -126,8 +128,9 @@ class CLI extends React.Component{
 
     // const url = "http://localhost:5000/input/" + this.state.value
     event.preventDefault()
+    var loadingAnimation = setInterval(this.tree.current.animateTree,300);
+    var treeReference = this.tree
     const url = "/input"
-
     const ul = document.getElementById("ul-info")
     let resp = ""
     fetch(url, {method: "POST", body: JSON.stringify(this.state.value),
@@ -135,17 +138,11 @@ class CLI extends React.Component{
       "content-type": "application/json"
     })}
     ).then(function(response) {
-    // if (response.status !== 200) {
-    //   console.log(`Looks like there was a problem. Status code: ${response.status}`);
-    //   return;
-    // }
     resp = response
     response.json().then(function(data) {
 
       console.log(data);
       process_input(ul,data)
-
-    //  this.state.label = data.label
     });
   })
   .catch(function(error) {
@@ -156,19 +153,14 @@ class CLI extends React.Component{
     "content-type": "application/json"
   })}
   ).then(function(response) {
-  // if (response.status !== 200) {
-  //   console.log(`Looks like there was a problem. Status code: ${response.status}`);
-  //   return;
-  // }
+
   resp = response
   response.json().then(function(data) {
 
     console.log(data);
-    process_commands(ul,data)
-    // console.log(data.info)
-    // console.log(data.info.length)
-    // console.log(data.info[0])
-
+    process_commands(ul,data);
+    clearInterval(loadingAnimation);
+    treeReference.current.draw_initial();
   });
 })
 .catch(function(error) {
@@ -181,9 +173,9 @@ class CLI extends React.Component{
 
       <form onSubmit = {this.handleSubmit}>
         <label>
-        <Tree/>
+        <Tree ref={this.tree} ></Tree>
         <h6>
-          Non-Euclidean Computational Engine
+          Non-Euclidean Computational Engine - Functions
         </h6>
           <textarea value ={this.state.value}
             onChange = {this.handleChange} draggable = "false" cols = "70" rows = "2"/>

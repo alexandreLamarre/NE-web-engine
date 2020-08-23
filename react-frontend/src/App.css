@@ -15,3 +15,9 @@
 .App-link {
   color: #61dafb;
 }
+
+p{
+  min-width: 680px;
+  max-width: 680px;
+  font-size: 70%;
+}

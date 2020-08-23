@@ -44,11 +44,18 @@ class Tree extends React.Component{
 
 
   componentDidMount(){
-    draw_a_tree("white")
-    this.setState({value: 'false'})
+    draw_a_tree("white");
+    this.setState({value: 'false'});
   }
 
+  animateTree(){
+    draw_a_tree("#"+Math.floor(Math.random()*16777215).toString(16));
+    console.log("animate");
+  }
 
+  draw_initial(){
+    draw_a_tree("white");
+  }
   render(){
     return(
 
