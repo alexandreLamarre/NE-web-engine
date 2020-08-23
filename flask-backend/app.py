@@ -43,22 +43,18 @@ def run_commands():
     sub_labels_and_info_list = []
     error_list = []
 
-    if not new_command_manager.is_default():
-        label , sublabels_and_info, errors = asyncio.run(run_next(new_command_manager))
-        label_list.append(label)
-        sub_labels_and_info_list.append(sublabels_and_info)
-        error_list.append(errors)
-        while(label, sublabels_and_info, errors) != (None,None, "") and  (label, sublabels_and_info, errors) != (None,None,None) :
-            label , sublabels_and_info,errors = asyncio.run(run_next(new_command_manager))
-            if(label != None and sublabels_and_info!= None):
-                label_list.append(label)
-                sub_labels_and_info_list.append(sublabels_and_info)
-                error_list.append(errors)
-    else:
-        label_list.append("")
-        sub_labels_and_info_list.append("")
-        error_list.append("")
+    label , sublabels_and_info, errors = asyncio.run(run_next(new_command_manager))
+    label_list.append(label)
+    sub_labels_and_info_list.append(sublabels_and_info)
+    error_list.append(errors)
+    while(label, sublabels_and_info, errors) != (None,None, "") and  (label, sublabels_and_info, errors) != (None,None,None) :
+        label , sublabels_and_info,errors = asyncio.run(run_next(new_command_manager))
+        if(label != None and sublabels_and_info!= None):
+            label_list.append(label)
+            sub_labels_and_info_list.append(sublabels_and_info)
+            error_list.append(errors)
 
     return flask.jsonify({"labels": label_list, "info": sub_labels_and_info_list, "errors": error_list})
 
-app.run(debug = True)
+if __name__ == "__true__":
+    app.run(debug = True,threaded=False)

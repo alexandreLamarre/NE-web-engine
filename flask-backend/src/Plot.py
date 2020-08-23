@@ -43,7 +43,7 @@ class Plot(ErrorStack):
                 self.plot3d_one_two(f,fig,gs,i,0)
             elif f.in_dimension == 2 and f.out_dimension == 1:
                 self.plot3d_two_one(f,fig,gs,i,0)
-            elif f.out_dimension >1 and f.out_dimension ==2:
+            elif f.out_dimension ==2 and f.out_dimension ==2:
                 self.plot3d_two_to_two(f,fig,gs,i,0)
             figure_list.append(self.convert_plot_to_base64(fig))
             i += 1
@@ -74,7 +74,10 @@ class Plot(ErrorStack):
         ax.clear()
         ax.set_xlabel("{}".format(function.str_vars[0]), fontsize="8")
         ax.set_ylabel("{}({})".format(function.name, function.str_vars[0]), fontsize="8", rotation = "horizontal")
-        ax.set_title("{}".format(function.info_string))
+        try:
+            ax.set_title(function.get_latex())
+        except(ValueError):
+            ax.set_title(function.info_string)
         ax.plot(xs, ys)
 
 
@@ -101,7 +104,12 @@ class Plot(ErrorStack):
         xs, ys = np.meshgrid(xs, ys)
         ax = figure.add_subplot(projection = "3d")#grid[y_grid:, :], projection="3d")
         ax.clear()
-        ax.set_title("{}".format(function.info_string))
+        strs = function.get_latex()
+        if "\\bmod" in strs:
+            ax.set_title(function.info_string)
+        else:
+            ax.set_title(function.get_latex())
+
         ax.plot_surface(xs, ys, zs, cmap=cm.get_cmap("Spectral"), antialiased=True)
 
 
@@ -131,7 +139,10 @@ class Plot(ErrorStack):
 
         ax = figure.add_subplot(projection = "3d")#grid[y_grid,x_grid], projection="3d")
         ax.clear()
-        ax.set_title("{}".format(function.info_string))
+        try:
+            ax.set_title(function.get_latex())
+        except(ValueError):
+            ax.set_title(function.info_string)
         ax.plot_surface(xs,ys,zs, cmap = cm.get_cmap("Spectral"), antialiased = True)
 
     def plot3d_two_to_two(self, function, figure,grid,y_grid =0, x_grid= 0):
@@ -192,7 +203,10 @@ class Plot(ErrorStack):
 
         ax = figure.add_subplot(projection = "3d")
         ax.clear()
-        ax.set_title("{}".format(function.info_string), font = "Times")
+        try:
+            ax.set_title(function.get_latex())
+        except(ValueError):
+            ax.set_title(function.info_string)
         ax.plot(total_xs, total_ys, total_contours)
 
 
