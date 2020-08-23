@@ -189,7 +189,7 @@ class Calculus(OutputQueue, ErrorStack):
 
 if __name__ == "__main__":
     start_time = os.times()[0]
-    funct = FunctionManager("f(x) = (x**2,x) g(cat) = (log(cat))")
+    funct = FunctionManager("f(x,y) = (cos(x+y))")
     calcs = Calculus(funct)
     zeros = calcs.zeroes()
     print(zeros)

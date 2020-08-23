@@ -2,6 +2,7 @@ import parser
 from math import *
 from src.Error_Stack import ErrorStack
 import numpy as np
+from sympy import *
 
 class Function(ErrorStack):
     def __init__(self, function_string):
@@ -150,6 +151,22 @@ class Function(ErrorStack):
         """
         return self.str_vars
 
+    def get_latex(self):
+        output_vars = ""
+        for v in self.str_vars:
+            output_vars += v + ","
+            exec("{} = symbols('{}')".format(v, v))
+        if len(output_vars)>1:
+            output_vars = output_vars[:-1]
+        output_funcs = ""
+        for f in self.str_funcs:
+            func = eval(f)
+            output_funcs += latex(func) + ","
+
+        if len(output_funcs) > 1:
+            output_funcs = output_funcs[:-1]
+
+        return self.name + "("+output_vars+")"+" = "+"$(" + output_funcs +")$"
 
     def __repr__(self):
         """
@@ -170,19 +187,5 @@ class Function(ErrorStack):
         return output_str
 
 if __name__ == "__main__":
-    pass
-    # input_test = input()
-    # while(input_test):
-    #     test = match_function(input_test)
-    #     for t in test:
-    #         func = Function(t)
-    #         print(func)
-    #         print('\n')
-    #     input_test = input()
-
-    #test = match_function("laplace(x,y,z) = (x** (1/3), y**(1/3), z**(1/3)) fourrier(x) = (sin(x^5))")
-    #     for t in test:
-    #         func = Function(t)
-    #         print(func)
-    #         print('\n')
-
+    function = Function("f(x) = (x+1)")
+    print(function.get_latex())
