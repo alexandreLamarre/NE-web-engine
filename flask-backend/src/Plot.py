@@ -47,7 +47,7 @@ class Plot(ErrorStack):
                 self.plot3d_two_to_two(f,fig,gs,i,0)
             figure_list.append(self.convert_plot_to_base64(fig))
             i += 1
-            plt.close()
+            plt.close("all")
         end_time = os.times()[0]
         print("Plotting took: {} seconds".format(end_time - start_time))
         return figure_list, self.get_errors()
