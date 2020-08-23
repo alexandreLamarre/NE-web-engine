@@ -54,9 +54,10 @@ class CommandManager(CommandInterpreter):
             # No label and no [sublabel,info] pairs
             return None,None,None
         next_command = self.commands_queue.pop(0)
-        main_label, sub_labels_and_info,errors = next_command.run()
-
-        # Output is in the form [main label, (sublabel, info), errors]
+        try:
+            main_label, sub_labels_and_info,errors = next_command.run()
+        except Exception as e:
+            main_label,sub_labels_and_info,errors = next_command.command, [], str(e)  # Output is in the form [main label, (sublabel, info), errors]
         return main_label,sub_labels_and_info,errors
 
     def process_commands(self, command_string):
@@ -67,16 +68,21 @@ class CommandManager(CommandInterpreter):
             return processed_commands
         else:
             self.default = True
+            self.commands_queue = self.create_default_command_queue()
             return ""
 
-    def run_default(self):
+    def create_default_command_queue(self):
         """
         None -> #TODO
 
         When no commands are specified in the command line, run default commands.
         """
         #plot, zeroes, derivative, factorization, integral?
-        pass
+        plot = Command("plot{"+self.original_input+"}")
+        zeroes = Command("zeroes{" + self.original_input+ "}")
+        partial_derivatives = Command("partialderivative{"+self.original_input+"}")
+        partial_integral = Command("partialintegral{" + self.original_input+ "}")
+        return [plot,zeroes,partial_derivatives,partial_integral]
 
     def is_default(self):
         return self.default
@@ -107,22 +113,7 @@ class CommandManager(CommandInterpreter):
             output_message += c.get_interpreted() + "\n"
 
         return output_message[:-1] if output_message else ""
-    #
-    #
-    # def get_uninterpreted(self):
-    #     """
-    #     (None) -> String
-    #
-    #     Returns the uninterpreted commands in the command line formatted to a user friendly string
-    #     """
-    #     output_message = self.uninterpreted.strip()
-    #     output_message = "Could not interpret the following as commands :\n" + output_message if output_message else ""
-    #     for c in self.Commands_container:
-    #         unin = c.get_math_uninterpreted()
-    #         if unin:
-    #             output_message += "In " +c.command + " : " + unin +"\n"
-    #     return output_message
-    #
+
     def get_errors(self):
         output_message = ""
         for c in self.Commands_container:
@@ -133,7 +124,8 @@ class CommandManager(CommandInterpreter):
 
 if __name__ == "__main__":
 
-    c = CommandManager("f(x) = (x**2)")
+    c = CommandManager("partialintegral{f(x,y) = (cos(x+y))}")
     print(c.original_input)
     print(c.run_initial())
+    c.run_next()
 

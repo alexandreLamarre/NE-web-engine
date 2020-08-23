@@ -170,5 +170,6 @@ class Command():
         return self.command
 
 if __name__ == "__main__":
-    c = Command("\plot{f(x) = (x**2), g(x) = (x**2) h(x = (a+bc)}")
+    c = Command("partialintegral{f(x,y) = (cos(x+y))}")
+    print(c.run())
     # print(c.get_math_object_information())
