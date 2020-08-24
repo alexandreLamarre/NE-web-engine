@@ -1,4 +1,6 @@
 import React from 'react';
+import {Tab,Tabs,TabList,TabPanel} from 'react-tabs';
+import './Tab.css';
 import logo from './logo.svg';
 import './App.css';
 import Latex from "./Latex"
@@ -9,19 +11,25 @@ function App() {
     <div className="App">
       <header className="App-header">
 
-
-        <CLI />
-        <a
-          className="App-link"
-          href="https://github.com/alexandreLamarre/Non-Euclidean-Computational-Engine-Python-source-code-#Quick-guide"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Documentation
-        </a>
-
-        <ul  id = "ul-info"></ul>
-
+      <Tabs defaultIndex={0} onSelect={index => console.log(index)}>
+        <TabList>
+          <Tab> Functions </Tab>
+          <Tab> Matrices</Tab>
+          <Tab> Groups</Tab>
+          <Tab> Dynamical Systems</Tab>
+          <Tab> Data Visualization</Tab>
+          <Tab> Log in </Tab>
+        </TabList>
+        <TabPanel>
+          <CLI />
+          <ul  id = "ul-info"></ul>
+        </TabPanel>
+        <TabPanel> Matrices </TabPanel>
+        <TabPanel> Groups</TabPanel>
+        <TabPanel> Dynamical systems </TabPanel>
+        <TabPanel> Data Visualization </TabPanel>
+        <TabPanel> Log in </TabPanel>
+      </Tabs>
       </header>
 
     </div>

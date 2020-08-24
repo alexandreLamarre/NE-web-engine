@@ -14,10 +14,38 @@
 
 .App-link {
   color: #61dafb;
+  text-align: center;
 }
 
 p{
-  min-width: 680px;
-  max-width: 680px;
+  min-width: 200px;
+  max-width: 600px;
   font-size: 70%;
+}
+
+h2{
+  font-size: 80%;
+  margin-left: 1%;
+  font-weight: bolder;
+  color: orange;
+}
+
+h3{
+  font-size:70%;
+  margin-left: 2%;
+
+}
+
+h4{
+  font-size: 70%;
+  margin-left: 3%;
+}
+h5{
+  font-size: 60%;
+  margin-left: 4%;
+}
+
+img{
+  margin-left:4%;
+  margin-right: 40px;
 }
