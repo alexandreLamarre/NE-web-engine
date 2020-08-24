@@ -28,10 +28,10 @@ function process_commands(ul,data){
       let errors = createNode("p")
       console.log(data.errors[n])
       errors.innerHTML = data.errors[n]
-      errors.style = "color:red;"
+      errors.style = "color:#FE7272;"
       append(ul,errors)
     }
-    if(data.labels[n] == "zeroes" || data.labels[n] == "partialderivative" || data.labels[n] == "partialintegral"){
+    if(data.labels[n] == "ZEROES" || data.labels[n] == "PARTIALDERIVATIVE" || data.labels[n] == "PARTIALINTEGRAL"){
     for(i = 0; i <data.info[n].length;i++){
       let sublabel = createNode("h3");
       sublabel.innerHTML = data.info[n][i][0];
@@ -42,7 +42,7 @@ function process_commands(ul,data){
         append(ul, sublabel_function);
         for(k=0; k<data.info[n][i][1][j][1].length; k++){
            let math_var = createNode("h5")
-           math_var.innerHTML = "In terms of variable: " + data.info[n][i][1][j][1][k][0];
+           math_var.innerHTML = "       In terms of variable: " + data.info[n][i][1][j][1][k][0];
            append(ul, math_var)
            let math_info = createNode("img")
            // console.log("hello")
@@ -54,7 +54,7 @@ function process_commands(ul,data){
       }
     }
   }
-  if(data.labels[n] == "plot"){
+  if(data.labels[n] == "PLOT"){
     for(i = 0; i <data.info[n].length; i++){
       let math_info = createNode("img")
       console.log("math_info")
@@ -90,7 +90,7 @@ function process_input(ul, data){
     interpreted_info.innerHTML = "Interpreted input : None";
   }
   else{
-    interpreted_info.innerHTML = "Interpreted input : " + data.interpreted;
+    interpreted_info.innerHTML = "Interpreted input: " + data.interpreted;
   }
   append(ul,interpreted_info);
 
@@ -100,7 +100,7 @@ function process_input(ul, data){
   }
   else{
     error_info.innerHTML = "Errors : " + data.errors;
-    error_info.style="color:red;";
+    error_info.style="color:#FE7272;";
     append(ul, error_info);
   }
 }
@@ -117,11 +117,16 @@ class CLI extends React.Component{
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleHelp = this.handleHelp.bind(this);
 
   }
 
   handleChange(event){
     this.setState({value: event.target.value})
+  }
+
+  handleHelp(){
+
   }
 
   handleSubmit(event){
@@ -165,6 +170,7 @@ class CLI extends React.Component{
 })
 .catch(function(error) {
   console.log("Fetch error: " + error);
+  clearInterval(loadingAnimation);
 });
   }
 
@@ -177,10 +183,11 @@ class CLI extends React.Component{
         <h6>
           Non-Euclidean Computational Engine - Functions
         </h6>
+        <div id="cliText">
           <textarea value ={this.state.value}
             onChange = {this.handleChange} draggable = "false" cols = "70" rows = "2"/>
-            <input type = "submit" value = "=" />
-
+          <input type = "submit" value = "Run" />
+        </div>
         </label>
 
       </form>

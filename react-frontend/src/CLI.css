@@ -1,16 +1,27 @@
+#cliText{
+  display: flex;
+  flex-direction: row;
+  align-items: left;
+}
 textarea{
   resize: none;
+  font-size: 65%;
   height: 10;
   width: 400;
-  display:block;
-  margin-left:auto;
-  margin-right:auto;
   line-height: 1.5;
+  display: block;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
 }
 
+input{
+  position:relative;
+}
 h6 {
   text-align: center
 }
+
 
 Tree {
   position: absolute;
