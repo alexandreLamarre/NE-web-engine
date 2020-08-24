@@ -1,8 +1,12 @@
 import parser
-from math import *
 from src.Error_Stack import ErrorStack
-import numpy as np
 from sympy import *
+from math import *
+import os
+
+SUPPORTED_MATH_FUNCTIONS = ["abs","log","cos", "sin", "tan","ceil", "ceiling","factorial","floor",\
+                            "isqrt", "trunc", "pi", "e", "tau", "exp", "log2", "log10", "sqrt", "acos", "asin", "atan","atan2"\
+                            "degrees", "radians", "acosh", "asinh", "atanh", "cosh", "sinh", "tanh", "erf", "erfc", "gamma", "lgamma"]
 
 class Function(ErrorStack):
     def __init__(self, function_string):
@@ -20,6 +24,8 @@ class Function(ErrorStack):
         super().__init__()
         self.info_string = function_string
         self.name, self.str_vars, self.str_funcs = self._parse_input(function_string)
+        ## process step: switch '^' to ** and multiply where necessary
+        self.str_funcs = self.preprocess_function_string()
         self.funcs = self.create_funcs(self.str_funcs)
         self.in_dimension = len(self.str_vars)
         self.out_dimension = len(self.str_funcs)
@@ -57,6 +63,46 @@ class Function(ErrorStack):
             var[i] = var[i].strip()
         return name, var, function_set
 
+    def preprocess_function_string(self):
+        ##TODO Doesn't account for variables of length >1
+        for i in range(len(self.str_funcs)):
+            self.str_funcs[i] = self.str_funcs[i].replace("^", "**")
+            self.str_funcs[i] = self.str_funcs[i].replace(" ","")
+            for var in self.str_vars:
+                start_index= 0
+                while var in self.str_funcs[i][start_index:]:
+                    search_index = self.str_funcs[i].index(var,start_index)
+                    start_index = search_index + 1
+                    if not(start_index-2)<0:
+                        ##check characters to the left of var
+                        if self.str_funcs[i][search_index-1].isdigit() or self.str_funcs[i][search_index-1].isalpha() or self.str_funcs[i][search_index-1] == ")":
+                            self.str_funcs[i] = self.str_funcs[i][:search_index] +"*"+self.str_funcs[i][search_index:]
+                            start_index+=1
+                    if not(start_index+len(var)-1)>len(self.str_funcs[i])-1:
+                        if self.str_funcs[i][start_index+len(var)-1].isdigit() or self.str_funcs[i][start_index+len(var)-1].isalpha() or self.str_funcs[i][start_index+len(var)-1] == "(":
+                            self.str_funcs[i] = self.str_funcs[i][:start_index+len(var)-1] + "*" + self.str_funcs[i][start_index+len(var)-1:]
+                            start_index += 1
+            start_index = 0
+            while ")(" in self.str_funcs[i][start_index:]:
+                search_index = self.str_funcs[i].index(")(",start_index)
+                start_index = search_index + 1
+                self.str_funcs[i] = self.str_funcs[i][:start_index] + "*" + self.str_funcs[i][start_index:]
+
+
+            for j in range(len(SUPPORTED_MATH_FUNCTIONS)):
+                start_index = 0
+                if not SUPPORTED_MATH_FUNCTIONS[j] in self.str_vars:
+                    while SUPPORTED_MATH_FUNCTIONS[j] in self.str_funcs[i][start_index:]:
+
+                        search_index = self.str_funcs[i].index(SUPPORTED_MATH_FUNCTIONS[j], start_index)
+                        start_index = search_index
+                        if(start_index - 1) > 0:
+                            if self.str_funcs[i][start_index-1].isdigit() or self.str_funcs[i][start_index-1].isalpha() or self.str_funcs[i][start_index-1] == ")":
+                                self.str_funcs[i] = self.str_funcs[i][:start_index] +"*"+ self.str_funcs[i][start_index:]
+                        start_index+=1
+
+        return self.str_funcs
+
     def create_compiled_code(self, str_funcs):
         """
         (String[]) -> (python compilable code[])
@@ -77,8 +123,7 @@ class Function(ErrorStack):
                 code_list.append(code)
             except SyntaxError:
                 # self.push_errors("Invalid function {}".format(f))
-                self.push_error("'{}' :Your function caused something to go horribly wrong \n".format(f))
-                self.set_stop()
+                self.push_error("'{}' :Oops! Your function was misinterpreted by the compiler. Try explicitly multiplying things or specifying what standard functions act on by using parentheses \n".format(f))
         return code_list
 
     def create_eval_functions(self, code_list):
@@ -187,5 +232,15 @@ class Function(ErrorStack):
         return output_str
 
 if __name__ == "__main__":
-    function = Function("f(x) = (x+1)")
-    print(function.get_latex())
+    start_time = os.times()[0]
+    i= 0
+    function = Function("f(x) = (sin(2x),cos(x5))")
+    i+=1
+    function = Function("f(x,y) = (sin(2xy5), xlog(2x))")
+    i+=1
+    function = Function("f(cat) = (cat^2floor(cat))")
+    i+=1
+    function = Function("f(x,a) = (log(x)a)")
+    print(function)
+    end_time = os.times()[0]
+    print("Completed {} tests in {} seconds".format(i,end_time - start_time))
