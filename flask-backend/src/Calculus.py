@@ -19,7 +19,7 @@ class Calculus(OutputQueue, ErrorStack):
 
     def convert_latex_to_base64(self,latex):
         buf = io.BytesIO()
-        fig= plt.figure(figsize=(6,0.3))
+        fig= plt.figure(figsize=(6.5,0.3))
         plt.rc('text')
         plt.axis('off')
         plt.text(0,0.3, f'${latex}$', size = 10)

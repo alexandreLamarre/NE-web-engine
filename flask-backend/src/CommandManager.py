@@ -58,7 +58,7 @@ class CommandManager(CommandInterpreter):
             main_label, sub_labels_and_info,errors = next_command.run()
         except Exception as e:
             main_label,sub_labels_and_info,errors = next_command.command, [], str(e)  # Output is in the form [main label, (sublabel, info), errors]
-        return main_label,sub_labels_and_info,errors
+        return main_label.upper(),sub_labels_and_info,errors
 
     def process_commands(self, command_string):
 
@@ -82,7 +82,7 @@ class CommandManager(CommandInterpreter):
         zeroes = Command("zeroes{" + self.original_input+ "}")
         partial_derivatives = Command("partialderivative{"+self.original_input+"}")
         partial_integral = Command("partialintegral{" + self.original_input+ "}")
-        return [plot,zeroes,partial_derivatives,partial_integral]
+        return [zeroes,plot,partial_derivatives,partial_integral]
 
     def is_default(self):
         return self.default
@@ -124,8 +124,8 @@ class CommandManager(CommandInterpreter):
 
 if __name__ == "__main__":
 
-    c = CommandManager("partialintegral{f(x,y) = (cos(x+y))}")
+    c = CommandManager("plot{f(x) = sin(x)}")
     print(c.original_input)
-    print(c.run_initial())
-    c.run_next()
+    print(c.get_interpreted())
+
 

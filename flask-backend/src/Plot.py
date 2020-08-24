@@ -1,5 +1,6 @@
 from src.FunctionManager import FunctionManager
 import matplotlib
+from math import *
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.pylab as pl
@@ -75,8 +76,8 @@ class Plot(ErrorStack):
         ax.set_xlabel("{}".format(function.str_vars[0]), fontsize="8")
         ax.set_ylabel("{}({})".format(function.name, function.str_vars[0]), fontsize="8", rotation = "horizontal")
         try:
-            ax.set_title(function.get_latex())
-        except(ValueError):
+          ax.set_title(function.get_latex())
+        except:
             ax.set_title(function.info_string)
         ax.plot(xs, ys)
 
@@ -104,11 +105,11 @@ class Plot(ErrorStack):
         xs, ys = np.meshgrid(xs, ys)
         ax = figure.add_subplot(projection = "3d")#grid[y_grid:, :], projection="3d")
         ax.clear()
-        strs = function.get_latex()
-        if "\\bmod" in strs:
-            ax.set_title(function.info_string)
-        else:
-            ax.set_title(function.get_latex())
+        # strs = function.get_latex()
+        # if "\\bmod" in strs:
+        ax.set_title(function.info_string)
+        # else:
+        #     ax.set_title(function.get_latex())
 
         ax.plot_surface(xs, ys, zs, cmap=cm.get_cmap("Spectral"), antialiased=True)
 
@@ -139,10 +140,10 @@ class Plot(ErrorStack):
 
         ax = figure.add_subplot(projection = "3d")#grid[y_grid,x_grid], projection="3d")
         ax.clear()
-        try:
-            ax.set_title(function.get_latex())
-        except(ValueError):
-            ax.set_title(function.info_string)
+        # try:
+        #     ax.set_title(function.get_latex())
+        # except:
+        ax.set_title(function.info_string)
         ax.plot_surface(xs,ys,zs, cmap = cm.get_cmap("Spectral"), antialiased = True)
 
     def plot3d_two_to_two(self, function, figure,grid,y_grid =0, x_grid= 0):
@@ -203,10 +204,10 @@ class Plot(ErrorStack):
 
         ax = figure.add_subplot(projection = "3d")
         ax.clear()
-        try:
-            ax.set_title(function.get_latex())
-        except(ValueError):
-            ax.set_title(function.info_string)
+        # try:
+        #     ax.set_title(function.get_latex())
+        # except(ValueError):
+        #     ax.set_title(function.info_string)
         ax.plot(total_xs, total_ys, total_contours)
 
 
@@ -216,6 +217,6 @@ class Plot(ErrorStack):
 
 if __name__ == "__main__":
     # fm = FunctionManager("f(x,y) = (x**2 + 1/y) g(y) = (y**2, y**3) f(k) = (log(k))")
-    fm = FunctionManager("f(x,y) = (x**2, 1/y)")
+    fm = FunctionManager("f(x,y) = (tan(x+y))")
     p = Plot(fm)
     p.run()
