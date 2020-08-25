@@ -17,7 +17,7 @@ function App() {
           <Tab> Matrices</Tab>
           <Tab> Groups</Tab>
           <Tab> Dynamical Systems</Tab>
-          <Tab> Data Visualization</Tab>
+          <Tab> Algorithms</Tab>
           <Tab> Log in </Tab>
         </TabList>
         <TabPanel>
@@ -27,7 +27,7 @@ function App() {
         <TabPanel> Matrices </TabPanel>
         <TabPanel> Groups</TabPanel>
         <TabPanel> Dynamical systems </TabPanel>
-        <TabPanel> Data Visualization </TabPanel>
+        <TabPanel> Algorithms </TabPanel>
         <TabPanel> Log in </TabPanel>
       </Tabs>
       </header>

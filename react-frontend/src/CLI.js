@@ -23,6 +23,11 @@ function process_commands(ul,data){
       let label = createNode("h2");
       label.innerHTML = data.labels[n];
       append(ul,label);
+      let report = createNode("a")
+      report.innerHTML = "Report a bug"
+      report.href = "https://github.com/alexandreLamarre/NE-web-engine/issues/new"
+      report.target = "_blank"
+      append(ul, report)
     }
     if(data.errors[n] != null || data.errors != ""){
       let errors = createNode("p")
@@ -42,7 +47,7 @@ function process_commands(ul,data){
         append(ul, sublabel_function);
         for(k=0; k<data.info[n][i][1][j][1].length; k++){
            let math_var = createNode("h5")
-           math_var.innerHTML = "       In terms of variable: " + data.info[n][i][1][j][1][k][0];
+           math_var.innerHTML = "In terms of variable: " + data.info[n][i][1][j][1][k][0];
            append(ul, math_var)
            let math_info = createNode("img")
            // console.log("hello")
