@@ -3,6 +3,7 @@ from src.Error_Stack import ErrorStack
 from sympy import *
 from math import *
 import os
+import re
 
 SUPPORTED_MATH_FUNCTIONS = ["abs","log","cos", "sin", "tan","ceil", "ceiling","factorial","floor",\
                             "isqrt", "trunc", "exp", "log2", "log10", "sqrt", "acos", "asin", "atan",\
@@ -31,6 +32,10 @@ class Function(ErrorStack):
         self.funcs = self.create_funcs(self.str_funcs)
         self.in_dimension = len(self.str_vars)
         self.out_dimension = len(self.str_funcs)
+        ## Test evaluation
+        test_list = [0] *len(self.str_vars)
+        self.evaluate(*test_list)
+
 
 
     def _parse_input(self, function_matched_string):
@@ -327,10 +332,38 @@ class Function(ErrorStack):
             try:
                 value = self.funcs[i](self.str_vars, *args)
                 res.append(value)
-            except:
+            except ValueError:
                 res.append(None)
-
+            except NameError:
+                self.push_error(self.generate_reason_uninterpreted())
         return res
+
+    def generate_reason_uninterpreted(self):
+        function_list_uninterpreted = []
+        output_string = ""
+        for i in range(len(self.str_funcs)):
+            cur_func = self.str_funcs[i]
+            cur_func = cur_func.replace("*", " ")
+            cur_func = re.sub('\d', ' ', cur_func)
+
+            for var in self.str_vars:
+                cur_func = cur_func.replace(var, " ")
+            for f in SUPPORTED_MATH_FUNCTIONS:
+                cur_func = cur_func.replace(f, " ")
+            for c in SUPPORTED_MATH_CONSTANTS:
+                cur_func = cur_func.replace(c, " ")
+            function_list_uninterpreted.append(cur_func)
+        num_els = 0
+        for f in function_list_uninterpreted:
+            uninterpreted_element = f.split()
+            for el in uninterpreted_element:
+                output_string += "'{}', ".format(el)
+                num_els += 1
+        if output_string:
+            output_string = output_string[:-2]
+
+        intermediate = " are not defined" if num_els > 1 else " is not defined"
+        return output_string + intermediate if output_string else ""
 
     def get_codomain_functions(self):
         """
@@ -388,6 +421,7 @@ if __name__ == "__main__":
     i= 0
     function = Function("f(xax,xax) = (xaxxax)")
     print(function)
+    print(function.get_errors())
     i+=1
     function = Function("f(x) = (sin(2x),cos(x5))")
     i+=1
@@ -397,18 +431,25 @@ if __name__ == "__main__":
     i+=1
     function = Function("f(x,a) = (log(x)a)")
     print(function)
+    print(function.get_errors())
     function = Function("f(x,a) = (pixa2pi3)")
     print(function)
+    print(function.get_errors())
     function = Function("f(piad,a) = (pi2piapipiad)")
     print(function) ##checking for 'a' as var splits up 'piad' as a var
+    print(function.get_errors())
     function = Function("f(pied,a) = (pi2piapipied)")
     print(function) ## no idea whats wrong but pi*pi*ed should be pi*pied
+    print(function.get_errors())
     function = Function("f(pied, pie, pi, p) = (piedpiepip)")
     print(function)
+    print(function.get_errors())
     function = Function("f(randomcosvariable, randomsinvariable) = (randomcosvariablerandomsinvariable)")
     print(function)
+    print(function.get_errors())
     function = Function("f(x) = (cos(x)2acos(x)2)")
     print(function)
+    print(function.get_errors())
     end_time = os.times()[0]
 
     function = Function("f(x) = (2(x+1))")
