@@ -5,9 +5,10 @@ from math import *
 import os
 
 SUPPORTED_MATH_FUNCTIONS = ["abs","log","cos", "sin", "tan","ceil", "ceiling","factorial","floor",\
-                            "isqrt", "trunc", "pi", "e", "tau", "exp", "log2", "log10", "sqrt", "acos", "asin", "atan","atan2"\
+                            "isqrt", "trunc", "exp", "log2", "log10", "sqrt", "acos", "asin", "atan","atan2"\
                             "degrees", "radians", "acosh", "asinh", "atanh", "cosh", "sinh", "tanh", "erf", "erfc", "gamma", "lgamma"]
 
+SUPPORTED_MATH_CONSTANTS = ["pi","tau", "e"]
 class Function(ErrorStack):
     def __init__(self, function_string):
         """
@@ -24,6 +25,7 @@ class Function(ErrorStack):
         super().__init__()
         self.info_string = function_string
         self.name, self.str_vars, self.str_funcs = self._parse_input(function_string)
+        self.str_vars = self.preprocess_variables()
         ## process step: switch '^' to ** and multiply where necessary
         self.str_funcs = self.preprocess_function_string()
         self.funcs = self.create_funcs(self.str_funcs)
@@ -63,45 +65,195 @@ class Function(ErrorStack):
             var[i] = var[i].strip()
         return name, var, function_set
 
-    def preprocess_function_string(self):
-        ##TODO Doesn't account for variables of length >1
-        for i in range(len(self.str_funcs)):
-            self.str_funcs[i] = self.str_funcs[i].replace("^", "**")
-            self.str_funcs[i] = self.str_funcs[i].replace(" ","")
-            for var in self.str_vars:
-                start_index= 0
-                while var in self.str_funcs[i][start_index:]:
-                    search_index = self.str_funcs[i].index(var,start_index)
-                    start_index = search_index + 1
-                    if not(start_index-2)<0:
-                        ##check characters to the left of var
-                        if self.str_funcs[i][search_index-1].isdigit() or self.str_funcs[i][search_index-1].isalpha() or self.str_funcs[i][search_index-1] == ")":
-                            self.str_funcs[i] = self.str_funcs[i][:search_index] +"*"+self.str_funcs[i][search_index:]
-                            start_index+=1
-                    if not(start_index+len(var)-1)>len(self.str_funcs[i])-1:
-                        if self.str_funcs[i][start_index+len(var)-1].isdigit() or self.str_funcs[i][start_index+len(var)-1].isalpha() or self.str_funcs[i][start_index+len(var)-1] == "(":
-                            self.str_funcs[i] = self.str_funcs[i][:start_index+len(var)-1] + "*" + self.str_funcs[i][start_index+len(var)-1:]
-                            start_index += 1
+    def preprocess_variables(self):
+        cur_vars = self.str_vars
+        ## we don't use list(set(cur_vars)) because we want to preserve user input order
+        distinct_vars = []
+        for v in cur_vars:
+            if v not in distinct_vars:
+                distinct_vars.append(v)
+        return distinct_vars
+
+    def order_vars(self):
+        """Return variables but ordered in terms of decreasing length"""
+        cur_vars = list(self.str_vars) ## create a copy to preserve user given input order in the output
+
+        return sorted(cur_vars, key=len, reverse = True)
+
+    def allowed_chars(self, var, ordered_var):
+        """
+        Assumption: no repeated variables (guaranteed by preprocess variables)
+        """
+        allowed_left_chars = []
+        allowed_right_chars = []
+        if var in ordered_var:  # if call this we checking variables
+            search = ordered_var[:ordered_var.index(var)]
+
+        else:   ## if we call this with builtin functions or builtin-constants
+            search = ordered_var
+        for v in search:
+            if var in v:
+                left_index = v.index(var)
+                right_index = v.rfind(var)+len(var)
+                if(left_index - 1) >= 0:
+                    allowed_left_chars.append(v[left_index-1])
+                if(right_index < len(v)):
+                    allowed_right_chars.append(v[right_index])
+
+        return allowed_left_chars,allowed_right_chars
+
+    def preprocess_parantheses(self, cur_func):
+        start_index = 0
+        while ")(" in cur_func[start_index:]:
+            search_index = cur_func.index(")(", start_index)
+            start_index = search_index + 1
+            cur_func = cur_func[:start_index] + "*" + cur_func[start_index:]
+        j = 0
+        length = len(cur_func)
+        while(j<length):
+            if cur_func[j] == ")":
+                if j + 1< len(cur_func) and cur_func[j+1].isdigit():
+                    cur_func = cur_func[:j+1] + "*" +cur_func[j+1:]
+                    length += 1
+            if(cur_func[j] == "("):
+                if j - 1 >= 0 and cur_func[j-1].isdigit():
+                    if j - len("log10") >= 0:
+                        if cur_func[j-len("log10"):j] != "log10" and cur_func[j-len("log10"):j] != "atan2":
+                            cur_func = cur_func[:j] + "*" + cur_func[j:]
+                            length += 1
+                    elif j - len("log2") >= 0:
+                        if cur_func[j-len("log2"):j] != "log2":
+                            cur_func = cur_func[:j] + "*" + cur_func[j:]
+                            length += 1
+                    else:
+                        cur_func = cur_func[:j] + "*" + cur_func[j:]
+                        length += 1
+
+            j += 1
+        return cur_func
+
+    def preprocess_functions_variables(self,cur_func):
+        ordered_vars = self.order_vars()
+        for var in ordered_vars:
             start_index = 0
-            while ")(" in self.str_funcs[i][start_index:]:
-                search_index = self.str_funcs[i].index(")(",start_index)
+            allowed_left, allowed_right = self.allowed_chars(var,ordered_vars)
+            while var in cur_func[start_index:]:
+                search_index = cur_func.index(var, start_index)
                 start_index = search_index + 1
-                self.str_funcs[i] = self.str_funcs[i][:start_index] + "*" + self.str_funcs[i][start_index:]
+                if not (start_index - 2) < 0:
+                    ##check characters to the left of var
+                    if cur_func[search_index - 1].isdigit():
+                        cur_func = cur_func[:search_index] + "*" + cur_func[search_index:]
+                        start_index += 1
+                    if cur_func[search_index - 1].isalpha() and (cur_func[search_index-1] not in allowed_left):
+                        cur_func = cur_func[:search_index] + "*" + cur_func[search_index:]
+                        start_index += 1
+                    if  cur_func[search_index - 1] == ")":
+                        cur_func = cur_func[:search_index] + "*" + cur_func[search_index:]
+                        start_index += 1
+                pivot = start_index + len(var) - 1
+                if not (pivot) > len(cur_func) - 1:
+                    ## check characters to the right of var
+                    if cur_func[pivot].isdigit():
+                        cur_func = cur_func[:pivot] + "*" + cur_func[pivot:]
+                        start_index += 1
+                    if cur_func[pivot].isalpha() and (cur_func[pivot] not in allowed_right):
+                        cur_func = cur_func[:pivot] + "*" + cur_func[pivot:]
+                        start_index += 1
+                    if cur_func[start_index + len(var) - 1] == "(":
+                        cur_func = cur_func[:pivot] + "*" + cur_func[pivot:]
+                        start_index += 1
+        return cur_func
+
+    def preprocess_builtin_functions(self, cur_func):
+        for j in range(len(SUPPORTED_MATH_FUNCTIONS)):
+            start_index = 0
+            if not SUPPORTED_MATH_FUNCTIONS[j] in self.str_vars:
+                allowed_left, allowed_right = self.allowed_chars(SUPPORTED_MATH_FUNCTIONS[j], list(self.str_vars))
+                # if SUPPORTED_MATH_FUNCTIONS[j] == "cos" or SUPPORTED_MATH_FUNCTIONS[j] == "sin":
+                #     print(allowed_left)
+                while SUPPORTED_MATH_FUNCTIONS[j] in cur_func[start_index:]:
+                    search_index = cur_func.index(SUPPORTED_MATH_FUNCTIONS[j], start_index)
+                    start_index = search_index + 1
+                    if (start_index - 2) >= 0:
+                        if cur_func[start_index - 2].isdigit():
+                            cur_func = cur_func[:start_index-1] + "*" + cur_func[start_index-1:]
+                            start_index += 1
+                        if cur_func[start_index - 2] == ")":
+                            cur_func = cur_func[:start_index-1] + "*" + cur_func[start_index-1:]
+                            start_index += 1
+                        if cur_func[start_index - 2].isalpha():
+                            builtin = SUPPORTED_MATH_FUNCTIONS[j]
+                            if builtin == "cos" or builtin == "sin" or builtin == "tan":
+                                allowed_left.append("a")
+                            if cur_func[start_index - 2] not in allowed_left:
+                                # if (SUPPORTED_MATH_FUNCTIONS[j] == "cos" or SUPPORTED_MATH_FUNCTIONS[j] == "sin" or SUPPORTED_MATH_FUNCTIONS[j] == "tan"):
+                                #     if(cur_func[start_index-2] != "a"):
+
+                                cur_func = cur_func[:start_index-1] + "*" + cur_func[start_index-1:]
+        return cur_func
+
+    def preprocess_builtin_constants(self,cur_func):
+        for k in range(len(SUPPORTED_MATH_CONSTANTS)):
+            start_index = 0
+            if not SUPPORTED_MATH_CONSTANTS[k] in self.str_vars:
+                allowed_left, allowed_right = self.allowed_chars(SUPPORTED_MATH_CONSTANTS[k], list(self.str_vars))
+                while (SUPPORTED_MATH_CONSTANTS[k]) in cur_func[start_index:]:
+                    search_index = cur_func.index(SUPPORTED_MATH_CONSTANTS[k], start_index)
+                    start_index = search_index + 1  # must increment by at least one every time or we can get stuck in an infinite loop
+                    inserted_left = False
+                    inserted_right = False
+                    ##check characters to the left of known constants
+                    if start_index - 2 >= 0:
+                        if cur_func[start_index - 2].isdigit():
+                            cur_func = cur_func[:start_index - 1] + "*" + cur_func[start_index - 1:]
+                            inserted_left = True
+                        if cur_func[start_index - 2].isalpha():
+                            if cur_func[start_index - 2] not in allowed_left:
+                                cur_func = cur_func[:start_index - 1] + "*" + cur_func[start_index - 1:]
+                                inserted_left = True
+                        if cur_func[start_index - 2] == ")":
+                            cur_func = cur_func[:start_index - 1] + "*" + cur_func[start_index - 1:]
+                            inserted_left = True
+                    if inserted_left:
+                        start_index += 1
+                    ##check characters to the right of known constants
+                    right_pivot = start_index + len(SUPPORTED_MATH_CONSTANTS[k]) -1
+                    if right_pivot < len(cur_func):
+                        if cur_func[right_pivot].isdigit():
+                            cur_func = cur_func[:right_pivot] + "*" + cur_func[right_pivot:]
+                            inserted_right = True
+                        if cur_func[right_pivot] == "(":
+                            cur_func = cur_func[:right_pivot] + "*" + cur_func[right_pivot:]
+                            inserted_right = True
+                        if cur_func[right_pivot].isalpha():
+                            if cur_func[right_pivot] not in allowed_right:
+                                cur_func = cur_func[:right_pivot] + "*" + cur_func[right_pivot:]
+                                inserted_right = True
+                        if inserted_right:
+                            start_index += len(SUPPORTED_MATH_CONSTANTS[k])
+        return cur_func
+
+    def preprocess_function_string(self):
+
+        output_funcs = []
+        for i in range(len(self.str_funcs)):
+            cur_func = self.str_funcs[i].replace("^", "**")
+            cur_func = cur_func.replace(" ","")
+
+            ##preprocess variables in functions
+            cur_func = self.preprocess_functions_variables(cur_func)
+            ##process parentheses in functions
+            ##TODO Should also check for digits next to parantheses
+            cur_func = self.preprocess_parantheses(cur_func)
+            ##preprocess the functions provided by the math standard library
+            cur_func = self.preprocess_builtin_functions(cur_func)
+            ##preprocess the constants provided by the math standard library
+            cur_func = self.preprocess_builtin_constants(cur_func)
 
 
-            for j in range(len(SUPPORTED_MATH_FUNCTIONS)):
-                start_index = 0
-                if not SUPPORTED_MATH_FUNCTIONS[j] in self.str_vars:
-                    while SUPPORTED_MATH_FUNCTIONS[j] in self.str_funcs[i][start_index:]:
-
-                        search_index = self.str_funcs[i].index(SUPPORTED_MATH_FUNCTIONS[j], start_index)
-                        start_index = search_index
-                        if(start_index - 1) > 0:
-                            if self.str_funcs[i][start_index-1].isdigit() or self.str_funcs[i][start_index-1].isalpha() or self.str_funcs[i][start_index-1] == ")":
-                                self.str_funcs[i] = self.str_funcs[i][:start_index] +"*"+ self.str_funcs[i][start_index:]
-                        start_index+=1
-
-        return self.str_funcs
+            output_funcs.append(cur_func)
+        return output_funcs
 
     def create_compiled_code(self, str_funcs):
         """
@@ -234,6 +386,9 @@ class Function(ErrorStack):
 if __name__ == "__main__":
     start_time = os.times()[0]
     i= 0
+    function = Function("f(xax,xax) = (xaxxax)")
+    print(function)
+    i+=1
     function = Function("f(x) = (sin(2x),cos(x5))")
     i+=1
     function = Function("f(x,y) = (sin(2xy5), xlog(2x))")
@@ -242,5 +397,22 @@ if __name__ == "__main__":
     i+=1
     function = Function("f(x,a) = (log(x)a)")
     print(function)
+    function = Function("f(x,a) = (pixa2pi3)")
+    print(function)
+    function = Function("f(piad,a) = (pi2piapipiad)")
+    print(function) ##checking for 'a' as var splits up 'piad' as a var
+    function = Function("f(pied,a) = (pi2piapipied)")
+    print(function) ## no idea whats wrong but pi*pi*ed should be pi*pied
+    function = Function("f(pied, pie, pi, p) = (piedpiepip)")
+    print(function)
+    function = Function("f(randomcosvariable, randomsinvariable) = (randomcosvariablerandomsinvariable)")
+    print(function)
+    function = Function("f(x) = (cos(x)2acos(x)2)")
+    print(function)
     end_time = os.times()[0]
+
+    function = Function("f(x) = (2(x+1))")
+    print(function)
+    function = Function("f(x) = (log10(x)atan2(x))")
+    print(function)
     print("Completed {} tests in {} seconds".format(i,end_time - start_time))
