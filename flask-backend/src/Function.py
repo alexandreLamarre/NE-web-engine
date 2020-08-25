@@ -336,6 +336,8 @@ class Function(ErrorStack):
                 res.append(None)
             except NameError:
                 self.push_error(self.generate_reason_uninterpreted())
+            except TypeError:
+                self.push_error("A standard function requires parantheses")
         return res
 
     def generate_reason_uninterpreted(self):
@@ -362,7 +364,7 @@ class Function(ErrorStack):
         if output_string:
             output_string = output_string[:-2]
 
-        intermediate = " are not defined" if num_els > 1 else " is not defined"
+        intermediate = " are not a variable, standard constant or standard function" if num_els > 1 else " is not a variable, standard constant or standard function"
         return output_string + intermediate if output_string else ""
 
     def get_codomain_functions(self):
