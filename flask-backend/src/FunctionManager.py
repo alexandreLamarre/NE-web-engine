@@ -54,8 +54,17 @@ class FunctionManager(FunctionInterpreter):
         Returns a user friendly string that indicates which input is interpreted by the FunctionManager
         """
         res = ''
-        for f in self.Functions_str_container:
-            res += f
+        for f in self.Functions_container:
+            res += f.name
+            res += "("
+            for var in f.str_vars:
+                res += var +","
+            res = res[:-1]
+            res += ") = ("
+            for func in f.str_funcs:
+                res += func + ","
+            res = res[:-1]
+            res += ")"
             res += ' '
         res = res.strip()
         return res if res else ""
@@ -86,5 +95,4 @@ class FunctionManager(FunctionInterpreter):
         pass
 
 if __name__ == "__main__":
-    test = FunctionManager("laplace(x,y,z) = (x, y**(1/3), z**(1/3)) fourrier(x) = (x//y)}")
-    print(test.get_compile_errors())
+    test = FunctionManager("f(x) = (cos(x),sin(x))")
