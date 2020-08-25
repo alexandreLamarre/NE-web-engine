@@ -5,7 +5,7 @@ from math import *
 import os
 
 SUPPORTED_MATH_FUNCTIONS = ["abs","log","cos", "sin", "tan","ceil", "ceiling","factorial","floor",\
-                            "isqrt", "trunc", "exp", "log2", "log10", "sqrt", "acos", "asin", "atan","atan2"\
+                            "isqrt", "trunc", "exp", "log2", "log10", "sqrt", "acos", "asin", "atan",\
                             "degrees", "radians", "acosh", "asinh", "atanh", "cosh", "sinh", "tanh", "erf", "erfc", "gamma", "lgamma"]
 
 SUPPORTED_MATH_CONSTANTS = ["pi","tau", "e"]
@@ -118,7 +118,7 @@ class Function(ErrorStack):
             if(cur_func[j] == "("):
                 if j - 1 >= 0 and cur_func[j-1].isdigit():
                     if j - len("log10") >= 0:
-                        if cur_func[j-len("log10"):j] != "log10" and cur_func[j-len("log10"):j] != "atan2":
+                        if cur_func[j-len("log10"):j] != "log10":
                             cur_func = cur_func[:j] + "*" + cur_func[j:]
                             length += 1
                     elif j - len("log2") >= 0:
