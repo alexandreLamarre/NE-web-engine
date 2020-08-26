@@ -24,11 +24,11 @@ class Function(ErrorStack):
                 -Information about the Domain and Co-Domain of the function
         """
         super().__init__()
-        self.info_string = function_string
         self.name, self.str_vars, self.str_funcs = self._parse_input(function_string)
         self.str_vars = self.preprocess_variables()
         ## process step: switch '^' to ** and multiply where necessary
         self.str_funcs = self.preprocess_function_string()
+        self.info_string = self.generate_interpreted()
         self.funcs = self.create_funcs(self.str_funcs)
         self.in_dimension = len(self.str_vars)
         self.out_dimension = len(self.str_funcs)
@@ -55,6 +55,9 @@ class Function(ErrorStack):
         function_set = function_set.split(',')
         for i in range(len(function_set)):
             function_set[i] = function_set[i].strip()
+        ##remove 'empty' functions
+        while "" in function_set:
+            function_set.remove("")
 
         name_var = name_var.strip()
         name_var = name_var.split('(')
@@ -69,6 +72,20 @@ class Function(ErrorStack):
         for i in range(len(var)):
             var[i] = var[i].strip()
         return name, var, function_set
+
+    def generate_interpreted(self):
+        res = ''
+        res += self.name
+        res += "("
+        for var in self.str_vars:
+            res += var + ","
+        res = res[:-1]
+        res += ") = ("
+        for func in self.str_funcs:
+            res += func + ","
+        res = res[:-1]
+        res += ")"
+        return res
 
     def preprocess_variables(self):
         cur_vars = self.str_vars
@@ -249,7 +266,6 @@ class Function(ErrorStack):
             ##preprocess variables in functions
             cur_func = self.preprocess_functions_variables(cur_func)
             ##process parentheses in functions
-            ##TODO Should also check for digits next to parantheses
             cur_func = self.preprocess_parantheses(cur_func)
             ##preprocess the functions provided by the math standard library
             cur_func = self.preprocess_builtin_functions(cur_func)
@@ -458,4 +474,9 @@ if __name__ == "__main__":
     print(function)
     function = Function("f(x) = (log10(x)atan2(x))")
     print(function)
+
+    test = "(x,)"
+    test = test[1:-1]
+    test_split = test.split(",")
+    print(test_split)
     print("Completed {} tests in {} seconds".format(i,end_time - start_time))

@@ -14,10 +14,25 @@ class FunctionManager(FunctionInterpreter):
         Initializes a Function Manager with a list of Functions and user friendly strings with getters
         """
         super().__init__()
-        self.Functions_str_container = self.match(function_strs)
+        self.ErrorStack = ErrorStack()
+        self.Functions_str_container = self.process_functions(function_strs)
         self.uninterpreted = self.process_uninterpreted(function_strs)
 
         self.Functions_container = [Function(f) for f in self.Functions_str_container]
+
+    def process_functions(self,function_string):
+        output_strings = self.match(function_string)
+        return output_strings
+
+    def generate_reason_uninterpreted(self, uninterpreted_string):
+        balanced_parentheses = 0
+        for el in uninterpreted_string:
+            if el == "(":
+                balanced_parentheses += 1
+            if el == ")":
+                balanced_parentheses -= 1
+        if balanced_parentheses != 0:
+            self.ErrorStack.push_error("Mismatched parantheses in '{}'  ".format(uninterpreted_string))
 
     def process_uninterpreted(self, in_str):
         """
@@ -35,6 +50,7 @@ class FunctionManager(FunctionInterpreter):
             end_index = start_index+len(fstr)
             res = res[0:start_index].strip() +"\n"+ res[end_index:].strip()
             res.strip()
+        self.generate_reason_uninterpreted(res)
         return res
 
     # def get_uninterpreted(self):
@@ -55,22 +71,14 @@ class FunctionManager(FunctionInterpreter):
         """
         res = ''
         for f in self.Functions_container:
-            res += f.name
-            res += "("
-            for var in f.str_vars:
-                res += var +","
-            res = res[:-1]
-            res += ") = ("
-            for func in f.str_funcs:
-                res += func + ","
-            res = res[:-1]
-            res += ")"
+            res += f.info_string
             res += ' '
         res = res.strip()
         return res if res else ""
 
     def get_errors(self):
         output_str = ""
+        output_str += self.ErrorStack.get_errors()
         for f in self.Functions_container:
             output_str += f.get_errors() + " "
         return output_str[:-1] if len(output_str)>1 else ""
@@ -95,4 +103,5 @@ class FunctionManager(FunctionInterpreter):
         pass
 
 if __name__ == "__main__":
-    test = FunctionManager("f(x) = (cos(x),sin(x))")
+    test = FunctionManager("f(x) = (cos(x),sin(x)")
+    print(test.Functions_str_container)
