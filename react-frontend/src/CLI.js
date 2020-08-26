@@ -117,7 +117,7 @@ class CLI extends React.Component{
     super(props)
     this.tree = React.createRef();
     this.state = {value: '',
-                  interepreted: '',
+                  disabled: false,
                 label: ''}
 
     this.handleChange = this.handleChange.bind(this);
@@ -137,46 +137,52 @@ class CLI extends React.Component{
   handleSubmit(event){
 
     // const url = "http://localhost:5000/input/" + this.state.value
-    event.preventDefault()
-    var loadingAnimation = setInterval(this.tree.current.animateTree,300);
-    var treeReference = this.tree
-    const url = "/input"
-    const ul = document.getElementById("ul-info")
-    let resp = ""
-    fetch(url, {method: "POST", body: JSON.stringify(this.state.value),
+    event.preventDefault();
+    if(this.state.disabled == false){
+      this.setState({disabled : true})
+      const that = this
+      var loadingAnimation = setInterval(this.tree.current.animateTree,350);
+      var treeReference = this.tree
+      const url = "/input"
+      const ul = document.getElementById("ul-info")
+      let resp = ""
+      fetch(url, {method: "POST", body: JSON.stringify(this.state.value),
+      headers: new Headers({
+        "content-type": "application/json"
+      })}
+      ).then(function(response) {
+      resp = response
+      response.json().then(function(data) {
+
+        console.log(data);
+        process_input(ul,data)
+      });
+    })
+    .catch(function(error) {
+      console.log("Fetch error: " + error);
+    });
+    fetch(url+"/commands", {method: "POST", body: JSON.stringify(this.state.value),
     headers: new Headers({
       "content-type": "application/json"
     })}
     ).then(function(response) {
+
     resp = response
     response.json().then(function(data) {
 
       console.log(data);
-      process_input(ul,data)
+      process_commands(ul,data);
+      clearInterval(loadingAnimation);
+      treeReference.current.draw_initial();
+      that.setState({disabled:false})
     });
   })
   .catch(function(error) {
     console.log("Fetch error: " + error);
-  });
-  fetch(url+"/commands", {method: "POST", body: JSON.stringify(this.state.value),
-  headers: new Headers({
-    "content-type": "application/json"
-  })}
-  ).then(function(response) {
-
-  resp = response
-  response.json().then(function(data) {
-
-    console.log(data);
-    process_commands(ul,data);
     clearInterval(loadingAnimation);
-    treeReference.current.draw_initial();
+    that.setState({disabled:false})
   });
-})
-.catch(function(error) {
-  console.log("Fetch error: " + error);
-  clearInterval(loadingAnimation);
-});
+  }
   }
 
   render(){
@@ -190,8 +196,8 @@ class CLI extends React.Component{
         </h6>
         <div id="cliText">
           <textarea value ={this.state.value}
-            onChange = {this.handleChange} draggable = "false" cols = "70" rows = "2"/>
-          <input type = "submit" value = "Run" />
+            onChange = {this.handleChange} draggable = "false" cols = "68" rows = "2"/>
+          <input type = "submit" value = "Run" disabled = {this.state.disabled}/>
         </div>
         </label>
 
