@@ -79,11 +79,11 @@ class Function(ErrorStack):
         res += "("
         for var in self.str_vars:
             res += var + ","
-        res = res[:-1]
+        res = res[:-1] if res[-1] != "(" else res
         res += ") = ("
         for func in self.str_funcs:
             res += func + ","
-        res = res[:-1]
+        res = res[:-1] if res[-1] != "(" else res
         res += ")"
         return res
 

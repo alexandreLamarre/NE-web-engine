@@ -33,7 +33,21 @@ class FunctionManager(FunctionInterpreter):
                 balanced_parentheses -= 1
         if balanced_parentheses != 0:
             self.ErrorStack.push_error("Mismatched parantheses in '{}'  ".format(uninterpreted_string))
+        if "=" not in uninterpreted_string and uninterpreted_string.strip() != "":
+            self.ErrorStack.push_error("'{}' : Function declarations must contain an equal sign  ".format(uninterpreted_string))
 
+        var_errors = self.partial_match_variables(uninterpreted_string)
+        if var_errors:
+            for e in var_errors:
+                self.ErrorStack.push_error("Invalid variables declaration in '{}'  ".format(e))
+        var_errors = self.partial_match_name(uninterpreted_string)
+        if var_errors:
+            for e in var_errors:
+                self.ErrorStack.push_error("Invalid function name declaration in '{}'  ".format(e))
+        var_errors = self.partial_match_function(uninterpreted_string)
+        if var_errors:
+            for e in var_errors:
+                self.ErrorStack.push_error("Invalid output function definition in '{}'  ".format(e))
     def process_uninterpreted(self, in_str):
         """
         (String) -> (String)
