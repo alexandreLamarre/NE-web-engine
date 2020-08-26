@@ -95,7 +95,7 @@ class FunctionManager(FunctionInterpreter):
         output_str += self.ErrorStack.get_errors()
         for f in self.Functions_container:
             output_str += f.get_errors() + " "
-        return output_str[:-1] if len(output_str)>1 else ""
+        return output_str[:-1].strip() if len(output_str)>1 else ""
     # def get_compile_errors(self):
     #     """
     #     None -> (String)

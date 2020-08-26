@@ -1,7 +1,7 @@
 from src.interpreter import CommandInterpreter
 from src.Command import Command
 from src.FunctionManager import FunctionManager
-
+from src.Error_Stack import ErrorStack
 class CommandManager(CommandInterpreter):
     """ Factory object that processes the command line input
     And instantiates the commands to be run at runtime depending on their specifications
@@ -18,6 +18,7 @@ class CommandManager(CommandInterpreter):
         Creates a list of Command Objects using those strings
         """
         super().__init__()
+        self.ErrorStack = ErrorStack()
         self.default = False
         self.original_input = commands_str
         self.command_str_container = self.process_commands(commands_str)
@@ -25,7 +26,11 @@ class CommandManager(CommandInterpreter):
             self.uninterpreted = self.process_uninterpreted(commands_str)
             self.Commands_container = [Command(c) for c in self.command_str_container]
             self.commands_queue = list(self.Commands_container)
-
+        else:
+            ##TODO update these when we create default command queue, not here
+            ## This is a quick fix, do a real fix later
+            self.uninterpreted = []
+            self.Commands_container = []
     def run_initial(self):
         """
         Gets interpreted commands
@@ -46,7 +51,7 @@ class CommandManager(CommandInterpreter):
             temp_function_manager = FunctionManager(self.original_input)
             output.append(("Your input: ", self.original_input ))
             output.append(("Interpreted", temp_function_manager.get_interpreted()))
-            output.append(("Errors", temp_function_manager.get_errors()))
+            output.append(("Errors", temp_function_manager.get_errors() + self.get_errors()))
         return mainlabel, output
 
     async def run_next(self):
@@ -61,14 +66,17 @@ class CommandManager(CommandInterpreter):
         return main_label.upper(),sub_labels_and_info,errors
 
     def process_commands(self, command_string):
+        if len(command_string) < 300:
+            processed_commands = self.match(command_string)
 
-        processed_commands = self.match(command_string)
-
-        if processed_commands != []:
-            return processed_commands
+            if processed_commands != []:
+                return processed_commands
+            else:
+                self.default = True
+                self.commands_queue = self.create_default_command_queue()
+                return ""
         else:
-            self.default = True
-            self.commands_queue = self.create_default_command_queue()
+            self.ErrorStack.push_error("Character limit for input exceeded  ")
             return ""
 
     def create_default_command_queue(self):
@@ -116,11 +124,12 @@ class CommandManager(CommandInterpreter):
 
     def get_errors(self):
         output_message = ""
+        output_message += self.ErrorStack.get_errors()
         for c in self.Commands_container:
             if c.get_errors() != "":
                 output_message += c.get_errors() +"\n"
 
-        return output_message[:-1] if len(output_message)>1 else ""## remove last '\n' character
+        return output_message[:-1].strip() if len(output_message)>1 else ""## remove last '\n' character
 
 if __name__ == "__main__":
 

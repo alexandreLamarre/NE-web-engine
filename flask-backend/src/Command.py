@@ -1,6 +1,7 @@
 from src.FunctionManager import FunctionManager
 from src.Plot import Plot
 from src.Calculus import Calculus
+from src.Error_Stack import ErrorStack
 class Command():
     """
     Factory Object that manages the creation of DataManager Objects, i.e. FunctionManager
@@ -17,6 +18,7 @@ class Command():
         """
         # 'Static dictionary for the valid input classes inside the command given
         # In the future should be replaced by a database
+        self.ErrorStack = ErrorStack()
         self.commands_dict = {'plot': ['FunctionManager'], 'IFS': ['FunctionManager', 'MarkovChain'], \
                               'zeroes' : ['FunctionManager'], 'derivative': ['FunctionManager'], 'integral' : ['FunctionManager'],\
                               'partialderivative' : ['FunctionManager'], 'partialintegral': ['FunctionManager']}
@@ -26,11 +28,13 @@ class Command():
 
         self.input_types = []
 
-        if self.command != "":
+        if self.command in self.commands_dict:
             self.math_types = self.commands_dict[self.command]
             self.math_objects = self.process_input_types()
         else:
-            pass
+            self.math_types = []
+            self.math_objects = []
+
 
     def run(self):
         """
@@ -102,6 +106,8 @@ class Command():
         output_str = output_str[0]
         output_str= output_str.strip()
         output_str = output_str.lower()
+        if output_str not in self.commands_dict:
+            self.ErrorStack.push_error("Command '{}' not recognized  ".format(output_str))
         return output_str if output_str in self.commands_dict else ""
 
     def process_input_types(self):
@@ -124,13 +130,14 @@ class Command():
 
     def get_errors(self):
         output_str = ""
+        output_str += self.ErrorStack.get_errors()
         for e in self.math_objects:
             error = e.get_errors()
             if error != "":
                 output_str += error + "\n"
 
 
-        return output_str[:-1] if len(output_str)>1 else "" ##remove the last '\n' character
+        return output_str[:-1].strip() if len(output_str)>1 else "" ##remove the last '\n' character
     # def get_math_interpreted(self):
     #     res = ""
     #     for obj in self.math_objects:
