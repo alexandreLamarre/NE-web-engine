@@ -3,6 +3,7 @@
   flex-direction: row;
   align-items: left;
 }
+
 textarea{
   resize: none;
   font-size: 65%;

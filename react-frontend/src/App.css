@@ -29,6 +29,13 @@ a:link, a:visited{
 a:link:active, a:visited:active {
   color: #3CB371;
 }
+
+ul{
+  max-width: 700px;
+  margin-left: auto;
+  margin-right:auto;
+}
+
 p{
   min-width: 200px;
   max-width: 600px;
