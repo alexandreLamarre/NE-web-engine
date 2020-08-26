@@ -66,7 +66,7 @@ class CommandManager(CommandInterpreter):
         return main_label.upper(),sub_labels_and_info,errors
 
     def process_commands(self, command_string):
-        if len(command_string) < 300:
+        if len(command_string) < 150:
             processed_commands = self.match(command_string)
 
             if processed_commands != []:
