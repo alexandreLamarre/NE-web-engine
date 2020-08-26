@@ -199,7 +199,7 @@ class CLI extends React.Component{
           Non-Euclidean Computational Engine - Functions
         </h6>
         <div class = "help">
-          <a href = "https://github.com/alexandreLamarre/NE-web-engine" target="_blank">Help</a>
+          <a href = "https://github.com/alexandreLamarre/NE-web-engine#Quick-guide" target="_blank">Help</a>
         </div>
         <div id="cliText">
           <textarea value ={this.state.value}
