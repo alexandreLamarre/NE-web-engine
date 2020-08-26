@@ -47,7 +47,7 @@ class FunctionManager(FunctionInterpreter):
         var_errors = self.partial_match_function(uninterpreted_string)
         if var_errors:
             for e in var_errors:
-                self.ErrorStack.push_error("Invalid output function definition in '{}'  ".format(e))
+                self.ErrorStack.push_error("Invalid math function definition in '{}'  ".format(e))
     def process_uninterpreted(self, in_str):
         """
         (String) -> (String)

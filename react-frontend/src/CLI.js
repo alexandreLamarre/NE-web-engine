@@ -93,6 +93,7 @@ function process_input(ul, data){
   let interpreted_info = createNode("p");
   if (data.interpreted == "" || data.interpreted == null){
     interpreted_info.innerHTML = "Interpreted input : None";
+    interpreted_info.style = "color:#FE7272 ;"
   }
   else{
     interpreted_info.innerHTML = "Interpreted input: " + data.interpreted;
