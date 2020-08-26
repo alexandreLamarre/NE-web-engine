@@ -130,7 +130,9 @@ class CLI extends React.Component{
   handleChange(event){
     this.setState({value: event.target.value})
   }
-
+  componentWillUnmount(){
+    clearInterval(this.tree.current.animateTree);
+  }
   handleHelp(){
 
   }
