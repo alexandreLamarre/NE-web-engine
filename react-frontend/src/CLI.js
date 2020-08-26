@@ -191,10 +191,14 @@ class CLI extends React.Component{
 
       <form onSubmit = {this.handleSubmit}>
         <label>
+
         <Tree ref={this.tree} ></Tree>
         <h6>
           Non-Euclidean Computational Engine - Functions
         </h6>
+        <div class = "help">
+          <a href = "https://github.com/alexandreLamarre/NE-web-engine" target="_blank">Help</a>
+        </div>
         <div id="cliText">
           <textarea value ={this.state.value}
             onChange = {this.handleChange} draggable = "false" cols = "68" rows = "2"/>

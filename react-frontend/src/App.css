@@ -16,7 +16,10 @@
   color: #61dafb;
   text-align: center;
 }
-
+h6{
+  font-weight: bolder;
+  color: orange;
+}
 a{
     margin-left: 1%;
     font-size: 55%;

@@ -15,8 +15,6 @@ function App() {
         <TabList>
           <Tab> Functions </Tab>
           <Tab> Matrices</Tab>
-          <Tab> Groups</Tab>
-          <Tab> Dynamical Systems</Tab>
           <Tab> Algorithms</Tab>
           <Tab> Log in </Tab>
         </TabList>
@@ -25,8 +23,6 @@ function App() {
           <ul  id = "ul-info"></ul>
         </TabPanel>
         <TabPanel> Matrices </TabPanel>
-        <TabPanel> Groups</TabPanel>
-        <TabPanel> Dynamical systems </TabPanel>
         <TabPanel> Algorithms </TabPanel>
         <TabPanel> Log in </TabPanel>
       </Tabs>
