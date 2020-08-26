@@ -15,7 +15,7 @@ the properties of mathematical objects that produce things that are non-euclidea
   
 
 ## Table of Contents
-- [The goal](#The-goal)
+- [Features](#Features)
 - [Quick guide](#Quick-guide)
 - [Code architecture](#Code-architecture)
 - [Implementation details](#Implementation-details)
