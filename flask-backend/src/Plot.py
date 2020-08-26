@@ -30,6 +30,7 @@ class Plot(ErrorStack):
 
     def run(self):
         y_grid, x_grid = self.preprocess()
+        plt.close("all")
         figure_list = []
         start_time = os.times()[0]
         fig = plt.figure()
@@ -51,6 +52,7 @@ class Plot(ErrorStack):
             plt.close("all")
         end_time = os.times()[0]
         print("Plotting took: {} seconds".format(end_time - start_time))
+        plt.close("all")
         return figure_list, self.get_errors()
 
 
