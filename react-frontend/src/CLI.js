@@ -31,7 +31,7 @@ function process_commands(ul,data){
     }
     if(data.errors[n] != null || data.errors != ""){
       let errors = createNode("p")
-      console.log(data.errors[n])
+      // console.log(data.errors[n])
       errors.innerHTML = data.errors[n]
       errors.style = "color:#FE7272;"
       append(ul,errors)
@@ -62,8 +62,8 @@ function process_commands(ul,data){
   if(data.labels[n] == "PLOT"){
     for(i = 0; i <data.info[n].length; i++){
       let math_info = createNode("img")
-      console.log("math_info")
-      console.log(data.info[n][i][1])
+      // console.log("math_info")
+      // console.log(data.info[n][i][1])
       math_info.src = "data:image/png;base64,"+ `${data.info[n][i][1]}`
       append(ul, math_info)
     }
@@ -111,6 +111,44 @@ function process_input(ul, data){
   }
 }
 
+
+
+async function getInterpretedInput(input, component, animation){
+  const url = "/input";
+  const ul = document.getElementById("ul-info")
+  let response = await fetch(url, {method: "POST", body: input,
+    headers: new Headers({
+    "content-type": "application/json"
+    })}
+  );
+  let data = await response.json();
+  console.log(data);
+  process_input(ul, data);
+  let commands_to_run = data.commands
+
+  for(var i = 0; i < commands_to_run.length; i++){
+
+    await getCommand(JSON.stringify(commands_to_run[i]));
+  }
+  clearInterval(animation);
+  component.tree.current.draw_initial();
+  component.setState({disabled:false});
+}
+
+async function getCommand(command){
+  const ul = document.getElementById("ul-info");
+  const url = "/input/commands";
+  let response = await fetch(url, {method: "POST", body: command,
+    headers: new Headers({
+    "content-type": "application/json"
+      })
+    }
+  );
+
+  let data = await response.json();
+  process_commands(ul,data)
+
+}
 // ================================================================================================
 
 class CLI extends React.Component{
@@ -123,8 +161,6 @@ class CLI extends React.Component{
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleHelp = this.handleHelp.bind(this);
-
   }
 
   handleChange(event){
@@ -132,9 +168,6 @@ class CLI extends React.Component{
   }
   componentWillUnmount(){
     clearInterval(this.tree.current.animateTree);
-  }
-  handleHelp(){
-
   }
 
   handleSubmit(event){
@@ -145,46 +178,48 @@ class CLI extends React.Component{
       this.setState({disabled : true})
       const that = this
       var loadingAnimation = setInterval(this.tree.current.animateTree,350);
-      var treeReference = this.tree
-      const url = "/input"
-      const ul = document.getElementById("ul-info")
-      let resp = ""
-      fetch(url, {method: "POST", body: JSON.stringify(this.state.value),
-      headers: new Headers({
-        "content-type": "application/json"
-      })}
-      ).then(function(response) {
-      resp = response
-      response.json().then(function(data) {
 
-        console.log(data);
-        process_input(ul,data)
-      });
-    })
-    .catch(function(error) {
-      console.log("Fetch error: " + error);
-    });
-    fetch(url+"/commands", {method: "POST", body: JSON.stringify(this.state.value),
-    headers: new Headers({
-      "content-type": "application/json"
-    })}
-    ).then(function(response) {
+      getInterpretedInput(JSON.stringify(this.state.value), that, loadingAnimation);
 
-    resp = response
-    response.json().then(function(data) {
 
-      console.log(data);
-      process_commands(ul,data);
-      clearInterval(loadingAnimation);
-      treeReference.current.draw_initial();
-      that.setState({disabled:false})
-    });
-  })
-  .catch(function(error) {
-    console.log("Fetch error: " + error);
-    clearInterval(loadingAnimation);
-    that.setState({disabled:false})
-  });
+    //   fetch(url, {method: "POST", body: JSON.stringify(this.state.value),
+    //   headers: new Headers({
+    //     "content-type": "application/json"
+    //   })}
+    //   ).then(function(response) {
+    //   resp = response
+    //   response.json().then(function(data) {
+    //
+    //     // console.log(data);
+    //     process_input(ul,data)
+    //   });
+    // })
+    // .catch(function(error) {
+    //   console.log("Fetch error: " + error);
+    // });
+
+
+  //   fetch(url+"/commands", {method: "POST", body: JSON.stringify(this.state.value),
+  //   headers: new Headers({
+  //     "content-type": "application/json"
+  //   })}
+  //   ).then(function(response) {
+  //
+  //   resp = response
+  //   response.json().then(function(data) {
+  //
+  //     // console.log(data);
+  //     process_commands(ul,data);
+  //     clearInterval(loadingAnimation);
+  //     treeReference.current.draw_initial();
+  //     that.setState({disabled:false})
+  //   });
+  // })
+  // .catch(function(error) {
+  //   console.log("Fetch error: " + error);
+  //   clearInterval(loadingAnimation);
+  //   that.setState({disabled:false})
+  // });
   }
   }
 
