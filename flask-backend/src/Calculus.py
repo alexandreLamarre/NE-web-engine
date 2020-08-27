@@ -18,13 +18,14 @@ class Calculus(OutputQueue, ErrorStack):
         self.Functions = [f for f in functionManager.Functions_container]
 
     def convert_latex_to_base64(self,latex):
+        plt.close("all")
         buf = io.BytesIO()
         fig= plt.figure(figsize=(6.5,0.3))
         plt.rc('text')
         plt.axis('off')
         plt.text(0,0.3, f'${latex}$', size = 10)
         plt.savefig(buf, format = "png")
-        plt.close()
+        plt.close("all")
 
         base64_string = base64.b64encode(buf.getvalue())
         return str(base64_string)
