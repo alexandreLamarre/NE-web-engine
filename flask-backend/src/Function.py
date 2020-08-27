@@ -121,7 +121,16 @@ class Function(ErrorStack):
                     allowed_left_chars.append(v[left_index-1])
                 if(right_index < len(v)):
                     allowed_right_chars.append(v[right_index])
-
+        for j in SUPPORTED_MATH_FUNCTIONS:
+            if var in j:
+                left_index = j.index(var)
+                right_index = j.rfind(var) + len(var)
+                if left_index-1 >= 0:
+                    allowed_left_chars.append(j[left_index-1])
+                if(right_index < len(j)):
+                    allowed_right_chars.append(j[right_index])
+                else:
+                    allowed_right_chars.append(j)
         return allowed_left_chars,allowed_right_chars
 
     def preprocess_parantheses(self, cur_func):
@@ -183,8 +192,13 @@ class Function(ErrorStack):
                         cur_func = cur_func[:pivot] + "*" + cur_func[pivot:]
                         start_index += 1
                     if cur_func[start_index + len(var) - 1] == "(":
-                        cur_func = cur_func[:pivot] + "*" + cur_func[pivot:]
-                        start_index += 1
+                        if(start_index-2 >=0):
+                            if(cur_func[start_index-2] not in allowed_left):
+                                cur_func = cur_func[:pivot] + "*" + cur_func[pivot:]
+                                start_index += 1
+                        else:
+                            cur_func = cur_func[:pivot] + "*" + cur_func[pivot:]
+                            start_index += 1
         return cur_func
 
     def preprocess_builtin_functions(self, cur_func):
@@ -296,7 +310,7 @@ class Function(ErrorStack):
                 code_list.append(code)
             except SyntaxError:
                 # self.push_errors("Invalid function {}".format(f))
-                self.push_error("'{}' :Oops! Your function was misinterpreted by the compiler. Try explicitly multiplying things or specifying what standard functions act on by using parentheses \n".format(f))
+                self.push_error("'{}' :Oops! Your function was misinterpreted by the compiler. One or more variables/functions you are using may not be defined. \n".format(f))
         return code_list
 
     def create_eval_functions(self, code_list):
@@ -353,9 +367,8 @@ class Function(ErrorStack):
             except NameError:
                 self.push_error(self.generate_reason_uninterpreted())
             except TypeError:
-                self.push_error("A standard function requires parantheses")
-            except:
-                res.append(None)
+                self.push_error("A standard function requires parentheses")
+
         return res
 
     def generate_reason_uninterpreted(self):
@@ -364,11 +377,14 @@ class Function(ErrorStack):
         for i in range(len(self.str_funcs)):
             cur_func = self.str_funcs[i]
             cur_func = cur_func.replace("*", " ")
+            cur_func = cur_func.replace("(", " ")
+            cur_func = cur_func.replace(")", " ")
             cur_func = re.sub('\d', ' ', cur_func)
 
             for var in self.str_vars:
                 cur_func = cur_func.replace(var, " ")
-            for f in SUPPORTED_MATH_FUNCTIONS:
+            math_functions_ordered = sorted(SUPPORTED_MATH_FUNCTIONS, key =len, reverse = True)
+            for f in math_functions_ordered:
                 cur_func = cur_func.replace(f, " ")
             for c in SUPPORTED_MATH_CONSTANTS:
                 cur_func = cur_func.replace(c, " ")
@@ -382,7 +398,7 @@ class Function(ErrorStack):
         if output_string:
             output_string = output_string[:-2]
 
-        intermediate = " are not a variable, standard constant or standard function" if num_els > 1 else " is not a variable, standard constant or standard function"
+        intermediate = " are not a variable, common constant or common function" if num_els > 1 else " is not a variable, common constant or common function"
         return output_string + intermediate if output_string else ""
 
     def get_codomain_functions(self):
@@ -451,34 +467,56 @@ if __name__ == "__main__":
     i+=1
     function = Function("f(x,a) = (log(x)a)")
     print(function)
-    print(function.get_errors())
+    i += 1
     function = Function("f(x,a) = (pixa2pi3)")
     print(function)
-    print(function.get_errors())
+    i += 1
     function = Function("f(piad,a) = (pi2piapipiad)")
-    print(function) ##checking for 'a' as var splits up 'piad' as a var
-    print(function.get_errors())
+    print(function)
+    i+=1##checking for 'a' as var splits up 'piad' as a var
     function = Function("f(pied,a) = (pi2piapipied)")
+    i += 1
     print(function) ## no idea whats wrong but pi*pi*ed should be pi*pied
-    print(function.get_errors())
     function = Function("f(pied, pie, pi, p) = (piedpiepip)")
+    i += 1
     print(function)
-    print(function.get_errors())
     function = Function("f(randomcosvariable, randomsinvariable) = (randomcosvariablerandomsinvariable)")
+    i += 1
     print(function)
-    print(function.get_errors())
     function = Function("f(x) = (cos(x)2acos(x)2)")
+    i += 1
     print(function)
-    print(function.get_errors())
-    end_time = os.times()[0]
 
     function = Function("f(x) = (2(x+1))")
+    i += 1
     print(function)
-    function = Function("f(x) = (log10(x)atan2(x))")
+    function = Function("f(og) = (log(og))")
+    i += 1
     print(function)
-
-    test = "(x,)"
-    test = test[1:-1]
-    test_split = test.split(",")
-    print(test_split)
+    function = Function("f(l)= (log(l))")
+    i += 1
+    print(function)
+    function = Function("f(x,a) = (xacosh(x))")
+    i += 1
+    print(function)
+    function = Function("f(x) = (eerf(x))")
+    i += 1
+    print(function)
+    function = Function("f(x) = (lgamma(x))")
+    i += 1
+    print(function)
+    function = Function("f(x) = (ceil(x))")
+    i += 1
+    print(function)
+    function = Function("f(x) = (isqrt(x))")
+    i += 1
+    print(function)
+    function = Function("f(ei) = (ceil(ei))")
+    i += 1
+    print(function)
+    function = Function("f(ling) = (ceiling(ling))")
+    i += 1
+    function = Function("f(x,og) = (og(x))")
+    print(function)
+    end_time = os.times()[0]
     print("Completed {} tests in {} seconds".format(i,end_time - start_time))

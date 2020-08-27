@@ -7,7 +7,6 @@ class CommandManager(CommandInterpreter):
     And instantiates the commands to be run at runtime depending on their specifications
 
     Implements an Interpreter interface because it processes user input"""
-
     def __init__(self, commands_str):
         """
         None -> None
