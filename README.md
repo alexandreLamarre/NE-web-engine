@@ -7,11 +7,7 @@ In general a computation engine takes some aggregation of data and returns a mea
 This implementation of a computational engine 
 takes symbolic mathematical input from the user, computes its properties and returns them in a way humans can understand. 
  
-Traditionally, other mathematical computational engines like Wolfram Alpha(now computational intelligence) focus on 
-the fixed three dimensions that we've all seen in high school geometry, high school algebra and college calculus. 
-These methods represent simple ways to interpret phenomena and are Euclidean in nature.
-In this computational engine, we aim to take things further by also interpreting
-the properties of mathematical objects that produce things that are non-euclidean in nature. 
+**The overarching goal of this computational engine** is to provide users with a **hybrid computational engine** that combines the best of **WolframAlpha and Symbolab**. On one hand, it should provide a **flexible interpreter** and an **abundance of information** while on the other hand, it should remain **easy to use and self contained**, even for the most complicated features. As an additional improvement to these two outstanding engines, we also seek to **generalize problems** that are currently only solvable by these engines in three dimensions to any dimension as well as providing **information about the fundamental structures behind the behaviour of mathematical objects**.
   
 
 ## Table of Contents
