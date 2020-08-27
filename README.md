@@ -7,16 +7,13 @@ In general a computation engine takes some aggregation of data and returns a mea
 This implementation of a computational engine 
 takes symbolic mathematical input from the user, computes its properties and returns them in a way humans can understand. 
  
-Traditionally, other mathematical computational engines like Wolfram Alpha(now computational intelligence) focus on 
-the fixed three dimensions that we've all seen in high school geometry, high school algebra and college calculus. 
-These methods represent simple ways to interpret phenomena and are Euclidean in nature.
-In this computational engine, we aim to take things further by also interpreting
-the properties of mathematical objects that produce things that are non-euclidean in nature. 
+**The overarching goal of this computational engine** is to provide users with a **hybrid computational engine** that combines the best of **WolframAlpha and Symbolab**. On one hand, it should provide a **flexible interpreter** and an **abundance of information** while on the other hand, it should remain **easy to use and self contained**, even for the most complicated features. As an additional improvement to these two outstanding engines, we also seek to **generalize problems** that are currently only solvable by these engines in three dimensions to any dimension as well as providing **information about the fundamental structures behind the behaviour of mathematical objects**.
   
 
 ## Table of Contents
 - [Features](#Features)
 - [Quick guide](#Quick-guide)
+- [Documentation](#Documentation)
 - [Code architecture](#Code-architecture)
 - [Implementation details](#Implementation-details)
 - [Known issues](#Known-issues)
@@ -30,15 +27,36 @@ the properties of mathematical objects that produce things that are non-euclidea
   - Interprets **custom** mathematical functions from input into python computable functions
   - Makes use of the math standard library for python
   
-- Plotting functions from custom mathematical functions for:
+- Plotting functions for custom mathematical functions for:
   - Functions from R to R <sup></sup> using a traditional graph
   - Functions from R to R<sup>2</sup> using meshgrid technology
   - Functions from R<sup>2</sup> to R using meshgrid technology
   - Functions from R<sup>2</sup> to R<sup>2</sup> using contour maps
   
+- Symbolic computation of zeroes of a function in terms of every variable
+
+- Symbolic computation of partial derivatives of a function in terms of every variable
+
+- Symbolic computation of integrals of a function in terms of every variable
+
   
+## Quick guide
  
-## Quick guide:
+### Functions
+
+Functions have the syntax `functionname(variables) = (functions)` where ` functionname` is a sequence of letters and digits containing no spaces, `variables` is a list of variables that are a sequence of letters separated by a commas and where `functions` are a list of functions separated by commas that are the [operations](#L84) on those defined variables. See some examples [here](#L71). Multiple functions can be defined in the same line: `function1(x) = (x) function2(x) = (x^2) ...` will be interpreted as multiple functions. Functions support a variety of [Standard functions](#L96). **Before reporting a bug**, check out our [**known issues**](#L141).
+
+### Commands on Functions
+
+
+Commands have the syntax `commandname{data}` where `commandname` is a sequence of letters containing no spaces.
+
+- Plot: syntax: `plot{functions}`. Supports multiple functions.
+- Zeroes: syntax: `zeroes{functions}.` Supports multiple functions. 
+- Partial derivative: `partialderivative{functions}`. Supports multiple functions.
+- Partial integral: `partialintegral{functions}`. Supports multiplew functions
+
+## Documentation:
 
 ### Computational Engine: Functions
 
@@ -117,14 +135,18 @@ library variables and functions.
 --->
 
 ## Known issues
-- Complex casting happens in exponential and logarithmic functions 
-in contour maps from R<sup>2</sup> to R<sup>2</sup> when they involve multiple
-variables when complex casting should not occur. Issue likely has to do with the 
-implementation of the math standard library. 
- 
+- Plots from R2 to R2 appear stringy and not 3-dimensional, unfortunately we are looking at ways to adapt our contour maps to mesh-grid technology. 
+
+- Complex casting happens in exponential and logarithmic functions in contour maps from R<sup>2</sup> to R<sup>2</sup> when they involve multiplevariables when complex casting should not occur. Issue likely has to do with the implementation of the math standard library. 
+
+- Sometimes the latex interpreter on the server side cannot interpret complex latex expressions, and will return an error like the following:
+  - `\begin{cases} x \operatorname{acos}{\left(x \operatorname{asin}{\left(y \right)} \right)} - \frac{\sqrt{- x^{2} \operatorname{asin}^{2}{\left(y \right)} + 1}}{\operatorname{asin}{\left(y \right)}} & \text{for}\: y \neq 0 \\\frac{\pi x}{2} & \text{otherwise} \end{cases} ^ Unknown symbol: \begin, found '\' (at char 0), (line:1, col:1)`
+  - This will be fixed once the MathJaxHub Queue is fixed, as the server will no longer need to process latex internally and reformat it as an image using third party libraries, but will be rendered directly in the browser from its latex string. 
+
+- `e`,`tau`, `erf`, `erfc`, `log2`, `log10`, `lgamma` and potentially other common functions from the math standard library are not necessarily compatible with symbolic computation. An error of the type `name not defined` or `Symbol not recognized` will be output in this case. This issue will be fixed in a later version. 
 
 ## External Libraries
-- [NumPy](https://numpy.org/doc/)
+- [NumPy](https://numpy.org)
 - [Matplotlib](https://matplotlib.org/)
 - [regex](https://pypi.org/project/regex/)
 - [SymPy](https://www.sympy.org/en/index.html)
