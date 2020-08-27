@@ -19,8 +19,10 @@ class CommandManager(CommandInterpreter):
         super().__init__()
         self.ErrorStack = ErrorStack()
         self.default = False
+        self.commands_queue = []
         self.original_input = commands_str
         self.command_str_container = self.process_commands(commands_str)
+
         if not self.default:
             self.uninterpreted = self.process_uninterpreted(commands_str)
             self.Commands_container = [Command(c) for c in self.command_str_container]
@@ -53,7 +55,7 @@ class CommandManager(CommandInterpreter):
             output.append(("Errors", temp_function_manager.get_errors() + self.get_errors()))
         return mainlabel, output
 
-    async def run_next(self):
+    def run_next(self):
         if len(self.commands_queue) == 0:
             # No label and no [sublabel,info] pairs
             return None,None,None

@@ -18,6 +18,7 @@ class Command():
         """
         # 'Static dictionary for the valid input classes inside the command given
         # In the future should be replaced by a database
+        self.original_input = command_str
         self.ErrorStack = ErrorStack()
         self.commands_dict = {'plot': ['FunctionManager'], 'IFS': ['FunctionManager', 'MarkovChain'], \
                               'zeroes' : ['FunctionManager'], 'derivative': ['FunctionManager'], 'integral' : ['FunctionManager'],\
