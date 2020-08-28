@@ -368,6 +368,8 @@ class Function(ErrorStack):
                 self.push_error(self.generate_reason_uninterpreted())
             except TypeError:
                 self.push_error("A standard function requires parentheses")
+            except Exception as e:
+                self.push_error(e)
 
         return res
 
