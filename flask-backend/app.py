@@ -9,7 +9,7 @@ import asyncio
 import multiprocessing
 
 CACHE = {}
-app = flask.Flask("__main__", static_folder= './build', static_url_path = '../react-frontend/')
+app = flask.Flask("__main__")
 
 # async def run_next(command_manager):
 #     res1,res2,res3 = await command_manager.run_next()
@@ -22,11 +22,9 @@ def run_next(req, queue):
     queue.put(label)
     queue.put(info)
     queue.put(error)
-
-
 @app.route("/")
-def index():
-    return app.send_static_file('index.html')
+def my_index():
+    return "Hello World"
 
 @app.route("/input", methods = ["POST"])
 def interpret_command():
@@ -76,4 +74,4 @@ def run_commands():
     return flask.jsonify({"labels": label_list, "info": sub_labels_and_info_list, "errors": error_list})
 
 if __name__ == "__true__":
-    app.run(host = '0.0.0.0', debug = False, port = os.environ.get('PORT',80))
+    app.run(debug = True,threaded=False)
