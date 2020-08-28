@@ -2,6 +2,8 @@ from src.OutputQueue import OutputQueue
 from src.Error_Stack import ErrorStack
 import parser
 from sympy import *
+from sympy.calculus.util import continuous_domain
+from sympy.calculus.util import function_range
 from src.FunctionManager import FunctionManager
 import io
 import os
@@ -16,6 +18,7 @@ class Calculus(OutputQueue, ErrorStack):
         ErrorStack().__init__()
         self.function_manager = functionManager
         self.Functions = [f for f in functionManager.Functions_container]
+        self.jacobian = []
 
     def convert_latex_to_base64(self,latex):
         plt.close("all")
@@ -29,6 +32,42 @@ class Calculus(OutputQueue, ErrorStack):
 
         base64_string = base64.b64encode(buf.getvalue())
         return str(base64_string)
+
+    def domain(self):
+        output_list = []
+        eval_list = []
+        for f in self.Functions:
+            code_list = []
+            for var in f.str_vars:
+                exec("{} = symbols('{}')".format(var, var))
+            for function in f.str_funcs:
+                for var in f.str_vars:
+                    code = parser.expr("continuous_domain({},{},S.Reals)".format(function, var)).compile()
+                    code_list.append(code)
+            eval_list.append(code_list)
+        for i in range(len(self.Functions)):
+            for j in range(len(self.Functions[i].str_funcs)):
+                output_list.append((self.Functions[i].str_funcs[j], latex(eval(eval_list[i][j]))))
+
+        return output_list
+    def range(self):
+        output_list = []
+        eval_list = []
+        for f in self.Functions:
+            code_list = []
+            for var in f.str_vars:
+                exec("{} = symbols('{}')".format(var, var))
+            for function in f.str_funcs:
+                for var in f.str_vars:
+                    code = parser.expr("function_range({},{},S.Reals)".format(function, var)).compile()
+                    code_list.append(code)
+            eval_list.append(code_list)
+        for i in range(len(self.Functions)):
+            for j in range(len(self.Functions[i].str_funcs)):
+                output_list.append(
+                    (self.Functions[i].str_funcs[j], latex(eval(eval_list[i][j]))))
+
+        return output_list
 
     def symbolize(self):
         """
@@ -96,7 +135,12 @@ class Calculus(OutputQueue, ErrorStack):
     def derivative(self):
         ## should be a matrix of size rows = num range functions
         ##                         columns = num vars
-        pass
+        if not self.jacobian: #partial derivatives have not been calculated
+            pass
+        else:
+            ##process self.jacobian into a latex matrix:
+            pass
+        return self.jacobian
 
     def integral(self):
         pass
@@ -105,6 +149,7 @@ class Calculus(OutputQueue, ErrorStack):
 
     def partial_derivatives(self):
         ## Compile code for computing derivatives
+        jacobian_list= []
         eval_list = []
         for f in self.Functions:
             code_list = []
@@ -127,7 +172,9 @@ class Calculus(OutputQueue, ErrorStack):
                         self.Functions[i].str_funcs[(j - 1) // roots_modulus], function_root_list)
                     all_range_functions_root_list.append(range_function_var_root_tuple)
                     function_root_list = []
-                var_root_tuple = (self.Functions[i].str_vars[j % roots_modulus], self.convert_latex_to_base64(latex(eval(eval_list[i][j])))[2:-1])
+                eval_expr = latex(eval(eval_list[i][j]))
+                jacobian_list.append(eval_expr)
+                var_root_tuple = (self.Functions[i].str_vars[j % roots_modulus], self.convert_latex_to_base64(eval_expr)[2:-1])
                 function_root_list.append(var_root_tuple)
             ##has only one range function and one variable
             if function_root_list != []:
@@ -141,6 +188,7 @@ class Calculus(OutputQueue, ErrorStack):
             #     all_range_functions_root_list.append(range_function_var_root_tuple)
             function_root_tuple = (self.Functions[i].info_string, all_range_functions_root_list)
             output_list.append(function_root_tuple)
+        self.jacobian = jacobian_list
         return output_list
 
     def second_order_partials(self):
@@ -189,22 +237,25 @@ class Calculus(OutputQueue, ErrorStack):
         return output_list
 
 if __name__ == "__main__":
-    start_time = os.times()[0]
-    funct = FunctionManager("f(x,y) = (cos(x+y))")
-    calcs = Calculus(funct)
-    zeros = calcs.zeroes()
-    print(zeros)
-
-
-    derivatives = calcs.partial_derivatives()
-    print(derivatives)
-
-
-
-    integrals = calcs.partial_integrals()
-    print(integrals)
-    end_time = os.times()[0]
-    print("Finished in {} seconds".format(end_time-start_time))
+    fm = FunctionManager("f(x,y) = (log(x+y),y)")
+    calc = Calculus(fm)
+    print(calc.range())
+    # start_time = os.times()[0]
+    # funct = FunctionManager("f(x,y) = (cos(x+y))")
+    # calcs = Calculus(funct)
+    # zeros = calcs.zeroes()
+    # print(zeros)
+    #
+    #
+    # derivatives = calcs.partial_derivatives()
+    # print(derivatives)
+    #
+    #
+    #
+    # integrals = calcs.partial_integrals()
+    # print(integrals)
+    # end_time = os.times()[0]
+    # print("Finished in {} seconds".format(end_time-start_time))
     # expr = "\mathbb{R}"
     # expr = expr + "$\displaystyle" + expr + "$"
     # f = BytesIO()
