@@ -54,12 +54,15 @@ def run_commands():
     manager = multiprocessing.Manager()
     return_dict = manager.dict()
     p = multiprocessing.Process(target = run_next, args =(req,return_dict))
-
+    time_limit = 5
     p.start()
-    p.join(5)
-    label_list.append(return_dict["labels"] if "labels" in return_dict else "")
+    p.join(time_limit)
+    if p.is_alive():
+        p.terminate()
+        p.join()
+    label_list.append(return_dict["labels"] if "labels" in return_dict else new_command_manager.Commands_container[0].command)
     sub_labels_and_info_list.append(return_dict["sublabels_and_info"] if "sublabels_and_info" in return_dict else "")
-    error_list.append(return_dict["errors"] if "errors" in return_dict else "")
+    error_list.append(return_dict["errors"] if "errors" in return_dict else "Computation time exceeded ({} seconds)".format(time_limit))
     # label , sublabels_and_info, errors = new_command_manager.run_next()
     # label_list.append(label)
     # sub_labels_and_info_list.append(sublabels_and_info)
