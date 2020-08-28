@@ -1,6 +1,5 @@
 import React from "react"
 import "./CLI.css"
-import ReactDOM from 'react-dom'
 import Tree from "./Tree"
 
 
@@ -19,7 +18,7 @@ function process_commands(ul,data){
   var j;
   var k;
   for(n = 0; n<data.info.length;n++){
-    if(data.labels[n] != null){
+    if(data.labels[n] !== null){
       let label = createNode("h2");
       label.innerHTML = data.labels[n];
       append(ul,label);
@@ -29,14 +28,14 @@ function process_commands(ul,data){
       report.target = "_blank"
       append(ul, report)
     }
-    if(data.errors[n] != null || data.errors != ""){
+    if(data.errors[n] !== null || data.errors !== ""){
       let errors = createNode("p")
       // console.log(data.errors[n])
       errors.innerHTML = data.errors[n]
       errors.style = "color:#FE7272;"
       append(ul,errors)
     }
-    if(data.labels[n] == "ZEROES" || data.labels[n] == "PARTIALDERIVATIVE" || data.labels[n] == "PARTIALINTEGRAL"){
+    if(data.labels[n] === "ZEROES" || data.labels[n] === "PARTIALDERIVATIVE" || data.labels[n] === "PARTIALINTEGRAL"){
     for(i = 0; i <data.info[n].length;i++){
       let sublabel = createNode("h3");
       sublabel.innerHTML = data.info[n][i][0];
@@ -59,12 +58,12 @@ function process_commands(ul,data){
       }
     }
   }
-  if(data.labels[n] == "PLOT"){
+  if(data.labels[n] === "PLOT"){
     for(i = 0; i <data.info[n].length; i++){
       let math_info = createNode("img")
       // console.log("math_info")
       // console.log(data.info[n][i][1])
-      math_info.src = "data:image/png;base64,"+ `${data.info[n][i][1]}`
+      math_info.src = "data:image/png;base64,"+ data.info[n][i][1]
       append(ul, math_info)
     }
   }
@@ -82,7 +81,7 @@ function process_input(ul, data){
 
 
   let originalInput = createNode("p");
-  if (data.input == "" || data.input == null){
+  if (data.input === "" || data.input === null){
     originalInput.innerHTML = "Your input : None";
 
   }
@@ -91,7 +90,7 @@ function process_input(ul, data){
   }
   append(ul, originalInput);
   let interpreted_info = createNode("p");
-  if (data.interpreted == "" || data.interpreted == null){
+  if (data.interpreted === "" || data.interpreted == null){
     interpreted_info.innerHTML = "Interpreted input : None";
     interpreted_info.style = "color:#FE7272 ;"
   }
@@ -101,7 +100,7 @@ function process_input(ul, data){
   append(ul,interpreted_info);
 
   let error_info = createNode("p");
-  if (data.errors == "" || data.errors == null){
+  if (data.errors === "" || data.errors === null){
     //do nothing
   }
   else{
@@ -174,7 +173,7 @@ class CLI extends React.Component{
 
     // const url = "http://localhost:5000/input/" + this.state.value
     event.preventDefault();
-    if(this.state.disabled == false){
+    if(this.state.disabled === false){
       this.setState({disabled : true})
       const that = this
       var loadingAnimation = setInterval(this.tree.current.animateTree,350);
@@ -233,8 +232,8 @@ class CLI extends React.Component{
         <h6>
           Non-Euclidean Computational Engine - Functions
         </h6>
-        <div class = "help">
-          <a href = "https://github.com/alexandreLamarre/NE-web-engine#Quick-guide" target="_blank">Help</a>
+        <div className = "help">
+          <a href = "https://github.com/alexandreLamarre/NE-web-engine#Quick-guide" rel="noopener" target="_blank">Help</a>
         </div>
         <div id="cliText">
           <textarea value ={this.state.value}

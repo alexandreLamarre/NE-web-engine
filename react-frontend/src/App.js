@@ -1,9 +1,7 @@
 import React from 'react';
 import {Tab,Tabs,TabList,TabPanel} from 'react-tabs';
 import './Tab.css';
-import logo from './logo.svg';
 import './App.css';
-import Latex from "./Latex"
 import CLI from "./CLI"
 
 function App() {
