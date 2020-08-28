@@ -2,6 +2,7 @@
 
 ## Foreword
 
+
 A computational engine is hard to define, but easy to recognize. 
 In general a computation engine takes some aggregation of data and returns a meaningful result. 
 This implementation of a computational engine 
@@ -44,7 +45,7 @@ takes symbolic mathematical input from the user, computes its properties and ret
  
 ### Functions
 
-Functions have the syntax `functionname(variables) = (functions)` where ` functionname` is a sequence of letters and digits containing no spaces, `variables` is a list of variables that are a sequence of letters separated by a commas and where `functions` are a list of functions separated by commas that are the [operations](#L84) on those defined variables. See some examples [here](#L71). Multiple functions can be defined in the same line: `function1(x) = (x) function2(x) = (x^2) ...` will be interpreted as multiple functions. Functions support a variety of [Standard functions](#L96). **Before reporting a bug**, check out our [**known issues**](#L141).
+Functions have the syntax `functionname(variables) = (functions)` where ` functionname` is a sequence of letters and digits containing no spaces, `variables` is a list of variables that are a sequence of letters separated by a commas and where `functions` are a list of functions separated by commas that are the [operations](#operations) on those defined variables. See some examples [here](#examples). Multiple functions can be defined in the same line: `function1(x) = (x) function2(x) = (x^2) ...` will be interpreted as multiple functions. Functions support a variety of [Standard functions](#common). **Before reporting a bug**, check out our [**known issues**](#Known-issues).
 
 ### Commands on Functions
 
@@ -64,14 +65,14 @@ Commands have the syntax `commandname{data}` where `commandname` is a sequence o
   
 - For the website to recognize your input, we must define a function in a way that our interpreter will understand. We do so by providing a **function name** comprised of **only letters and digits**, followed by a **set of variables in between parentheses** `(a,b,c,d,...)`, where each variable name is comprised of **only letters**, **has no spaces** in it and each name is **separated by a comma**. Then the input must be followed by an **equals sign** `=` and a **set of parentheses** `(______)` which contain a **set of functions**, each **separated by a comma**. **Parentheses** in a function **must always match** or the interpreter will not recognize your input and will tell you that something is wrong!
 
-- We give some **examples** of recognized functions to help illustrate:
+- We give some ####examples of recognized functions to help illustrate:
     - `f(x) = (x)`
     - `f    (     x     )   =   ( x    )`, spaces do not effect the input as long as they do not occur in variable names
     - `functionname1(a,b,c) = (a,b,c) `, is also valid
     - `f2(cat,dog) = (cat,dog)`, variables can be of any length as long as they are not separated by spaces
     - `f3(cat   , dog) = (cat,dog)` is **valid** but `f(c at, dog) = (c at,dog)` is **not valid**
  
- - Now that we can define some functions, let's take a look at what **operations between variables** are supported in the functions we want to define:
+ - Now that we can define some functions, let's take a look at what ####operations **between variables** are supported in the functions we want to define:
     - `+` is standard addition
     - `-` is standard subtraction
     - `*` is standard multiplication
@@ -89,7 +90,7 @@ Commands have the syntax `commandname{data}` where `commandname` is a sequence o
     - `f(x,y) = ((x)x(y+1))` is equivalent to `f(x,y) = (x^2*(y+1))`
     - etc...
     
-- The interpreter also recognizes the following **common mathematical functions**:
+- The interpreter also recognizes the following ####common **mathematical functions** to the best of its ability:
     - `abs`,`log`,`cos`, `sin`, `tan`,`ceil`, `ceiling`,`factorial`,`floor`, `isqrt`, `trunc`, `exp`, `log2`, `log10`, `sqrt`, `acos`,`asin`, `atan`,`degrees`, `radians`, `acosh`, `asinh`, `atanh`, `cosh`, `sinh`, `tanh`, `erf`, `erfc`, `gamma`, `lgamma`
 
 - **For these common functions you must provide parentheses** to what they act on, or the interpreter will tell you something is wrong:
@@ -144,6 +145,8 @@ library variables and functions.
   - This will be fixed once the MathJaxHub Queue is fixed, as the server will no longer need to process latex internally and reformat it as an image using third party libraries, but will be rendered directly in the browser from its latex string. 
 
 - `e`,`tau`, `erf`, `erfc`, `log2`, `log10`, `lgamma` and potentially other common functions from the math standard library are not necessarily compatible with symbolic computation. An error of the type `name not defined` or `Symbol not recognized` will be output in this case. This issue will be fixed in a later version. 
+
+- 'Zeroes' information tab will sometimes insist that a root must be complex when it is clearly not necessarily a complex root.
 
 ## External Libraries
 - [NumPy](https://numpy.org)
