@@ -16,10 +16,12 @@ app = flask.Flask("__main__")
 #
 #     return (res1,res2,res3)
 
-def run_next(req, return_dict):
+def run_next(req, queue):
     new_command_manager = CommandManager(req)
-    return_dict["labels"], return_dict["sublabels_and_info"], return_dict["errors"] = new_command_manager.run_next()
-
+    label,info, error = new_command_manager.run_next()
+    queue.put(label)
+    queue.put(info)
+    queue.put(error)
 @app.route("/")
 def my_index():
     return "Hello World"
@@ -52,17 +54,17 @@ def run_commands():
     error_list = []
 
     manager = multiprocessing.Manager()
-    return_dict = manager.dict()
-    p = multiprocessing.Process(target = run_next, args =(req,return_dict))
+    queue = manager.Queue()
+    p = multiprocessing.Process(target = run_next, args =(req,queue))
     time_limit = 5
     p.start()
     p.join(time_limit)
     if p.is_alive():
         p.terminate()
         p.join()
-    label_list.append(return_dict["labels"] if "labels" in return_dict else new_command_manager.Commands_container[0].command)
-    sub_labels_and_info_list.append(return_dict["sublabels_and_info"] if "sublabels_and_info" in return_dict else "")
-    error_list.append(return_dict["errors"] if "errors" in return_dict else "Computation time exceeded ({} seconds)".format(time_limit))
+    label_list.append(queue.get() if queue.empty() == False else new_command_manager.Commands_container[0].command.upper())
+    sub_labels_and_info_list.append(queue.get() if queue.empty() == False else "")
+    error_list.append(queue.get() if queue.empty() == False else "Computation time exceeded ({} seconds)".format(time_limit))
     # label , sublabels_and_info, errors = new_command_manager.run_next()
     # label_list.append(label)
     # sub_labels_and_info_list.append(sublabels_and_info)
