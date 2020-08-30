@@ -110,13 +110,16 @@ Commands have the syntax `commandname{data}` where `commandname` is a sequence o
 
 ## Code architecture
 
+
+We used a Factory design pattern when considering the way the app process input from the user on the backend:
+
+![Factory](https://github.com/alexandreLamarre/NE-web-engine/blob/master/FactoryDesign.png)
+
 We used a Model-Controller-View design pattern when considering the way the app is used and structured with respect to the user as seen below:
 
 ![MCV](https://github.com/alexandreLamarre/NE-web-engine/blob/master/MCV.png)
 
-We used a Factory Design pattern when considering the way the app process input from the user on the backend:
 
-![Factory](https://github.com/alexandreLamarre/NE-web-engine/blob/master/FactoryDesign.png)
 ## Implementation details
 
 - Function variables overshadow math standard 
