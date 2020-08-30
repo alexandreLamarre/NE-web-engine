@@ -108,6 +108,15 @@ Commands have the syntax `commandname{data}` where `commandname` is a sequence o
 - If your **input is not recognized**, the compiler will tell you so and attempt to give you the reason why the input was rejected. 
     - `Mismatched parentheses` mean 
 
+## Code architecture
+
+We used a Model-Controller-View design pattern when considering the way the app is used and structured with respect to the user as seen below:
+
+![MCV](https://github.com/alexandreLamarre/NE-web-engine/blob/master/MCV.png)
+
+We used a Factory Design pattern when considering the way the app process input from the user on the backend:
+
+![Factory](https://github.com/alexandreLamarre/NE-web-engine/blob/master/FactoryDesign.png)
 ## Implementation details
 
 - Function variables overshadow math standard 
