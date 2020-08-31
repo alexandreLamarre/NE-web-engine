@@ -1,6 +1,6 @@
 import parser
 from src.Error_Stack import ErrorStack
-from sympy import *
+# from sympy import *
 from math import *
 import os
 import re
@@ -71,6 +71,8 @@ class Function(ErrorStack):
         var = var.split(",")
         for i in range(len(var)):
             var[i] = var[i].strip()
+        while "" in var:
+            var.remove("")
         return name, var, function_set
 
     def generate_interpreted(self):
@@ -419,22 +421,22 @@ class Function(ErrorStack):
         """
         return self.str_vars
 
-    def get_latex(self):
-        output_vars = ""
-        for v in self.str_vars:
-            output_vars += v + ","
-            exec("{} = symbols('{}')".format(v, v))
-        if len(output_vars)>1:
-            output_vars = output_vars[:-1]
-        output_funcs = ""
-        for f in self.str_funcs:
-            func = eval(f)
-            output_funcs += latex(func) + ","
-
-        if len(output_funcs) > 1:
-            output_funcs = output_funcs[:-1]
-
-        return self.name + "("+output_vars+")"+" = "+"$(" + output_funcs +")$"
+    # def get_latex(self):
+    #     output_vars = ""
+    #     for v in self.str_vars:
+    #         output_vars += v + ","
+    #         exec("{} = symbols('{}')".format(v, v))
+    #     if len(output_vars)>1:
+    #         output_vars = output_vars[:-1]
+    #     output_funcs = ""
+    #     for f in self.str_funcs:
+    #         func = eval(f)
+    #         output_funcs += latex(func) + ","
+    #
+    #     if len(output_funcs) > 1:
+    #         output_funcs = output_funcs[:-1]
+    #
+    #     return self.name + "("+output_vars+")"+" = "+"$(" + output_funcs +")$"
 
     def __repr__(self):
         """
@@ -457,68 +459,73 @@ class Function(ErrorStack):
 if __name__ == "__main__":
     start_time = os.times()[0]
     i= 0
-    function = Function("f(xax,xax) = (xaxxax)")
+    # function= Function("f(var,var,var) = (var)")
+    # print(function)
+    #TODO returns an error
+    function = Function("f(var,,,,,) = (floor(var))")
     print(function)
-    print(function.get_errors())
-    i+=1
-    function = Function("f(x) = (sin(2x),cos(x5))")
-    i+=1
-    function = Function("f(x,y) = (sin(2xy5), xlog(2x))")
-    i+=1
-    function = Function("f(cat) = (cat^2floor(cat))")
-    i+=1
-    function = Function("f(x,a) = (log(x)a)")
-    print(function)
-    i += 1
-    function = Function("f(x,a) = (pixa2pi3)")
-    print(function)
-    i += 1
-    function = Function("f(piad,a) = (pi2piapipiad)")
-    print(function)
-    i+=1##checking for 'a' as var splits up 'piad' as a var
-    function = Function("f(pied,a) = (pi2piapipied)")
-    i += 1
-    print(function) ## no idea whats wrong but pi*pi*ed should be pi*pied
-    function = Function("f(pied, pie, pi, p) = (piedpiepip)")
-    i += 1
-    print(function)
-    function = Function("f(randomcosvariable, randomsinvariable) = (randomcosvariablerandomsinvariable)")
-    i += 1
-    print(function)
-    function = Function("f(x) = (cos(x)2acos(x)2)")
-    i += 1
-    print(function)
-
-    function = Function("f(x) = (2(x+1))")
-    i += 1
-    print(function)
-    function = Function("f(og) = (log(og))")
-    i += 1
-    print(function)
-    function = Function("f(l)= (log(l))")
-    i += 1
-    print(function)
-    function = Function("f(x,a) = (xacosh(x))")
-    i += 1
-    print(function)
-    function = Function("f(x) = (eerf(x))")
-    i += 1
-    print(function)
-    function = Function("f(x) = (lgamma(x))")
-    i += 1
-    print(function)
-    function = Function("f(x) = (ceil(x))")
-    i += 1
-    print(function)
-    function = Function("f(x) = (isqrt(x))")
-    i += 1
-    print(function)
-    function = Function("f(ei) = (ceil(ei))")
-    i += 1
-    print(function)
-    function = Function("f(ling) = (ceiling(ling))")
-    i += 1
-    function = Function("f(x,og) = (og(x))")
-    print(function)
+    # function = Function("f(xax,xax) = (xaxxax)")
+    # print(function)
+    # print(function.get_errors())
+    # i+=1
+    # function = Function("f(x) = (sin(2x),cos(x5))")
+    # i+=1
+    # function = Function("f(x,y) = (sin(2xy5), xlog(2x))")
+    # i+=1
+    # function = Function("f(cat) = (cat^2floor(cat))")
+    # i+=1
+    # function = Function("f(x,a) = (log(x)a)")
+    # print(function)
+    # i += 1
+    # function = Function("f(x,a) = (pixa2pi3)")
+    # print(function)
+    # i += 1
+    # function = Function("f(piad,a) = (pi2piapipiad)")
+    # print(function)
+    # i+=1##checking for 'a' as var splits up 'piad' as a var
+    # function = Function("f(pied,a) = (pi2piapipied)")
+    # i += 1
+    # print(function) ## no idea whats wrong but pi*pi*ed should be pi*pied
+    # function = Function("f(pied, pie, pi, p) = (piedpiepip)")
+    # i += 1
+    # print(function)
+    # function = Function("f(randomcosvariable, randomsinvariable) = (randomcosvariablerandomsinvariable)")
+    # i += 1
+    # print(function)
+    # function = Function("f(x) = (cos(x)2acos(x)2)")
+    # i += 1
+    # print(function)
+    #
+    # function = Function("f(x) = (2(x+1))")
+    # i += 1
+    # print(function)
+    # function = Function("f(og) = (log(og))")
+    # i += 1
+    # print(function)
+    # function = Function("f(l)= (log(l))")
+    # i += 1
+    # print(function)
+    # function = Function("f(x,a) = (xacosh(x))")
+    # i += 1
+    # print(function)
+    # function = Function("f(x) = (eerf(x))")
+    # i += 1
+    # print(function)
+    # function = Function("f(x) = (lgamma(x))")
+    # i += 1
+    # print(function)
+    # function = Function("f(x) = (ceil(x))")
+    # i += 1
+    # print(function)
+    # function = Function("f(x) = (isqrt(x))")
+    # i += 1
+    # print(function)
+    # function = Function("f(ei) = (ceil(ei))")
+    # i += 1
+    # print(function)
+    # function = Function("f(ling) = (ceiling(ling))")
+    # i += 1
+    # function = Function("f(x,og) = (og(x))")
+    # print(function)
     end_time = os.times()[0]
     print("Completed {} tests in {} seconds".format(i,end_time - start_time))
