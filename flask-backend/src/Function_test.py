@@ -6,9 +6,8 @@ if __name__ == "__main__":
         success = 0
         num_tests = 0
 
-        ## ======================= Object tests ===============================
-        ##
-        ## Full Interpreter tests
+        ## ======================= Things that should be interpreted tests ===============================
+
         FAILED = []
 
         function = Function("f(xax,xax) = (xaxxax)")
@@ -144,7 +143,23 @@ if __name__ == "__main__":
         else:
                 FAILED.append(function)
         num_tests+=1
-        ## Constants
+        ## ==================== spaces that should be interpreted =============
+        function = Function("f(x   ,   y) = (x x x, y   )")
+        if str(function) == "NAME: f VARS: [x,y] FUNCS [x*x*x,y]":
+                success+=1
+        else:
+                FAILED.append(function)
+        num_tests+=1
+
+        function = Function("f (x,y)       =  (log    ( x   )    y)")
+        print(function)
+
+        if str(function) == "NAME: f VARS: [x,y] FUNCS [log(x)*y]":
+                success+=1
+        else:
+                FAILED.append(function)
+        num_tests+=1
+        ## ========================== Constants ==============================
         function = Function("f(x) = (ex)")
 
         if str(function) == "NAME: f VARS: [x] FUNCS [e*x]":
@@ -152,6 +167,14 @@ if __name__ == "__main__":
         else:
                 FAILED.append(function)
         num_tests+=1
+
+        function = Function("f(x) = (ex x)")
+        if str(function) == "NAME: f VARS: [x] FUNCS [e*x*x]":
+                success+=1
+        else:
+                FAILED.append(function)
+        num_tests +=1
+
         function = Function("f(x) = (pix)")
         if str(function) == "NAME: f VARS: [x] FUNCS [pi*x]":
                 success+=1
@@ -165,16 +188,23 @@ if __name__ == "__main__":
         else:
                 FAILED.append(function)
         num_tests+=1
-        ##TODO this one returns an error, need to check right allowed char constants too
 
+        ## ==========Invalid variables /functions that should be interpreted==========
         function = Function("f(x,,,,) = (x)")
         if str(function) == "NAME: f VARS: [x] FUNCS [x]":
                 success+=1
         else:
                 FAILED.append(function)
+        num_tests += 1
+
+        function = Function("f(x) = (x^2,,,,,x^3,,,,,x)")
+        if str(function) == "NAME: f VARS: [x] FUNCS [x**2,x**3,x]":
+                success+=1
+        else:
+                FAILED.append(function)
         num_tests+=1
 
-        ##==================== End of object tests =============================
+        ##==================== End of things that should be interpreted tests =============================
         print("{}/{} tests were successful for Function Object interpreter".format(success,num_tests))
         end_time = os.times()[0]
         if FAILED:
