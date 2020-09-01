@@ -5,9 +5,96 @@ if __name__ == "__main__":
         start_time = os.times()[0]
         success = 0
         num_tests = 0
+        ### _PARSE_INPUT Tests
+        ##################################### GENERAL METHODS TESTS #############################################
+
+        ## Instantiation of FUnction object doesn't matter here, it will be reused to test a method
+        FAILED = []
+        function = Function("f(x) = (x)")
+
+        test_string = "f(x) = (x)"
+        res = function._parse_input(test_string)
+        if res[0] == "f" and res[1] == ["x"] and res[2] == ["x"]:
+            success+=1
+        else:
+            FAILED.append((test_string, res[0], res[1], res[2]))
+        num_tests+=1
+
+        test_string = "f(x,y) = (x^2y^2, x)"
+        res = function._parse_input(test_string)
+        if res[0] == "f" and res[1] == ["x","y"] and res[2] == ["x^2y^2", "x"]:
+            success+=1
+        else:
+            FAILED.append((test_string, res[0], res[1], res[2]))
+        num_tests+=1
+
+        test_string = "function1name(varone, vartwo) = (varone, vartwo)"
+        res = function._parse_input(test_string)
+        if res[0] == "function1name" and res[1] == ["varone", "vartwo"] \
+                                                and res[2] == ["varone", "vartwo"]:
+            success+=1
+        else:
+            FAILED.append((test_string, res[0], res[1], res[2]))
+        num_tests+=1
+
+        test_string = "f(x) = ()"
+        res = function._parse_input(test_string)
+        if res[0] == "f" and res[1] == ["x"] and res[2] == []:
+            success+=1
+        else:
+            FAILED.append((test_string, res[0], res[1], res[2]))
+        num_tests += 1
+
+        test_string = "functionname  (x,y,z,x) = (xyzyxyxyx)"
+
+        res = function._parse_input(test_string)
+        if res[0] == "functionname" and res[1] == ["x", "y", "z", "x"]\
+                                                and res[2] == ["xyzyxyxyx"]:
+            success+=1
+        else:
+            FAILED.append((test_string, res[0], res[1], res[2]))
+        num_tests += 1
+
+        end_time = os.times()[0]
+
+        print("{}/{} tests passed for _parse_input method".format(success, num_tests))
+        if FAILED:
+            print("The following strings failed the tests")
+            for i in FAILED:
+                for j in i:
+                        print("\t" + str(j))
+
+        print("Testing '_parse_input' method for Function took {} seconds.".format(end_time-start_time))
+        print("\n")
+        ## ===================== end _parse_input tests ==========================
+
+        ## ======================== preprocess_variables tests =======================
+
+        ## ======================== end of preprocess_variables tests ===============
+
+        ## ==========================order_vars tests ==================================
+
+        ## ========================= end of order_vars tests ===========================
+
+        ## ========================= allowed_chars tests =================================
+
+        ## ======================== end of allowed_chars tests ==============================
+
+        ############################## END OF GENERAL METHODS TESTS ########################
+
+        ############################# PREPROCESSES TESTS ################################
+
+        ## ======================== preprocess_parentheses ==================================
+
+        ## ======================== end of preprocess_parentheses =========================
+
+
+
+        ############################# END PREPROCESSES TESTS #################################
 
         ## ======================= Things that should be interpreted tests ===============================
-
+        success = 0
+        num_tests = 0
         FAILED = []
 
         function = Function("f(xax,xax) = (xaxxax)")
@@ -152,7 +239,6 @@ if __name__ == "__main__":
         num_tests+=1
 
         function = Function("f (x,y)       =  (log    ( x   )    y)")
-        print(function)
 
         if str(function) == "NAME: f VARS: [x,y] FUNCS [log(x)*y]":
                 success+=1
@@ -189,7 +275,7 @@ if __name__ == "__main__":
                 FAILED.append(function)
         num_tests+=1
 
-        ## ==========Invalid variables /functions that should be interpreted==========
+        ## =========='Invalid' variables /functions that should be interpreted==========
         function = Function("f(x,,,,) = (x)")
         if str(function) == "NAME: f VARS: [x] FUNCS [x]":
                 success+=1
@@ -205,10 +291,15 @@ if __name__ == "__main__":
         num_tests+=1
 
         ##==================== End of things that should be interpreted tests =============================
-        print("{}/{} tests were successful for Function Object interpreter".format(success,num_tests))
+        print("{}/{} tests passed for Function interpreter as a whole".format(success,num_tests))
         end_time = os.times()[0]
         if FAILED:
                 print("The following functions failed the tests:")
                 for i in FAILED:
                         print("\t" + str(i))
         print("Tests for Function interpreter were completed in {} seconds.".format(end_time-start_time))
+
+        ## ====================== generate_interpreted tests ==============================================
+
+
+        ## ======================= end of generate_interpreted tests =====================================
