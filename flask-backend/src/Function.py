@@ -25,7 +25,7 @@ class Function(ErrorStack):
         """
         super().__init__()
         self.name, self.str_vars, self.str_funcs = self._parse_input(function_string)
-        self.str_vars = self.preprocess_variables()
+        self.str_vars = self.preprocess_variables(self.str_vars)
         ## process step: switch '^' to ** and multiply where necessary
         self.str_funcs = self.preprocess_function_string()
         self.info_string = self.generate_interpreted()
@@ -89,8 +89,7 @@ class Function(ErrorStack):
         res += ")"
         return res
 
-    def preprocess_variables(self):
-        cur_vars = self.str_vars
+    def preprocess_variables(self, cur_vars):
         ## we don't use list(set(cur_vars)) because we want to preserve user input order
         distinct_vars = []
         for v in cur_vars:
@@ -98,10 +97,8 @@ class Function(ErrorStack):
                 distinct_vars.append(v)
         return distinct_vars
 
-    def order_vars(self):
+    def order_vars(self, cur_vars):
         """Return variables but ordered in terms of decreasing length"""
-        cur_vars = list(self.str_vars) ## create a copy to preserve user given input order in the output
-
         return sorted(cur_vars, key=len, reverse = True)
 
     def allowed_chars(self, var, ordered_var):
@@ -166,7 +163,7 @@ class Function(ErrorStack):
         return cur_func
 
     def preprocess_functions_variables(self,cur_func):
-        ordered_vars = self.order_vars()
+        ordered_vars = self.order_vars(self.str_vars)
         for var in ordered_vars:
             start_index = 0
             allowed_left, allowed_right = self.allowed_chars(var,ordered_vars)

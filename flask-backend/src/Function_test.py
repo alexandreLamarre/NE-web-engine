@@ -55,8 +55,15 @@ if __name__ == "__main__":
             FAILED.append((test_string, res[0], res[1], res[2]))
         num_tests += 1
 
-        end_time = os.times()[0]
+        test_string = "name(x,,,,,x) = (log(x),,,sin(x))"
+        res = function._parse_input(test_string)
+        if res[0] == "name" and res[1] == ["x", "x"] and res[2] == ["log(x)", "sin(x)"]:
+                success+=1
+        else:
+                FAILED.append(test_string)
+        num_tests += 1
 
+        end_time = os.times()[0]
         print("{}/{} tests passed for _parse_input method".format(success, num_tests))
         if FAILED:
             print("The following strings failed the tests")
@@ -69,15 +76,131 @@ if __name__ == "__main__":
         ## ===================== end _parse_input tests ==========================
 
         ## ======================== preprocess_variables tests =======================
+        success = 0
+        num_tests = 0
+        FAILED = []
+        ## placehold object to test preprocess_variables
+        function = Function("f(x) = (x)")
 
+        test_list = ["x"]
+        res = function.preprocess_variables(test_list)
+        if res == ["x"]:
+                success+=1
+        else:
+                FAILED.append((test_list,res))
+
+        num_tests += 1
+
+        test_list = ["var", "var", "vari"]
+        res = function.preprocess_variables(test_list)
+        if res == ["var", "vari"]:
+                success+=1
+        else:
+                FAILED.append((test_list,res))
+
+        num_tests +=1
+
+        test_list = ["x", "x"]
+        res = function.preprocess_variables(test_list)
+        if res == ["x"]:
+                success+=1
+        else:
+                FAILED.append((test_list,res))
+
+        num_tests += 1
+
+        end_time = os.times()[0]
+        print("{}/{} tests passed for preprocess_variables method".format(success, num_tests))
+        if FAILED:
+            print("The following variables list failed the test")
+            for i in FAILED:
+                    print("\t Expected: {}  Got: {}".format(i[0], i[1]))
+        print("Testing preprocess_variables took {} seconds".format(end_time-start_time))
+        print("\n")
         ## ======================== end of preprocess_variables tests ===============
 
         ## ==========================order_vars tests ==================================
 
+        success = 0
+        num_tests = 0
+        FAILED = []
+
+        ## placehold function to use order_var method
+        function = Function("f(x) = (x)")
+
+        test_var_list = ["x", "y", "z"]
+        res = function.order_vars(test_var_list)
+        if res == test_var_list:
+                success+=1
+        else:
+                FAILED.append((test_var_list, res))
+        num_tests +=1
+
+        test_var_list = ["length", "lengt", "leng", "len"]
+        res = function.order_vars(test_var_list)
+        if res == test_var_list:
+                success+=1
+        else:
+                FAILED.append((test_var_list, res))
+        num_tests +=1
+
+        ## next test is the list above in reverse order
+
+        test_var_list = ["len", "leng", "lengt", "length"]
+        res = function.order_vars(test_var_list)
+        if res == ["length", "lengt", "leng", "len"]:
+                success+=1
+        else:
+                FAILED.append((test_var_list,res))
+
+        num_tests += 1
+        ##next test is the list above in random order
+
+        test_var_list = ["length","len", "leng", "lengt","leng", "len", "length"]
+        res = function.order_vars(test_var_list)
+        if res == ["length", "length", "lengt", "leng", "leng", "len", "len"]:
+                success+=1
+        else:
+                FAILED.append((test_var_list,res))
+
+        num_tests +=1
+
+        end_time = os.times()[0]
+        print("{}/{} tests passed for order_vars method".format(success, num_tests))
+        if FAILED:
+                print("The following failed the tests for order_vars:")
+                for i in FAILED:
+                        print("\t Expected: " + i[0] + " Got:  " + i[1])
+        print("Testing order_vars method took {} seconds".format(end_time-start_time))
+        print("\n")
         ## ========================= end of order_vars tests ===========================
 
         ## ========================= allowed_chars tests =================================
 
+        success = 0
+        num_tests = 0
+        FAILED = []
+        ## placeholder function for testing methods
+        function = Function("f(x) = (x)")
+
+        test_var = ""
+        test_ordered_list = []
+        res = function.allowed_chars(test_var, test_ordered_list)
+        if res == "":
+                success+=1
+        else:
+                FAILED.append(((test_var, test_ordered_list), res))
+
+        num_tests +=1
+
+        end_time = os.times()[0]
+        print("{}/{} tests passed for allowed chars method.".format(success,num_tests))
+        if FAILED:
+                print("The following input (var, ordered_vars) failed the tests")
+                for i in FAILED:
+                        print("Input:"+ str(i[0][0]) + "," + str(i[0][1]) + " Got:  " + str(i[1]))
+        print("Testing allowed_chars method took {} seconds".format(end_time-start_time))
+        print("\n")
         ## ======================== end of allowed_chars tests ==============================
 
         ############################## END OF GENERAL METHODS TESTS ########################
@@ -297,7 +420,7 @@ if __name__ == "__main__":
                 print("The following functions failed the tests:")
                 for i in FAILED:
                         print("\t" + str(i))
-        print("Tests for Function interpreter were completed in {} seconds.".format(end_time-start_time))
+        print("Testing Function interpreter as a whole took {} seconds.".format(end_time-start_time))
 
         ## ====================== generate_interpreted tests ==============================================
 
