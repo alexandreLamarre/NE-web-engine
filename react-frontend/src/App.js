@@ -3,6 +3,7 @@ import {Tab,Tabs,TabList,TabPanel} from 'react-tabs';
 import './Tab.css';
 import './App.css';
 import CLI from "./CLI"
+import MatrixCLI from "./MatrixCLI"
 
 function App() {
   return (
@@ -20,7 +21,10 @@ function App() {
           <CLI />
           <ul  id = "ul-info"></ul>
         </TabPanel>
-        <TabPanel> Matrices </TabPanel>
+        <TabPanel>
+        Matrices
+        <MatrixCLI/> 
+        </TabPanel>
         <TabPanel> Algorithms </TabPanel>
         <TabPanel> Log in </TabPanel>
       </Tabs>

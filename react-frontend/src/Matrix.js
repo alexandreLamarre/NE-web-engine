@@ -1,4 +1,5 @@
 import React from "react"
+import PropTypes from "prop-types"
 
 class MatrixCell extends React.Component{
   constructor(props){
@@ -90,7 +91,7 @@ class Matrix extends React.Component{
     this.state = {
       x: -1,
       y: -1,
-      caret = 0,
+      caret: 0,
       columns: this.props.columns
     }
 
@@ -142,7 +143,7 @@ class Matrix extends React.Component{
 
   getRow(n){
     var row = new Array(this.getWidth());
-    var coli,ns = this.state.columns;
+    var columns = this.state.columns;
     for (var i = 0; i <columns.length; i ++){
       row[i] = columns[i][n];
     }
@@ -312,7 +313,7 @@ class Matrix extends React.Component{
       var y = 0;
       var column = columnValues.map(function(value, y){
         var active = currentCell === activeCell;
-        var cell = <MatrixCell key={x+'-'+y} value={value}, matrix={this} x={x} y = {y} active = {active} readonly = {this.props.readonly}/>
+        var cell = <MatrixCell key={x+'-'+y} value={value} matrix={this} x={x} y = {y} active = {active} readonly = {this.props.readonly}/>
         currentCell ++;
         return cell;
       }, this)
@@ -332,10 +333,10 @@ class Matrix extends React.Component{
   }
 }
 
-Matrix.propTypes = {
-  columns: React.PropTypes.array,
-  resize: React.PropTypes.oneOf(['both', 'vertical', 'horizontal', 'none']),
-  readonly: React.PropTypes.bool
-}
+// Matrix.propTypes = {
+//   columns: React.PropTypes.array,
+//   resize: React.PropTypes.oneOf(['both', 'vertical', 'horizontal', 'none']),
+//   readonly: React.PropTypes.bool
+// }
 
 export default Matrix;
