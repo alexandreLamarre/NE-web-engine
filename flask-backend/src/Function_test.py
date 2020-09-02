@@ -183,22 +183,61 @@ if __name__ == "__main__":
         ## placeholder function for testing methods
         function = Function("f(x) = (x)")
 
-        test_var = ""
-        test_ordered_list = []
+        test_var = "x"
+        test_ordered_list = ["x"]
+        left = set("e")
+        right = set("p")
         res = function.allowed_chars(test_var, test_ordered_list)
-        if res == "":
+        if set(res[0]) == left and set(res[1]) == right:
                 success+=1
         else:
-                FAILED.append(((test_var, test_ordered_list), res))
+                FAILED.append(((test_var, test_ordered_list), left, right, set(res[0]), set(res[1])))
 
         num_tests +=1
+
+        test_var = "og"
+        test_ordered_list = ["og"]
+        left = set("l")
+        right = {"g", "2", "1"}
+        res = function.allowed_chars(test_var, test_ordered_list)
+        if set(res[0]) == left and set(res[1]) == right:
+                success+=1
+        else:
+                FAILED.append(((test_var, test_ordered_list), left, right, set(res[0]), set(res[1])))
+
+        num_tests+=1
+
+        ## TODO need to change the way the builtin function degrees is called, PROBABLY degrees => deg
+        test_builtin_constant = "e"
+        test_ordered_list = ["x"]
+        left = {"c", "d"}
+        right = {"x", "i", "r", "s"}
+        res = function.allowed_chars(test_builtin_constant, test_ordered_list)
+        if set(res[0]) == left and set(res[1]) == right:
+                success+=1
+        else:
+                FAILED.append(((test_var, test_ordered_list), left, right, set(res[0]), set(res[1])))
+
+        num_tests += 1
+
+
+        test_builtin_function = "cos"
+        test_ordered_list = ["x"]
+        left = {"a"}
+        right = {"h"}
+        res = function.allowed_chars(test_builtin_function, test_ordered_list)
+        if set(res[0]) == left and set(res[1]) == right:
+                success+=1
+        else:
+                FAILED.append(((test_var, test_ordered_list), left, right, set(res[0]), set(res[1])))
+        num_tests += 1
 
         end_time = os.times()[0]
         print("{}/{} tests passed for allowed chars method.".format(success,num_tests))
         if FAILED:
                 print("The following input (var, ordered_vars) failed the tests")
                 for i in FAILED:
-                        print("Input:"+ str(i[0][0]) + "," + str(i[0][1]) + " Got:  " + str(i[1]))
+                        print("Input:"+ str(i[0][0]) + "," + str(i[0][1]) + " Expected: (" +str(i[1])+","+str(i[2]) + " Got:  (" + str(i[3]) + "," + str(i[4]) + ")")
         print("Testing allowed_chars method took {} seconds".format(end_time-start_time))
         print("\n")
         ## ======================== end of allowed_chars tests ==============================
@@ -398,6 +437,52 @@ if __name__ == "__main__":
                 FAILED.append(function)
         num_tests+=1
 
+        function = Function("f(o) = (ooooooo)")
+        if str(function) == "NAME: f VARS: [o] FUNCS [o*o*o*o*o*o*o]":
+                success+=1
+        else:
+                FAILED.append(function)
+        num_tests +=1
+
+        function = Function("f(g) = (ggggggggg)")
+        if str(function) == "NAME: f VARS: [g] FUNCS [g*g*g*g*g*g*g*g*g]":
+                success+=1
+        else:
+                FAILED.append(function)
+        num_tests +=1
+
+        function = Function("f(g,l) = (gglgllllgllg)")
+
+        if str(function) == "NAME: f VARS: [g,l] FUNCS [g*g*lg*l*l*l*lg*l*lg]":
+                success+=1
+        else:
+                FAILED.append(function)
+
+        num_tests+=1
+
+        function = Function("f(g,l) = (loglglglglgggglllgloggggg)")
+        if str(function) == "NAME: f VARS: [g,l] FUNCS [log*lg*lg*lg*lg*g*g*g*l*l*lg*log*g*g*g*g]":
+                success+=1
+        else:
+                FAILED.append(function)
+        num_tests += 1
+
+        function = Function("f(e) = (degrees(e))")
+        if str(function) == "NAME: f VARS: [e] FUNCS [degrees(e)]":
+                success+=1
+        else:
+                FAILED.append(function)
+        num_tests += 1
+
+        #Note this function will not compile properly but we expect the interpreter to interpret it according to the test regardless
+        function = Function("f(x) = (coss(x))")
+        print(function)
+        if str(function) == "NAME: f VARS: [x] FUNCS [cos*s*(x)]":
+                success+=1
+        else:
+                FAILED.append(function)
+
+        num_tests += 1
         ## =========='Invalid' variables /functions that should be interpreted==========
         function = Function("f(x,,,,) = (x)")
         if str(function) == "NAME: f VARS: [x] FUNCS [x]":

@@ -129,7 +129,7 @@ class Function(ErrorStack):
                 if(right_index < len(j)):
                     allowed_right_chars.append(j[right_index])
                 else:
-                    allowed_right_chars.append(j)
+                    allowed_right_chars.append(j[-1])
         return allowed_left_chars,allowed_right_chars
 
     def preprocess_parantheses(self, cur_func):
