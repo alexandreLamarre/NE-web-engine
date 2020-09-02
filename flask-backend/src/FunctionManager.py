@@ -1,8 +1,9 @@
 from src.interpreter import FunctionInterpreter
 from src.Error_Stack import ErrorStack
 from src.Function import Function
+from src.DataManager import DataManager
 
-class FunctionManager(FunctionInterpreter):
+class FunctionManager(FunctionInterpreter, DataManager):
     """Factory object that processes the input arguments inside a command object
     Instantiates these inputs into custom Function objects
 
@@ -117,5 +118,5 @@ class FunctionManager(FunctionInterpreter):
         pass
 
 if __name__ == "__main__":
-    test = FunctionManager("f(x) = (cos(x),sin(x)")
+    test = FunctionManager("f(x) = (cos(x),sin(x))")
     print(test.Functions_str_container)

@@ -16,6 +16,10 @@ class Interpreter():
             res.append(m.group(0))
         return res
 
+class ChainInterpreter(Interpreter):
+    def __init__(self):
+        regex_str = ""
+        super().__init__(regex_str)
 
 class FunctionInterpreter(Interpreter):
     def __init__(self):
