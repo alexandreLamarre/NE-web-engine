@@ -173,6 +173,7 @@ library variables and functions.
   - Munkres, James R. "Topology" 2nd edition. 2018.
   - Fisher, Stephen D. "Complex Variables" 1990.
   - Folland, Gerald B.  "Advanced Calculus" 2002.
+  - React Resizeable matrix code based on: https://github.com/oal/react-matrix
 
 ## Running development server commands
 
