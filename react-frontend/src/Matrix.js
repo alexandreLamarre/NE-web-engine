@@ -1,10 +1,11 @@
 import React from "react"
 import PropTypes from "prop-types"
+import ReactDOM from "react-dom"
 
 class MatrixCell extends React.Component{
   constructor(props){
     super(props);
-
+    this.input = React.createRef();
     this.activeStyle = {
       border: "1px solid # 000",
       display: 'block',
@@ -50,6 +51,7 @@ class MatrixCell extends React.Component{
         dy = 1;
         break;
       case "ArrowLeft":
+        dx = -1;
         break;
     }
 
@@ -57,10 +59,8 @@ class MatrixCell extends React.Component{
 
   }
   focus() {
-    var node = this.refs.input.getDOMnode();
-    node.focus();
+    this.input.current.focus();
     var caretPos = this.props.matrix.state.caret;
-    node.setSelectionRange(caretPos, caretPos);
   }
 
   componentDidMount(){
@@ -75,7 +75,7 @@ class MatrixCell extends React.Component{
     var style = this.defaultStyle;
     if(this.props.active) style = this.activeStyle;
     return(
-      <input ref="input" type="text" style = {style} value={this.props.value} readOnly = {this.props.readonly}
+      <input ref={this.input} type="text" style = {style} value={this.props.value} readOnly = {this.props.readonly}
       onClick = {this.onClick.bind(this)}
       onKeyUp = {this.onKeyUp.bind(this)}
       onChange = {this.onChange.bind(this)}
@@ -212,7 +212,7 @@ class Matrix extends React.Component{
     if(cellX >= this.getWidth() && this.isResizeableX()){
       this.addColumn();
     }
-    if(this.staste.y+dy >= this.getHeight() && this.isResizeableY()) {
+    if(this.state.y+dy >= this.getHeight() && this.isResizeableY()) {
       this.addRow();
     }
 

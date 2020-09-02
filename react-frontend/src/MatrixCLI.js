@@ -21,7 +21,7 @@ class MatrixCLI extends React.Component{
   }
 
   onClickRemove(){
-
+    ReactDOM.unmountComponentAtNode(document.getElementById("matrices"));
   }
 
 
