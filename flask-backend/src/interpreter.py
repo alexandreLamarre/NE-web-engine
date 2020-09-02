@@ -18,7 +18,7 @@ class Interpreter():
 
 class ChainInterpreter(Interpreter):
     def __init__(self):
-        regex_str = ""
+        regex_str = "\({1}(\s*([a-zA-Z])*\s*:{1}\s*((([0-9])+(.)?([0-9])*))+)+\s*\){1}"
         super().__init__(regex_str)
 
 class FunctionInterpreter(Interpreter):
@@ -68,3 +68,12 @@ if __name__ == "__main__":
     print(b)
     print(c)
     print(d)
+
+    ci = ChainInterpreter()
+
+    a = ci.match("(a: 0.05 6 6 b: 0.0 0.0) (a: 5)")
+    print(a)
+    for el in a:
+        print(el.split())
+    test_string = "a:b  b:c"
+    print(test_string.split())
