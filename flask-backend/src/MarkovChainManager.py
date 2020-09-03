@@ -61,11 +61,11 @@ class MarkovChainManager(ChainInterpreter, DataManager):
             if len_difference>0:
                 transitions[i] = transitions[i][:len(states[i])]
                 self.Error_stack.push_errors("Too many transitions sets were specified for the set of states, \
-                                                truncating last {} transition".format(len_difference))
+                                                truncating last {} transition(s)".format(len_difference))
             elif len_difference < 0:
                 length_goal = len(states[i]) - len(transitions[i])
                 self.Error_stack.push_error("Not enough transition sets were specified for the set of states, \
-                                                        adding empty {} transition sets".format(len_difference))
+                                                        adding empty {} transition set(s)".format(len_difference))
                 while(length_goal != len(states[i])):
                     transitions[i].append([])
                     length_goal += 1
@@ -74,11 +74,11 @@ class MarkovChainManager(ChainInterpreter, DataManager):
                 len_difference = len(transitions[i][j]) - len(states[i])
                 if len_difference>0:
                     self.Error_stack.push_error("Too many transitions specified for state '{}', truncating last \
-                                                                {} transitions".format(states[i][j], len_difference))
+                                                                {} transition(s)".format(states[i][j], len_difference))
                     transitions[i][j] = transitions[i][j][:len(states[i])]
                 elif len_difference<0:
                     self.Error_stack.push_error("Not enough transitions specified for state '{}', padding with \
-                                                                    {} zero transitions".format(states[i][j],len_difference))
+                                                                    {} zero transition(s)".format(states[i][j],len_difference))
                     length_goal = len(states[i]) - len(transitions[i][j])
                     while(length_goal != len(states[i])):
                         transitions[i][j].append(0)
@@ -148,9 +148,10 @@ class MarkovChainManager(ChainInterpreter, DataManager):
 
 if __name__ == "__main__":
     start_time = os.times()[0]
-    M = MarkovChainManager("(a: 1 1 2 b: 1 1 1 c: 2 2 2 2 2 2 2)")
+    M = MarkovChainManager("(a: 0.2 0.7 0.1 0.1 b: 0.9 0.0 0.1 1 c: 2 8 0 0 d: 9 8 1 9)")
     for c in M.chain_list:
         c.stationary_distribution(20)
+        c.simulation_history(1000)
     end_time = os.times()[0]
     print("{} seconds".format(end_time - start_time))
     # print(M.get_interpreted())
