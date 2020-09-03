@@ -13,7 +13,7 @@ class DataManager(Interpreter):
     def get_errors(self):
         pass
 
-    def get_uninterpreted(self, in_str):
+    def get_uninterpreted(self):
         pass
 
     def process_uninterpreted(self, uninterpreted_string):
