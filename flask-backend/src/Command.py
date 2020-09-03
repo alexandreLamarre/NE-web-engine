@@ -1,7 +1,9 @@
 from src.FunctionManager import FunctionManager
+from src.MarkovChainManager import MarkovChainManager
 from src.Plot import Plot
 from src.Calculus import Calculus
 from src.Error_Stack import ErrorStack
+
 class Command():
     """
     Factory Object that manages the creation of DataManager Objects, i.e. FunctionManager
@@ -22,7 +24,8 @@ class Command():
         self.ErrorStack = ErrorStack()
         self.commands_dict = {'plot': ['FunctionManager'], 'IFS': ['FunctionManager', 'MarkovChain'], \
                               'zeroes' : ['FunctionManager'], 'derivative': ['FunctionManager'], 'integral' : ['FunctionManager'],\
-                              'partialderivative' : ['FunctionManager'], 'partialintegral': ['FunctionManager']}
+                              'partialderivative' : ['FunctionManager'], 'partialintegral': ['FunctionManager'], \
+                              'chain': ["Chain"]}
         self.arguments = self.process_input(command_str)
         self.command = self.process_command(command_str)
 
@@ -75,6 +78,8 @@ class Command():
                     partial_derivatives = calc.partial_derivatives()
                     for p in partial_derivatives:
                         output.append((p[0], p[1]))
+        if self.command == "chain":
+            pass
 
         all_errors = all_errors[:-1] if len(all_errors)>1 else ""
         return main_label, output, all_errors
@@ -120,13 +125,16 @@ class Command():
         for i in self.math_types:
             if i == "FunctionManager":
                     output_list.append(FunctionManager(self.arguments))
+            if i == "Chain":
+                output_list.append(MarkovChainManager(self.arguments))
         return output_list
 
     def get_interpreted(self):
         output_str = ""
         for m in self.math_objects:
             output_str += m.get_interpreted() + " "
-
+        if self.command == "chain":
+            return output_str
         return self.command + "{ " + output_str +"}"
 
     def get_errors(self):

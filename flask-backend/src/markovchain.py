@@ -60,5 +60,15 @@ class Chain:
 
         return np.array(res)
 
+    def get_interpreted(self):
+        output_str = "<br>"
+        states = self.get_states()
+        transitions = self.get_transitions()
+        for i in range(len(states)):
+            for j in range(len(states)):
+                output_str += "{} -> {} : {}  ".format(states[i], states[j], transitions[states[i]][j])
+            output_str += "<br><br>"
+        return output_str
+
     def __repr__(self):
         return str(self.get_transitions())

@@ -84,32 +84,16 @@ class MarkovChainManager(ChainInterpreter, DataManager):
 
     def get_interpreted(self):
         """
+        (None) -> String
         Displays the markov chain in a matrix style
+
         """
-        # output_strings = []
-        # for mc in self.chain_list:
-        #     max_str_len_column = []
-        #     s = mc.get_states()
-        #     t = mc.get_transitions()
-        #
-        #     for i in range(len(s)):
-        #         max_len = 0
-        #         for tr in t:
-        #             max_len= max(len(str(tr[i])), max_len)
-        #         max_str_len_column.append(max_len)
-        #     max_len_state = 0
-        #     for st in s:
-        #         max_len_state = max(len(st), max_len_state)
-        #     first_row = "" + " "*max_len_state
-        #
-        #     for i in range(len(s)):
-        #         padding = max_str_len_column[i] - len(s[i])
-        #         first_row += " "*(padding//2) + s[i] + " "*(padding//2)
-        #     print(max_len_state)
-        #     print(max_str_len_column)
-        #     print(first_row)
+        output_str = ""
+        print(self.chain_list)
+        for m in self.chain_list:
+            output_str += m.get_interpreted() +"\n"
 
-
+        return output_str
 
 
 
@@ -137,18 +121,19 @@ class MarkovChainManager(ChainInterpreter, DataManager):
 if __name__ == "__main__":
     start_time = os.times()[0]
     M = MarkovChainManager("(a: 0.1 0.4 0.5 b: 0.2 0.4 0.4 c: 0.2 0.2 0.2)")
-    print("state_list test")
-    print(M.state_list)
-    print("transition list test")
-    print(M.transitions_list)
-    print("chain list test")
-    print(M.chain_list)
-    print("normalize test")
-    print(M.normalize([[1.5, 1.4, 1.3]]))
-    print("\n")
-
-    M = MarkovChainManager("(one: 1 1 1 1 1 two: 1 1 1 1 1 three 1 1 1 1 1 four 1 1 1 1 1 five 1 1 1 1 1) (a: 1 1 1 b: 1 2 3 c: 1 2 3)")
-    M.get_interpreted()
-    print(M.chain_list)
-    end_time = os.times()[0]
-    print("{} seconds".format(end_time- start_time))
+    # print("state_list test")
+    # print(M.state_list)
+    # print("transition list test")
+    # print(M.transitions_list)
+    # print("chain list test")
+    # print(M.chain_list)
+    # print("normalize test")
+    # print(M.normalize([[1.5, 1.4, 1.3]]))
+    # print("\n")
+    print(M.get_interpreted())
+    #
+    # M = MarkovChainManager("(one: 1 1 1 1 1 two: 1 1 1 1 1 three 1 1 1 1 1 four 1 1 1 1 1 five 1 1 1 1 1) (a: 1 1 1 b: 1 2 3 c: 1 2 3)")
+    # M.get_interpreted()
+    # print(M.chain_list)
+    # # end_time = os.times()[0]
+    # print("{} seconds".format(end_time- start_time))
