@@ -148,13 +148,21 @@ class MarkovChainManager(ChainInterpreter, DataManager):
 
 if __name__ == "__main__":
     start_time = os.times()[0]
-    M = MarkovChainManager("(a: 0 0 1 b: 1 1 1 c: 2 2 2 2 2 2 2)")
-    print(M.get_interpreted())
-    M = MarkovChainManager("(a: 0)")
-    print(M.get_interpreted())
-    print(M.get_errors())
-
-    M = MarkovChainManager("(a: 0) (a: 0 0 1 b: 1 1 1 c: 2 2 2 2 2 2 2 )")
+    M = MarkovChainManager("(a: 1 1 2 b: 1 1 1 c: 2 2 2 2 2 2 2)")
+    for c in M.chain_list:
+        c.stationary_distribution(20)
+    end_time = os.times()[0]
+    print("{} seconds".format(end_time - start_time))
+    # print(M.get_interpreted())
+    # print(M.get_interpreted())
+    # print(M.get_errors())
+    # for c in M.chain_list:
+    #     res = c.approximate_distribution()
+    #     print(res)
+    # end_time = os.times()[0]
+    #
+    # print("{} seconds".format(end_time-start_time))
+    # M = MarkovChainManager("(a: 0) (a: 0 0 1 b: 1 1 1 c: 2 2 2 2 2 2 2 )")
 
     # print("state_list test")
     # print(M.state_list)

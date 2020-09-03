@@ -1,4 +1,11 @@
 import numpy as np
+import pandas as pd
+import io
+import base64
+from random import seed
+from random import random
+import matplotlib.pyplot as plt
+
 """ Implementation of a Markov chain using states (which can be numbers, strings or
     even functions)"""
 
@@ -13,11 +20,19 @@ class Chain:
             "number of states and transitions do not match"
 
         self._states = states
+        self.matrix = self.process_transitions(transitions)
         markov_chain = list(zip(states, transitions))
         efficient_chain = {}
         for m in markov_chain:
             efficient_chain[m[0]] = m[1]
         self._transitions = efficient_chain
+
+    def convert_plot_to_base64(self,figure):
+        buf = io.BytesIO()
+
+        figure.savefig(buf, format = "png")
+        base64_string = base64.b64encode(buf.getvalue())
+        return str(base64_string)[2:-1]
 
     def get_states(self):
         """ Getter function for the states of a markov chain"""
@@ -69,6 +84,89 @@ class Chain:
                 output_str += "{} -> {} : {}  ".format(states[i], states[j], transitions[states[i]][j])
             output_str += "<br><br>"
         return output_str
+
+    def process_transitions(self, transitions):
+        return np.array(transitions)
+
+    def approximate_distribution(self, num_orbits = 1000, orbit_length = 10000):
+        hits_dict = {}
+        states = self.get_states()
+        ## initialize number of times we got resultant node
+        for el in states:
+            hits_dict[el] = 0
+
+        for no in range(num_orbits):
+            start_state = self._states[0]
+            next_state = self.step(start_state)
+            for ol in range(orbit_length-1):
+                next_state = self.step(next_state)
+
+            hits_dict[next_state] += 1
+
+        ##TODO iterate over dict
+        output_str = ""
+        for s in states:
+            output_str += "{}: {} ".format(s, hits_dict[s]/num_orbits)
+        return output_str
+
+    def stationary_distribution(self, num_exponentiations=50):
+        #Prevent any kind of crazy matplotlib memory leaks (which seem to happen pretty frequently)
+        plt.close("all")
+        # Stochastic matrix P
+        P = self.get_transition_matrix()
+        start_state_to_transition_matrix = [1.0]
+        for i in range(len(self.get_states())-1):
+            start_state_to_transition_matrix.append(0.0)
+        state = np.array([start_state_to_transition_matrix])
+        stateHist = state
+
+        dfStateHist = pd.DataFrame(state)
+        distribution_hist = [[0]*len(self.get_states())]
+
+        for x in range(num_exponentiations):
+            state = np.dot(state,P)
+            stateHist = np.append(stateHist,state,axis = 0)
+
+            # dfDistrHist.plot()
+        dfDistrHist = pd.DataFrame(stateHist, columns=self.get_states())
+        dfDistrHist.plot(alpha = 0.7)
+        ax = plt.gca()
+        ax.set_ylabel("Probability")
+        plt.title("Stationary Distribution")
+        # plt.show()
+        ##Calculate the actual value of the stationary distribution
+        distr_values = self.calculate_stationary_distribution(P)
+
+
+        figure = plt.gcf()
+        output_plot = self.convert_plot_to_base64(figure)
+        plt.close("all")
+
+        return output_plot, distr_values
+
+    def calculate_stationary_distribution(self, matrix):
+        """
+        Solves the following for pi, where pi = startstate * stochastic_matrix^n as n-> infinity
+        """
+        A = np.append(np.transpose(matrix) - np.identity(len(self.get_states())), [[1]*len(self.get_states())], axis = 0)
+        b = []
+        for i in range(len(self.get_states())):
+            b.append(0)
+        b.append(1)
+        b = np.transpose(np.array(b))
+        return np.linalg.solve(np.transpose(A).dot(A), np.transpose(A).dot(b))
+
+    def distribution(self):
+        pass
+
+    def individual_state_properties(self):
+        pass
+
+    def is_regular(self):
+        pass
+
+    def get_transition_matrix(self):
+        return self.matrix
 
     def __repr__(self):
         return str(self.get_transitions())
