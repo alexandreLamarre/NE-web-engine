@@ -25,14 +25,14 @@ class ErrorStack:
             self.error_dict[error] += 1
 
     def get_errors(self):
-        output_str = ""
+        output_str = "<br>"
         for (k,v) in self.error_dict.items():
             if v == 1:
-                output_str += k + "\n"
+                output_str += k + "<br>"
             else:
-                output_str += k + " (" + str(v) + ")" + "\n"
+                output_str += k + " (" + str(v) + ")" + "<br>"
 
-        return output_str[:-1] ##remove last '\n'
+        return output_str ##remove last '\n'
     # def check_errors(self):
     #     """
     #     None -> String
