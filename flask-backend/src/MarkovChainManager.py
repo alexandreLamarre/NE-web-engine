@@ -99,7 +99,6 @@ class MarkovChainManager(ChainInterpreter, DataManager):
         new_transitions = []
         for t in transitions:
             new_transition_row = []
-            ##Todo make all entries in t positive
             pos_entries_t = [abs(e) for e in t]
             normalizing_constant = sum(pos_entries_t)
             if normalizing_constant == 0:
@@ -149,6 +148,7 @@ class MarkovChainManager(ChainInterpreter, DataManager):
 if __name__ == "__main__":
     start_time = os.times()[0]
     M = MarkovChainManager("(a: 0.2 0.7 0.1 0.1 b: 0.9 0.0 0.1 1 c: 2 8 0 0 d: 9 8 1 9)")
+    print(M.get_interpreted())
     for c in M.chain_list:
         c.stationary_distribution(20)
         c.simulation_history(1000)

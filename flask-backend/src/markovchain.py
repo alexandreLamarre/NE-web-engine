@@ -143,12 +143,11 @@ class Chain:
         ##Calculate the actual value of the stationary distribution
         distr_values = self.calculate_stationary_distribution(P)
 
-
         figure = plt.gcf()
         output_plot = self.convert_plot_to_base64(figure)
         plt.close("all")
 
-        return output_plot, distr_values
+        return output_plot, list(distr_values)
 
     def calculate_stationary_distribution(self, matrix):
         """
@@ -217,9 +216,10 @@ class Chain:
 
         dfDistrHist = pd.DataFrame(distr_hist, columns = self.get_states())
 
-        dfDistrHist.plot(title = "Simulation History")
+        dfDistrHist.plot(title = "Simulation History",alpha = 0.7)
         ax = plt.gca()
         ax.set_ylabel("Probability")
+        ax.set_xlabel("Steps")
         plt.show()
         figure = plt.gcf()
 
