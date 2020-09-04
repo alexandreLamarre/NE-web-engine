@@ -69,35 +69,40 @@ function process_commands(ul,data){
     }
   }
   if(data.labels[n] == "CHAIN"){
+    // console.log("data.info[n].length")
+    // console.log(data.info[n].length)
     for(i = 0; i < data.info[n].length; i ++){
       let statsublabel = createNode("h3");
       statsublabel.innerHTML = "Stationary Distribution";
       append(ul,statsublabel);
+      for(j = 0; j < data.info[n][i][1].length; j ++){
+        let stationary = createNode("img");
+        stationary.src = "data:image/png;base64," + data.info[n][i][1][j][0]
+        append(ul, stationary)
 
-      let stationary = createNode("img");
-      stationary.src = "data:image/png;base64," + data.info[n][i][1][0][0]
-      append(ul, stationary)
-
-      let actual = createNode("h4")
-      var output_str = ""
-      // console.log("data.info[n][i][0]")
-      console.log(data.info[n][i][0][0][0])
-      console.log(data.info[n][i][1][0][1])
-      for(j = 0; j<data.info[n][i][1][0][1].length; j++){
-        // output_str += data.info[n][i][0]
-        output_str += data.info[n][i][0][0][0][j] + " : " + data.info[n][i][1][0][1][j]+ "<br>"
+        let actual = createNode("h4")
+        var output_str = ""
+        // console.log("data.info[n][i][0]")
+        // console.log(data.info[n][i][0][0][0])
+        // console.log(data.info[n][i][1][0][1])
+        console.log(data.info[n][i][0][j][0])
+        for(k = 0; k<data.info[n][i][1][j][1].length; k++){
+          // output_str += data.info[n][i][0]
+          output_str += data.info[n][i][0][j][0][k] + " : " + data.info[n][i][1][j][1][k]+ "<br>"
+        }
+        actual.innerHTML = "Actual Stationary Distribution:  <br>" + output_str
+        append(ul, actual)
       }
-      actual.innerHTML = "Actual Stationary Distribution:  <br>" + output_str
-      append(ul, actual)
 
 
       let simulationsublabel = createNode("h3");
       simulationsublabel.innerHTML = "Simulation History";
       append(ul,simulationsublabel);
-
-      let simulations = createNode("img")
-      simulations.src = "data:image/png;base64,"+data.info[n][i][2]
-      append(ul, simulations);
+      for(j = 0; j < data.info[n][i][2].length; j++){
+        let simulations = createNode("img")
+        simulations.src = "data:image/png;base64,"+data.info[n][i][2][j]
+        append(ul, simulations);
+      }
     }
   }
   }
