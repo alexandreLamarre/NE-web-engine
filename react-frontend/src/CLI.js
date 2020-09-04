@@ -17,6 +17,7 @@ function process_commands(ul,data){
   var i;
   var j;
   var k;
+  console.log(data);
   for(n = 0; n<data.info.length;n++){
     if(data.labels[n] !== null){
       let label = createNode("h2");
@@ -65,6 +66,38 @@ function process_commands(ul,data){
       // console.log(data.info[n][i][1])
       math_info.src = "data:image/png;base64,"+ data.info[n][i][1]
       append(ul, math_info)
+    }
+  }
+  if(data.labels[n] == "CHAIN"){
+    for(i = 0; i < data.info[n].length; i ++){
+      let statsublabel = createNode("h3");
+      statsublabel.innerHTML = "Stationary Distribution";
+      append(ul,statsublabel);
+
+      let stationary = createNode("img");
+      stationary.src = "data:image/png;base64," + data.info[n][i][1][0][0]
+      append(ul, stationary)
+
+      let actual = createNode("h4")
+      var output_str = ""
+      // console.log("data.info[n][i][0]")
+      console.log(data.info[n][i][0][0][0])
+      console.log(data.info[n][i][1][0][1])
+      for(j = 0; j<data.info[n][i][1][0][1].length; j++){
+        // output_str += data.info[n][i][0]
+        output_str += data.info[n][i][0][0][0][j] + " : " + data.info[n][i][1][0][1][j]+ "<br>"
+      }
+      actual.innerHTML = "Actual Stationary Distribution:  <br>" + output_str
+      append(ul, actual)
+
+
+      let simulationsublabel = createNode("h3");
+      simulationsublabel.innerHTML = "Simulation History";
+      append(ul,simulationsublabel);
+
+      let simulations = createNode("img")
+      simulations.src = "data:image/png;base64,"+data.info[n][i][2]
+      append(ul, simulations);
     }
   }
   }
