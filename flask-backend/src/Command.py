@@ -2,6 +2,7 @@ from src.FunctionManager import FunctionManager
 from src.MarkovChainManager import MarkovChainManager
 from src.Plot import Plot
 from src.Calculus import Calculus
+from src.MarkovChainManager import MarkovChainManager
 from src.Error_Stack import ErrorStack
 
 class Command():
@@ -79,7 +80,10 @@ class Command():
                     for p in partial_derivatives:
                         output.append((p[0], p[1]))
         if self.command == "chain":
-            pass
+            for math in self.math_objects:
+                if isinstance(math, MarkovChainManager):
+                    info, distributions, simulations = math.run_all()
+                    output.append((info, distributions, simulations))
 
         all_errors = all_errors[:-1] if len(all_errors)>1 else ""
         return main_label, output, all_errors

@@ -20,6 +20,7 @@ class Chain:
             "number of states and transitions do not match"
 
         self._states = states
+        self.original_transitions = transitions
         self.matrix = self.process_transitions(transitions)
         markov_chain = list(zip(states, transitions))
         efficient_chain = {}
@@ -41,7 +42,7 @@ class Chain:
     def get_transitions(self):
         """ Setter function for the (states,transitions) pairs
         of the markov chain"""
-        return self._transitions
+        return self.original_transitions
 
     def pick_random(self, next_states):
         """ Given a list of transition functions (probabilities)
@@ -78,7 +79,7 @@ class Chain:
     def get_interpreted(self):
         output_str = "<br>"
         states = self.get_states()
-        transitions = self.get_transitions()
+        transitions = self._transitions
 
         output_str += "Start state: " + states[0] + "<br>"
         for i in range(len(states)):

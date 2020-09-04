@@ -145,6 +145,16 @@ class MarkovChainManager(ChainInterpreter, DataManager):
     def generate_reason_uninterpreted(self, unintepreted_string):
         pass
 
+    def run_all(self):
+        info = []
+        stationary_distributions = []
+        simulations = []
+        for c in self.chain_list:
+            info.append((c.get_states(), c.get_transitions()))
+            stationary_distributions.append(c.stationary_distribution())
+            simulations.append(c.simulation_history())
+        return info, stationary_distributions,simulations
+
 if __name__ == "__main__":
     start_time = os.times()[0]
     M = MarkovChainManager("(a: 0.2 0.7 0.1 0.1 b: 0.9 0.0 0.1 1 c: 2 8 0 0 d: 9 8 1 9)")
