@@ -221,7 +221,6 @@ class Chain:
         ax = plt.gca()
         ax.set_ylabel("Probability")
         ax.set_xlabel("Steps")
-        plt.show()
         figure = plt.gcf()
 
         output_plot = self.convert_plot_to_base64(figure)
