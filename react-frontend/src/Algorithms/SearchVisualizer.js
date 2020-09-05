@@ -28,6 +28,22 @@ class SearchVisualizer extends React.Component{
     this.setState({grid: grid});
   }
 
+  defaultGrid(){
+    const startNodePos = this.state.startNodePos;
+    const endNodePos = this.state.goalNodePos;
+    const size = this.state.gridSize;
+    const grid = getInitialGrid(startNodePos, endNodePos, size);
+    this.setState({grid: grid, startNodePos: startNodePos, endNodePos: endNodePos});
+    for(let row = 0; row<this.state.grid.length; row++){
+      for(let col = 0; col < this.state.grid[row].length; col++){
+        if(!grid[row][col].StartNode && !grid[row][col].GoalNode){
+          let el = document.getElementById(`node-${row}-${col}`);
+          el.className = "node";
+        }
+      }
+    }
+  }
+
   handleMouseDown(row,col){
     if(row === this.state.startNodePos[0] && col === this.state.startNodePos[1]){
       this.setState({startNodeDragging: true, mousePressed: true});
@@ -134,6 +150,9 @@ class SearchVisualizer extends React.Component{
 
         <button onClick = {() => this.visualizeDijkstra()}>
           Run Search
+        </button>
+        <button onClick = {() => this.defaultGrid()}>
+          Remove Walls
         </button>
         <div className="grid">
           {grid.map((row,rowIdx) => {
