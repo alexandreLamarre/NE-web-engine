@@ -14,7 +14,7 @@ class Node extends React.Component{
       onMouseUp,row,} = this.props;
 
     const extraClassName = GoalNode ? 'node-goal': StartNode ? 'node-start' : WallNode ? 'node-wall' : 'node';
-    return <div id = {'node-${row}-${col}'}
+    return <div id = {`node-${row}-${col}`}
     className={`node ${extraClassName}`}
     onMouseDown={() => onMouseDown(row,col)}
     onMouseEnter={()=> onMouseEnter(row,col)}

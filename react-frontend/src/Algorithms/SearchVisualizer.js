@@ -1,11 +1,8 @@
 import React from "react";
 import Node from "./Node"
-import "./SearchVisualizer.css";
+import{dijkstra, getNodesInShortestPathOrder} from "./dijkstra"
 
-const START_NODE_ROW = 5;
-const START_NODE_COL = 5;
-const FINISH_NODE_ROW = 5;
-const FINISH_NODE_COL = 10;
+import "./SearchVisualizer.css";
 
 
 
@@ -79,7 +76,48 @@ class SearchVisualizer extends React.Component{
     console.log("Mouse Released")
   }
 
+  animateShortestPath(nodesInShortestPathOrder) {
+    for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
+      setTimeout(() => {
+        const node = nodesInShortestPathOrder[i];
+        if((node.row !== this.state.startNodePos[0] || node.col !== this.state.startNodePos[1]) &&
+              (node.row !== this.state.goalNodePos[0] || node.col !== this.state.goalNodePos[1])){
+                document.getElementById(`node-${node.row}-${node.col}`).className =
+                'node node-shortest-path';
+        }
+      }, 10 * i);
 
+    }
+  }
+
+  animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder){
+    for(let i = 0; i <= visitedNodesInOrder.length; i ++){
+      if(i === visitedNodesInOrder.length){
+        setTimeout(()=>{
+          this.animateShortestPath(nodesInShortestPathOrder);
+        }, 10*i);
+        return;
+      }
+      setTimeout(()=>{
+        const node = visitedNodesInOrder[i];
+        if((node.row !== this.state.startNodePos[0] || node.col !== this.state.startNodePos[1]) &&
+              (node.row !== this.state.goalNodePos[0] || node.col !== this.state.goalNodePos[1])){
+                let el = document.getElementById(`node-${node.row}-${node.col}`)
+                el.className = 'node node-visited';
+              }
+      }, 10*i);
+    }
+
+  }
+
+  visualizeDijkstra(){
+    const grid = this.state.grid;
+    const startNode = grid[this.state.startNodePos[0]][this.state.startNodePos[1]];
+    const goalNode = grid[this.state.goalNodePos[0]][this.state.goalNodePos[1]];
+    const visitedNodesInOrder = dijkstra(grid, startNode, goalNode);
+    const nodesInShortestPathOrder = getNodesInShortestPathOrder(goalNode);
+    this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
+  }
 
   render(){
     const {grid, mousePressed} = this.state;
@@ -87,7 +125,7 @@ class SearchVisualizer extends React.Component{
     return(
       <>
 
-        <button>
+        <button onClick = {() => this.visualizeDijkstra()}>
           Run Search
         </button>
         <div className="grid">
@@ -123,9 +161,9 @@ class SearchVisualizer extends React.Component{
 
 const getInitialGrid = (startNodePos,endNodePos) => {
   const grid = [];
-  for(let row = 0; row< 10; row ++){
+  for(let row = 0; row< 15; row ++){
     const currentRow = [];
-    for(let col = 0; col < 25; col ++){
+    for(let col = 0; col < 35; col ++){
       currentRow.push(createNode(col,row, startNodePos,endNodePos));
     }
     grid.push(currentRow);

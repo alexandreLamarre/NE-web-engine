@@ -52,6 +52,7 @@
 }
 
 .node-shortest-path{
+  background-color: orange;
   animation-name: shortestPath;
   animation-duration: 1.5s;
   animation-timing-function: ease-out;
