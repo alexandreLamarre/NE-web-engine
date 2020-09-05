@@ -61,6 +61,7 @@ class MatrixCell extends React.Component{
   focus() {
     this.input.current.focus();
     var caretPos = this.props.matrix.state.caret;
+    this.input.current.setSelectionRange(caretPos, caretPos);
   }
 
   componentDidMount(){

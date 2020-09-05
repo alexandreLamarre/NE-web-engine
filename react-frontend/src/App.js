@@ -4,6 +4,9 @@ import './Tab.css';
 import './App.css';
 import CLI from "./CLI"
 import MatrixCLI from "./MatrixCLI"
+import MarkovGraph from "./MarkovGraph"
+import SearchVisualizer from "./Algorithms/SearchVisualizer"
+
 
 function App() {
   return (
@@ -23,10 +26,16 @@ function App() {
         </TabPanel>
         <TabPanel>
         Matrices
-        <MatrixCLI/> 
+        <MatrixCLI/>
         </TabPanel>
-        <TabPanel> Algorithms </TabPanel>
-        <TabPanel> Log in </TabPanel>
+        <TabPanel>
+        Algorithms
+        <SearchVisualizer></SearchVisualizer>
+        </TabPanel>
+        <TabPanel>
+        Log in
+        <MarkovGraph/>
+         </TabPanel>
       </Tabs>
       </header>
 

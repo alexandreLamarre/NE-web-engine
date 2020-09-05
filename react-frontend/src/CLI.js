@@ -32,9 +32,14 @@ function process_commands(ul,data){
     if(data.errors[n] !== null || data.errors !== ""){
       let errors = createNode("p")
       // console.log(data.errors[n])
-      errors.innerHTML = data.errors[n]
-      errors.style = "color:#FE7272;"
-      append(ul,errors)
+      let s = data.errors[n]
+      s.replace(" ", "");
+      console.log(s)
+      if(s != ""){
+        errors.innerHTML = data.errors[n]
+        errors.style = "color:#FE7272;"
+        append(ul,errors)
+      }
     }
     if(data.labels[n] === "ZEROES" || data.labels[n] === "PARTIALDERIVATIVE" || data.labels[n] === "PARTIALINTEGRAL"){
     for(i = 0; i <data.info[n].length;i++){
@@ -142,9 +147,18 @@ function process_input(ul, data){
     //do nothing
   }
   else{
-    error_info.innerHTML = "Errors : " + data.errors;
-    error_info.style="color:#FE7272;";
-    append(ul, error_info);
+    let s = data.errors
+    console.log("initial errors")
+    console.log(s)
+    s = s.replace(/<br>/g, "")
+    s = s.replace(/\s/g, "")
+    console.log("after")
+    console.log(s)
+    if(s != ""){
+      error_info.innerHTML = "Errors : " + data.errors;
+      error_info.style="color:#FE7272;";
+      append(ul, error_info);
+    }
   }
 }
 

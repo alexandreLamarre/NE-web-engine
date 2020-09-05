@@ -26,25 +26,48 @@ class MarkovGraph extends React.Component{
         background: "#FFFFFF",
         border:"2px solid #000000"
       },
-      height : 200
+      height : 200,
+      width : 800,
+      states: ["a", "b", "c", "d", "e", "f", "g", "h", "i"],
+      transitions: [[]]
     };
+
+    this.canvas = React.createRef();
+
+    this.setStates = this.setStates.bind(this);
+    this.setTransitions = this.setTransitions.bind(this);
 
   }
 
   componentDidMount(){
 
+    this.setState({height: 200* Math.ceil(this.state.states.length/7)})
   }
   componentDidUpdate(){
-
+    this.drawToCanvas(this.getStates(), this.getTransitions());
   }
 
+  setStates(new_states){
+    this.setState({states: new_states});
+  }
 
+  setTransitions(new_transitions){
+    this.setState({transitions: new_transitions});
+  }
+
+  getStates(){
+    return this.state.states;
+  }
+
+  getTransitions(){
+    return this.state.transitions;
+  }
   drawToCanvas(states, transitions){
     //states is a 1 dimensional list of strings
     //transitions is a 2 dimensional list of probabilities
 
     var margin = 20;
-    var c = document.getElementById("MarkovCanvas");
+    var c = this.canvas.current;
     var ctx = c.getContext("2d");
     ctx.beginPath();
     // draw node circles
@@ -54,7 +77,7 @@ class MarkovGraph extends React.Component{
 
     for(var i =0; i<states.length; i ++){
       var radius = 40;
-      var xPos = margin + radius+ (c.width)/(states.length) //* (i%7)
+      var xPos = margin + radius+ (c.width)/(states.length) * i
       var yPos = 100 //+ 200*Math.floor(Math.abs(i-1)/7);
       var text = ctx.measureText(states[i]);
       ctx.fillText(states[i], xPos-Math.min(text.width/2, radius), yPos, 2*radius);
@@ -104,7 +127,7 @@ class MarkovGraph extends React.Component{
 
   render(){
     return <div>
-            <canvas id = "MarkovCanvas" width = "800" height = {this.state.height} style = {this.state.canvas_styles}>
+            <canvas ref = {this.canvas} width = "800" height = {this.state.height} style = {this.state.canvas_styles}>
             </canvas>
            </div>
   }
