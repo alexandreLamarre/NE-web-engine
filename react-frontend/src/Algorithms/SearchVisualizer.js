@@ -11,6 +11,7 @@ class SearchVisualizer extends React.Component{
     super(props);
     this.state = {
       grid: [],
+      gridSize : [15,35],
       mousePressed: false,
       startNodePos: [5,5],
       goalNodePos: [5,20],
@@ -22,7 +23,8 @@ class SearchVisualizer extends React.Component{
   componentDidMount(){
     const startNodePos = this.state.startNodePos;
     const endNodePos = this.state.goalNodePos;
-    const grid = getInitialGrid(startNodePos, endNodePos);
+    const size = this.state.gridSize;
+    const grid = getInitialGrid(startNodePos, endNodePos, size);
     this.setState({grid: grid});
   }
 
@@ -51,6 +53,7 @@ class SearchVisualizer extends React.Component{
       this.setState({startNodePos: [row,col], grid: newGrid});
       // console.log("moving start to")
       // console.log(row,col)
+      console.log(row,col);
     }
     else if(this.state.goalNodeDragging){
       const goalNodePos = this.state.goalNodePos;
@@ -111,13 +114,17 @@ class SearchVisualizer extends React.Component{
   }
 
   visualizeDijkstra(){
+    const newGrid = resetGrid(this.state.grid); //Need to make this way more rigorous, preserve WallNodes, reset distances...
+    this.setState({grid: newGrid});
     const grid = this.state.grid;
     const startNode = grid[this.state.startNodePos[0]][this.state.startNodePos[1]];
     const goalNode = grid[this.state.goalNodePos[0]][this.state.goalNodePos[1]];
+    console.log(startNode);
     const visitedNodesInOrder = dijkstra(grid, startNode, goalNode);
     const nodesInShortestPathOrder = getNodesInShortestPathOrder(goalNode);
     this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
   }
+
 
   render(){
     const {grid, mousePressed} = this.state;
@@ -159,17 +166,41 @@ class SearchVisualizer extends React.Component{
   }
 }
 
-const getInitialGrid = (startNodePos,endNodePos) => {
+const getInitialGrid = (startNodePos,endNodePos, size) => {
   const grid = [];
-  for(let row = 0; row< 15; row ++){
+  for(let row = 0; row< size[0]; row ++){
     const currentRow = [];
-    for(let col = 0; col < 35; col ++){
+    for(let col = 0; col < size[1]; col ++){
       currentRow.push(createNode(col,row, startNodePos,endNodePos));
     }
     grid.push(currentRow);
   }
   return grid;
 };
+
+const resetGrid= (grid) => {
+  const newGrid = grid.slice();
+  for(let row = 0; row < grid.length; row++){
+    for(let col =0; col < grid[row].length; col++){
+      const node = newGrid[row][col];
+      if(!node.StartNode && !node.GoalNode && !node.WallNode){
+        const newNode = createNode(col,row,[-1,-1],[-1,-1]) // ensure it doesnt get mistaken for a start/goalnode
+        newGrid[row][col] = newNode;
+        let el = document.getElementById(`node-${row}-${col}`);
+        el.className = "node";
+      }
+      else if(node.StartNode){
+        const newNode = createNode(col,row, [row,col], [-1,-1]);
+        newGrid[row][col] = newNode;
+      }
+      else if(node.GoalNode){
+        const newNode = createNode(col,row, [-1,-1], [row,col]);
+        newGrid[row][col] = newNode;
+      }
+    }
+  }
+  return newGrid;
+}
 
 const createNode = (col,row, startNodePos, endNodePos) => {
   return {col,row,StartNode: row === startNodePos[0] && col === startNodePos[1],
