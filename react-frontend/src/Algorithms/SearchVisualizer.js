@@ -1,7 +1,8 @@
 import React from "react";
 import Node from "./Node"
 import{dijkstra, getNodesInShortestPathOrder} from "./dijkstra"
-
+import {astar} from "./Astar"
+import {greedy} from "./GreedyBestFirst"
 import "./SearchVisualizer.css";
 
 
@@ -135,8 +136,29 @@ class SearchVisualizer extends React.Component{
     const grid = this.state.grid;
     const startNode = grid[this.state.startNodePos[0]][this.state.startNodePos[1]];
     const goalNode = grid[this.state.goalNodePos[0]][this.state.goalNodePos[1]];
-    console.log(startNode);
     const visitedNodesInOrder = dijkstra(grid, startNode, goalNode);
+    const nodesInShortestPathOrder = getNodesInShortestPathOrder(goalNode);
+    this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
+  }
+
+  visualizeAstar(){
+    const newGrid = resetGrid(this.state.grid); //Need to make this way more rigorous, preserve WallNodes, reset distances...
+    this.setState({grid: newGrid});
+    const grid = this.state.grid;
+    const startNode = grid[this.state.startNodePos[0]][this.state.startNodePos[1]];
+    const goalNode = grid[this.state.goalNodePos[0]][this.state.goalNodePos[1]];
+    const visitedNodesInOrder = astar(grid, startNode, goalNode);
+    const nodesInShortestPathOrder = getNodesInShortestPathOrder(goalNode);
+    this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
+  }
+
+  visualizeGreedy(){
+    const newGrid = resetGrid(this.state.grid); //Need to make this way more rigorous, preserve WallNodes, reset distances...
+    this.setState({grid: newGrid});
+    const grid = this.state.grid;
+    const startNode = grid[this.state.startNodePos[0]][this.state.startNodePos[1]];
+    const goalNode = grid[this.state.goalNodePos[0]][this.state.goalNodePos[1]];
+    const visitedNodesInOrder = greedy(grid, startNode, goalNode);
     const nodesInShortestPathOrder = getNodesInShortestPathOrder(goalNode);
     this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
   }
@@ -149,10 +171,16 @@ class SearchVisualizer extends React.Component{
       <>
 
         <button onClick = {() => this.visualizeDijkstra()}>
-          Run Search
+          Run Dijkstra Search
+        </button>
+        <button onClick = {() => this.visualizeGreedy()}>
+          Greedy Best First Search
+        </button>
+        <button onClick = {()=> this.visualizeAstar()}>
+          Run A* search
         </button>
         <button onClick = {() => this.defaultGrid()}>
-          Remove Walls
+          Clear
         </button>
         <div className="grid">
           {grid.map((row,rowIdx) => {
