@@ -17,7 +17,8 @@ class SearchVisualizer extends React.Component{
       startNodePos: [5,5],
       goalNodePos: [5,20],
       startNodeDragging: false,
-      goalNodeDragging: false
+      goalNodeDragging: false,
+      running: false
     };
   }
 
@@ -108,6 +109,7 @@ class SearchVisualizer extends React.Component{
       }, 10 * i);
 
     }
+    this.setState({running:false});
   }
 
   animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder){
@@ -127,10 +129,10 @@ class SearchVisualizer extends React.Component{
               }
       }, 10*i);
     }
-
   }
 
   visualizeDijkstra(){
+    this.setState({running:true});
     const newGrid = resetGrid(this.state.grid); //Need to make this way more rigorous, preserve WallNodes, reset distances...
     this.setState({grid: newGrid});
     const grid = this.state.grid;
@@ -142,6 +144,7 @@ class SearchVisualizer extends React.Component{
   }
 
   visualizeAstar(){
+    this.setState({running:true});
     const newGrid = resetGrid(this.state.grid); //Need to make this way more rigorous, preserve WallNodes, reset distances...
     this.setState({grid: newGrid});
     const grid = this.state.grid;
@@ -153,6 +156,7 @@ class SearchVisualizer extends React.Component{
   }
 
   visualizeGreedy(){
+    this.setState({running:true});
     const newGrid = resetGrid(this.state.grid); //Need to make this way more rigorous, preserve WallNodes, reset distances...
     this.setState({grid: newGrid});
     const grid = this.state.grid;
@@ -169,19 +173,6 @@ class SearchVisualizer extends React.Component{
 
     return(
       <>
-
-        <button onClick = {() => this.visualizeDijkstra()}>
-          Run Dijkstra Search
-        </button>
-        <button onClick = {() => this.visualizeGreedy()}>
-          Greedy Best First Search
-        </button>
-        <button onClick = {()=> this.visualizeAstar()}>
-          Run A* search
-        </button>
-        <button onClick = {() => this.defaultGrid()}>
-          Clear
-        </button>
         <div className="grid">
           {grid.map((row,rowIdx) => {
             return (
@@ -207,6 +198,20 @@ class SearchVisualizer extends React.Component{
             )
           }
           )}
+        </div>
+        <div className = "buttons">
+          <button onClick = {() => this.visualizeDijkstra()} disabled = {this.state.running}>
+            Run Dijkstra Search
+          </button>
+          <button onClick = {() => this.visualizeGreedy()} disabled = {this.state.running}>
+            Greedy Best First Search
+          </button>
+          <button onClick = {()=> this.visualizeAstar()} disabled = {this.state.running}>
+            Run A* search
+          </button>
+          <button onClick = {() => this.defaultGrid()} disabled = {this.state.running}>
+            Clear
+          </button>
         </div>
       </>
     )

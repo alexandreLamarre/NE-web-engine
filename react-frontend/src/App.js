@@ -29,7 +29,6 @@ function App() {
         <MatrixCLI/>
         </TabPanel>
         <TabPanel>
-        Algorithms
         <SearchVisualizer></SearchVisualizer>
         </TabPanel>
         <TabPanel>
