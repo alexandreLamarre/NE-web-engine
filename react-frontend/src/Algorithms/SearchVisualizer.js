@@ -18,7 +18,8 @@ class SearchVisualizer extends React.Component{
       goalNodePos: [5,20],
       startNodeDragging: false,
       goalNodeDragging: false,
-      running: false
+      running: false,
+      animationSpeed: 10,
     };
   }
 
@@ -47,18 +48,20 @@ class SearchVisualizer extends React.Component{
   }
 
   handleMouseDown(row,col){
-    if(row === this.state.startNodePos[0] && col === this.state.startNodePos[1]){
-      this.setState({startNodeDragging: true, mousePressed: true});
-      console.log("startnode selected")
-    }
-    else if(row === this.state.goalNodePos[0] && col === this.state.goalNodePos[1]){
-      this.setState({goalNodeDragging: true, mousePressed: true});
-      console.log("goalnode selected");
-    }
-    else{
-      const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
-      this.setState({grid: newGrid, mousePressed: true});
-      console.log("regular node selected")
+    if(!this.state.running){
+      if(row === this.state.startNodePos[0] && col === this.state.startNodePos[1]){
+        this.setState({startNodeDragging: true, mousePressed: true});
+        console.log("startnode selected")
+      }
+      else if(row === this.state.goalNodePos[0] && col === this.state.goalNodePos[1]){
+        this.setState({goalNodeDragging: true, mousePressed: true});
+        console.log("goalnode selected");
+      }
+      else{
+        const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
+        this.setState({grid: newGrid, mousePressed: true});
+        console.log("regular node selected")
+      }
     }
   }
 
@@ -106,7 +109,7 @@ class SearchVisualizer extends React.Component{
                 document.getElementById(`node-${node.row}-${node.col}`).className =
                 'node node-shortest-path';
         }
-      }, 10 * i);
+      }, this.state.animationSpeed * i);
 
     }
     this.setState({running:false});
@@ -117,7 +120,7 @@ class SearchVisualizer extends React.Component{
       if(i === visitedNodesInOrder.length){
         setTimeout(()=>{
           this.animateShortestPath(nodesInShortestPathOrder);
-        }, 10*i);
+        }, this.state.animationSpeed*i);
         return;
       }
       setTimeout(()=>{
@@ -127,7 +130,7 @@ class SearchVisualizer extends React.Component{
                 let el = document.getElementById(`node-${node.row}-${node.col}`)
                 el.className = 'node node-visited';
               }
-      }, 10*i);
+      }, this.state.animationSpeed*i);
     }
   }
 
@@ -167,6 +170,12 @@ class SearchVisualizer extends React.Component{
     this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
   }
 
+  setAnimationSpeed(value){
+    const val = Math.abs(value-11);
+    console.log(val);
+    this.setState({animationSpeed: val});
+  }
+
 
   render(){
     const {grid, mousePressed} = this.state;
@@ -198,6 +207,12 @@ class SearchVisualizer extends React.Component{
             )
           }
           )}
+        </div>
+        <div className = "sliders">
+          <input type = "range" min = "1" max = "10" defaultValue ="1" className = "slider"
+          name = "speed" disabled = {this.state.running}
+          onInput = {(event)=> this.setAnimationSpeed(event.target.value)} disabled = {this.state.running}/>
+          <label for="speed"> AnimationSpeed : {this.state.animationSpeed}ms</label>
         </div>
         <div className = "buttons">
           <button onClick = {() => this.visualizeDijkstra()} disabled = {this.state.running}>

@@ -20,6 +20,8 @@ class SortVisualizer extends React.Component{
       barWidth: 1,
       comparisons: 0,
       arrayAccesses: 0,
+      running: false,
+      sorted: false,
     }
   }
 
@@ -116,7 +118,7 @@ class SortVisualizer extends React.Component{
     console.log(sortedArray);
     console.log(animations);
     // this.animateInsertionSort(animations);
-    this.setState({array: sortedArray})
+    this.setState({array: sortedArray, sorted: true})
 
   }
 
@@ -126,7 +128,7 @@ class SortVisualizer extends React.Component{
     console.log(animationArray)
     console.log(array);
     // this.animateSort(animationArray)
-    this.setState({array:array});
+    this.setState({array:array, sorted: true});
   }
 
   getMergeSorted(){
@@ -136,43 +138,43 @@ class SortVisualizer extends React.Component{
     console.log("animations")
     console.log(animations);
     // this.animateMergeSort(animations);
-    this.setState({array:new_array});
+    this.setState({array:new_array, sorted: true});
   }
 
   getBubbleSorted(){
     const sortedArray = bubbleSort(this.state.array);
     console.log(sortedArray);
-    this.setState({array:sortedArray})
+    this.setState({array:sortedArray, sorted: true})
   }
 
   getRadixSorted(){
     const sortedArray = radixSort(this.state.array);
     console.log(sortedArray);
-    this.setState({array:sortedArray});
+    this.setState({array:sortedArray, sorted: true});
   }
 
   getHeapSorted(){
     const sortedArray = heapSort(this.state.array);
     console.log(sortedArray);
-    this.setState({array:sortedArray});
+    this.setState({array:sortedArray, sorted: true});
   }
 
   getGravitySorted(){
     const sortedArray = gravitySort(this.state.array);
     console.log(sortedArray);
-    this.setState({array: sortedArray});
+    this.setState({array: sortedArray, sorted: true});
   }
 
   getTimSorted(){
     const sortedArray = timSort(this.state.array);
     console.log(sortedArray);
-    this.setState({array: sortedArray});
+    this.setState({array: sortedArray, sorted: true});
   }
 
   getIntroSorted(){
     const sortedArray = introSort(this.state.array);
     console.log(sortedArray);
-    this.setState({array: sortedArray});
+    this.setState({array: sortedArray, sorted: true});
   }
 
   resetArray(){
@@ -190,7 +192,7 @@ class SortVisualizer extends React.Component{
     // if(el){
     //   el.width = `${this.state.barWidth}px`;
     // }
-    this.setState({array:array, containerWidth: w, containerHeight: h});
+    this.setState({array:array, containerWidth: w, containerHeight: h, sorted:false});
 
   }
 
@@ -213,39 +215,48 @@ class SortVisualizer extends React.Component{
       <div className = "sliders">
         <input type = "range" min = "1" max = "10" default = "1" className = "slider"
         name = "arraysize"
-        onInput = {(event)=> this.setBarWidth(event.target.value)}/>
+        onInput = {(event)=> this.setBarWidth(event.target.value)} disabled = {this.state.running}/>
         <label for="arraysize"> ArraySize </label>
       </div>
       </div>
       <div className = "buttons" style = {{maxWidth: `${containerWidth}px`}}>
-      <button onClick = {()=> this.getInsertionSorted()} className ="b">
+      <button onClick = {()=> this.getInsertionSorted()} className ="b"
+      disabled = {this.state.running || this.state.sorted}>
       Insertion Sort
       </button>
-      <button className ="b" onClick = {()=> this.getQuickSorted()}>
+      <button className ="b" onClick = {()=> this.getQuickSorted()}
+      disabled = {this.state.running || this.state.sorted}>
       Quick Sort
       </button>
-      <button className ="b" onClick = {()=>this.getMergeSorted()}>
+      <button className ="b" onClick = {()=>this.getMergeSorted()}
+      disabled = {this.state.running || this.state.sorted}>
       Merge Sort
       </button>
-      <button className ="b" onClick = {() => this.getBubbleSorted()}>
+      <button className ="b" onClick = {() => this.getBubbleSorted()}
+      disabled = {this.state.running || this.state.sorted}>
       Bubble Sort
       </button>
-      <button className ="b" onClick = {() => this.getTimSorted()}>
+      <button className ="b" onClick = {() => this.getTimSorted()}
+      disabled = {this.state.running || this.state.sorted}>
       Tim Sort
       </button>
-      <button className ="b" onClick = {() => this.getIntroSorted()}>
+      <button className ="b" onClick = {() => this.getIntroSorted()}
+      disabled = {this.state.running || this.state.sorted}>
       Intro Sort
       </button>
-      <button className ="b" onClick = {() => this.getRadixSorted()}>
+      <button className ="b" onClick = {() => this.getRadixSorted()}
+      disabled = {this.state.running || this.state.sorted}>
       Radix Sort
       </button>
       <button onClick = {() => this.resetArray()} className ="b">
       Reset Array
       </button>
-      <button onClick = {() => this.getHeapSorted()} className = "b">
+      <button onClick = {() => this.getHeapSorted()} className = "b"
+      disabled = {this.state.running || this.state.sorted}>
       Heap Sort
       </button>
-      <button className = "b" onClick = {() => this.getGravitySorted()}>
+      <button className = "b" onClick = {() => this.getGravitySorted()}
+      disabled = {this.state.running || this.state.sorted}>
       Gravity Sort
       </button>
       </div>
