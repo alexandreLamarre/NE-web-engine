@@ -6,7 +6,8 @@ import CLI from "./CLI"
 import MatrixCLI from "./MatrixCLI"
 import MarkovGraph from "./MarkovGraph"
 import SearchVisualizer from "./Algorithms/SearchVisualizer"
-
+import SortVisualizer from "./Algorithms/SortVisualizer"
+import AlgoVisualizer from "./Algorithms/algoVisualizer"
 
 function App() {
   return (
@@ -29,7 +30,7 @@ function App() {
         <MatrixCLI/>
         </TabPanel>
         <TabPanel>
-        <SearchVisualizer></SearchVisualizer>
+          <AlgoVisualizer/>
         </TabPanel>
         <TabPanel>
         Log in

@@ -1,11 +1,15 @@
+let animations_array = [];
+
 export function startMergeSort(arr){
   const array = arr;
+  animations_array = [];
+  console.log(animations_array)
   const new_array = mergeSort(array, 0, array.length-1);
-  return new_array;
+  return [new_array, animations_array];
 }
 
 function mergeSort(array){
-
+  // console.log(animations_array)
   if(array.length <=1){
     return array;
   }
@@ -19,12 +23,15 @@ function mergeSort(array){
 
 function merge(left,right){
   let resultArray = [], leftIndex = 0, rightIndex = 0;
-
   while(leftIndex < left.length && rightIndex < right.length){
+    animations_array.push([leftIndex, rightIndex]);
+    animations_array.push([leftIndex, rightIndex]);
     if(left[leftIndex] < right[rightIndex]){
+      animations_array.push([leftIndex,left[leftIndex]])
       resultArray.push(left[leftIndex]);
       leftIndex++;
     } else{
+      animations_array.push([rightIndex, rightIndex]);
       resultArray.push(right[rightIndex]);
       rightIndex ++;
     }

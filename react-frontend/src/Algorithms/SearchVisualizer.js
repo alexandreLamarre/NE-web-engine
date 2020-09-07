@@ -12,7 +12,7 @@ class SearchVisualizer extends React.Component{
     super(props);
     this.state = {
       grid: [],
-      gridSize : [15,35],
+      gridSize : [20,35],
       mousePressed: false,
       startNodePos: [5,5],
       goalNodePos: [5,20],

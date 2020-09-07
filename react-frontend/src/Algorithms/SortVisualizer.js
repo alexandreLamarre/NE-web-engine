@@ -7,6 +7,8 @@ import {bubbleSort} from "./bubbleSort";
 import {radixSort} from "./radixSort";
 import {heapSort} from "./heapSort";
 import {gravitySort} from "./gravitySort"
+import {timSort} from "./timSort";
+import {introSort} from "./introSort";
 
 class SortVisualizer extends React.Component{
   constructor(props){
@@ -62,10 +64,58 @@ class SortVisualizer extends React.Component{
       }
     }
   }
+  animateMergeSort(animations){
+    for(var i =0; i < animations.length; i++){
+      console.log("animating")
+      const arrayBars = document.getElementsByClassName("array-bar");
+      if(i%3 !==2){
+        const [barOne, barTwo] = animations[i];
+        const barOneStyle = arrayBars[barOne].style;
+        const barTwoStyle = arrayBars[barTwo].style;
+        console.log(barOneStyle)
+        const color = i%3 === 0? "red":"green"
+        console.log(color)
+        setTimeout(()=>{
+          barOneStyle.backgroundColor = color;
+          barTwoStyle.backgroundColor = color;
+        }, i * 5);
+      } else{
+
+      }
+    }
+  }
+
+  animateInsertionSort(animations){
+    for(let i = 0; i < animations.length; i ++){
+      const arrayBars = document.getElementsByClassName("array-bar");
+      if(i%3 !==2){
+        const [barOne] = animations[i];
+        const barOneStyle = arrayBars[barOne].style;
+        const color = i%3 === 0? "red": "green";
+        setTimeout(()=>{
+          barOneStyle.backgroundColor = color;
+        }, i* 1)
+      }
+      else{
+        const [barOne,barTwo] = animations[i];
+        const array = this.state.array;
+        setTimeout(() => {
+          const temp = array[barOne];
+          array[barOne] = array[barTwo];
+          array[barTwo] = temp;
+          this.setState({array:array});
+        }, i * 1)
+      }
+
+    }
+  }
+
 
   getInsertionSorted(){
-    const sortedArray = insertionSort(this.state.array);
+    const [sortedArray, animations] = insertionSort(this.state.array);
     console.log(sortedArray);
+    console.log(animations);
+    // this.animateInsertionSort(animations);
     this.setState({array: sortedArray})
 
   }
@@ -80,9 +130,13 @@ class SortVisualizer extends React.Component{
   }
 
   getMergeSorted(){
-    const sortedArray = startMergeSort(this.state.array);
-    console.log(sortedArray);
-    this.setState({array:sortedArray});
+    const [new_array, animations] = startMergeSort(this.state.array);
+    console.log("sorted array");
+    console.log(new_array);
+    console.log("animations")
+    console.log(animations);
+    // this.animateMergeSort(animations);
+    this.setState({array:new_array});
   }
 
   getBubbleSorted(){
@@ -108,10 +162,23 @@ class SortVisualizer extends React.Component{
     console.log(sortedArray);
     this.setState({array: sortedArray});
   }
+
+  getTimSorted(){
+    const sortedArray = timSort(this.state.array);
+    console.log(sortedArray);
+    this.setState({array: sortedArray});
+  }
+
+  getIntroSorted(){
+    const sortedArray = introSort(this.state.array);
+    console.log(sortedArray);
+    this.setState({array: sortedArray});
+  }
+
   resetArray(){
     const array = [];
     const w = Math.floor(window.innerWidth *0.45);
-    const h = Math.floor(window.innerHeight* 0.60);
+    const h = Math.floor(window.innerHeight* 0.55);
     // console.log(w)
     // console.log(h)
     console.log("number of array elements")
@@ -163,10 +230,10 @@ class SortVisualizer extends React.Component{
       <button className ="b" onClick = {() => this.getBubbleSorted()}>
       Bubble Sort
       </button>
-      <button className ="b">
+      <button className ="b" onClick = {() => this.getTimSorted()}>
       Tim Sort
       </button>
-      <button className ="b">
+      <button className ="b" onClick = {() => this.getIntroSorted()}>
       Intro Sort
       </button>
       <button className ="b" onClick = {() => this.getRadixSorted()}>
