@@ -1,6 +1,56 @@
 .sliders{
+  margin-top: 1%;
+  border: solid 1px;
+  border-top: 2px;
+  border-color: black;
   background: #787878;
   width:100%
+}
+
+.slider{
+  margin-left: 10%
+}
+
+.selects{
+  border: solid 1px;
+  border-color: black;
+  border-top: 0px;
+  background: #797979;
+  color: "black";
+  display:flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.selectSearch{
+  flex-basis: 25%;
+  margin: auto;
+  color: "black";
+  text-align: center;
+}
+
+.sb{
+  border: solid 2px;
+  border-top: 0px;
+  border-bottom: 0px;
+  margin-top: 0;
+  padding: 15px 32px;
+  font-family:'Roboto',sans-serif;
+  font-weight:300;
+  font-size: 20px;
+  color:white;
+  text-align:center;
+  transition: all 0.2s;
+  background-color: #e7e7e7;
+}
+
+.b:hover {
+  background-color: green;
+  color:white;
+}
+
+.b:disabled{
+  background-color: lightgrey;
 }
 
 .slider{

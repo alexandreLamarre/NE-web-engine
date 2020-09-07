@@ -15,11 +15,13 @@ class SearchVisualizer extends React.Component{
       gridSize : [20,35],
       mousePressed: false,
       startNodePos: [5,5],
-      goalNodePos: [5,20],
+      goalNodePos: [10,30],
       startNodeDragging: false,
       goalNodeDragging: false,
       running: false,
       animationSpeed: 10,
+      weight: 1,
+      searchType: "dijkstra",
     };
   }
 
@@ -176,6 +178,20 @@ class SearchVisualizer extends React.Component{
     this.setState({animationSpeed: val});
   }
 
+  runSearch(){
+    if(this.state.searchType === "dijkstra") this.visualizeDijkstra();
+    if(this.state.searchType === "astar") this.visualizeAstar();
+    if(this.state.searchType === "greedy") this.visualizeGreedy();
+  }
+
+  setSearch(value){
+    console.log(value);
+    this.setState({searchType:value})
+  }
+
+  setWeight(value){
+    this.setState({weight: value})
+  }
 
   render(){
     const {grid, mousePressed} = this.state;
@@ -209,22 +225,44 @@ class SearchVisualizer extends React.Component{
           )}
         </div>
         <div className = "sliders">
-          <input type = "range" min = "1" max = "10" defaultValue ="1" className = "slider"
+          <input
+          type = "range"
+          min = "1"
+          max = "10"
+          defaultValue ="1"
+          className = "slider"
           name = "speed" disabled = {this.state.running}
-          onInput = {(event)=> this.setAnimationSpeed(event.target.value)} disabled = {this.state.running}/>
+          onInput = {(event)=> this.setAnimationSpeed(event.target.value)}
+          disabled = {this.state.running}>
+          </input>
           <label for="speed"> AnimationSpeed : {this.state.animationSpeed}ms</label>
+          <input
+          type = "range"
+          min = "0"
+          max = "10"
+          defaultValue = "1"
+          className = "slider"
+          name = "weight"
+          disabled = {this.state.running || this.state.searchType !== "wastar"}
+          onInput = {(event) => this.setWeight(event.target.value)}>
+          </input>
+          <label> A* Weighted Weight: {this.state.weight}</label>
         </div>
-        <div className = "buttons">
-          <button onClick = {() => this.visualizeDijkstra()} disabled = {this.state.running}>
-            Run Dijkstra Search
+        <div className = "selects">
+          <label for="selectSearch" className = "selectSearch">
+           Choose a Search Algorithm </label>
+          <select id = "selectSearch" onChange = {(event) => this.setSearch(event.target.value)}>
+            <option value = "dijkstra"> Dijkstra </option>
+            <option value = "greedy"> Greedy Best First Search</option>
+            <option value = "astar"> A* Search</option>
+            <option value = "wastar"> Weighted A* Search </option>
+            <option value = "bfs"> Breadth First Search</option>
+            <option value = "dfs"> Depth First Search </option>
+          </select>
+          <button onClick = {() => this.runSearch()} disabled = {this.state.running} className = "sb">
+            Run Search
           </button>
-          <button onClick = {() => this.visualizeGreedy()} disabled = {this.state.running}>
-            Greedy Best First Search
-          </button>
-          <button onClick = {()=> this.visualizeAstar()} disabled = {this.state.running}>
-            Run A* search
-          </button>
-          <button onClick = {() => this.defaultGrid()} disabled = {this.state.running}>
+          <button onClick = {() => this.defaultGrid()} disabled = {this.state.running} className = "sb">
             Clear
           </button>
         </div>
