@@ -3,6 +3,7 @@ import Node from "./Node"
 import{dijkstra, getNodesInShortestPathOrder} from "./dijkstra"
 import {astar} from "./Astar"
 import {greedy} from "./GreedyBestFirst"
+import {wastar} from "./AstarWeighted"
 import "./SearchVisualizer.css";
 
 
@@ -172,6 +173,18 @@ class SearchVisualizer extends React.Component{
     this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
   }
 
+  visualizeAstarWeighted(){
+    this.setState({running:true});
+    const newGrid = resetGrid(this.state.grid); //Need to make this way more rigorous, preserve WallNodes, reset distances...
+    this.setState({grid: newGrid});
+    const grid = this.state.grid;
+    const startNode = grid[this.state.startNodePos[0]][this.state.startNodePos[1]];
+    const goalNode = grid[this.state.goalNodePos[0]][this.state.goalNodePos[1]];
+    const visitedNodesInOrder = wastar(grid, startNode, goalNode, this.state.weight);
+    const nodesInShortestPathOrder = getNodesInShortestPathOrder(goalNode);
+    this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
+  }
+
   setAnimationSpeed(value){
     const val = Math.abs(value-11);
     console.log(val);
@@ -182,6 +195,7 @@ class SearchVisualizer extends React.Component{
     if(this.state.searchType === "dijkstra") this.visualizeDijkstra();
     if(this.state.searchType === "astar") this.visualizeAstar();
     if(this.state.searchType === "greedy") this.visualizeGreedy();
+    if(this.state.searchType === "wastar") this.visualizeAstarWeighted();
   }
 
   setSearch(value){
@@ -241,6 +255,7 @@ class SearchVisualizer extends React.Component{
           min = "0"
           max = "10"
           defaultValue = "1"
+          step = "0.1"
           className = "slider"
           name = "weight"
           disabled = {this.state.running || this.state.searchType !== "wastar"}
