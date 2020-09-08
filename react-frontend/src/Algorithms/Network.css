@@ -14,6 +14,25 @@
   margin-left: 10%
 }
 
+.sliders2{
+  border: #000000 1px solid;
+  border-top: 0px;
+  margin-top: 0%;
+  background: #787878;
+  width:100%;
+  flex-basis: 33%;
+  text-align: center;
+}
+
+.slider2{
+  margin-left: 2%;
+  margin-top: 0;
+  flex-basis: 10%;
+}
+
+.label{
+  width: 100px;
+}
 /* .selects{
   border: solid 1px;
   border-color: black;

@@ -1,17 +1,19 @@
-const CREP = 20;
-const CSPRING = 20;
+var CREP = 20;
+var CSPRING = 20;
 var lx = 0;
 var ly = 0;
 /**
 * Basic spring embedding algorithm
 */
-export function forceDirectedLayout(vertices,edges,graph_distancex, graph_distancey, iterations, threshold, constant){
+export function forceDirectedLayout(vertices,edges,graph_distancex, graph_distancey, iterations, threshold, constant, cspring, crep){
   // relevant constants for spring embedding
   lx = graph_distancex;
   ly = graph_distancey;
   const K = iterations === undefined ? 100: iterations;
   const epsilon = threshold === undefined? 0.1: threshold;
   const delta = constant === undefined? 1.5: constant;
+  CREP = cspring === undefined? 20: cspring;
+  CSPRING = crep === undefined? 20: crep;
 
   //make copies of input
   let new_vertices = [];

@@ -19,6 +19,10 @@ class NetworkVisualizer extends React.Component{
       animationSpeed: 50,
       running: false,
       sorted: false,
+      cspring: 20,
+      crep: 20,
+      eps: 0.1,
+      iterations: 100,
     };
 
     this.stateRef = React.createRef(this.state);
@@ -56,7 +60,7 @@ class NetworkVisualizer extends React.Component{
   }
 
   generateForceDirectedLayout(){
-    const values = forceDirectedLayout(this.state.vertices, this.state.edges,this.state.width, this.state.height);
+    const values = forceDirectedLayout(this.state.vertices, this.state.edges,this.state.width, this.state.height, this.state.iterations, this.state.eps, this.state.delta, this.state.cspring, this.state.crep);
     const new_vertices = values[0];
     const animations = values[1];
     console.log(animations);
@@ -104,6 +108,21 @@ class NetworkVisualizer extends React.Component{
     this.setState({animationSpeed: value});
   }
 
+  setCREP(v){
+    this.setState({crep:v})
+  }
+
+  setCSPRING(v){
+    this.setState({cspring:v})
+  }
+
+  setDelta(v){
+    this.setState({delta:v})
+  }
+
+  setEpsilon(v){
+    this.setState({eps:v})
+  }
   render(){
 
     return <div>
@@ -146,6 +165,53 @@ class NetworkVisualizer extends React.Component{
               onInput = {(event) => this.setEdges(event.target.value)}>
               </input>
               <label> Edges: {this.state.numE}</label>
+            </div>
+            <div className = "sliders2">
+              <label> CSPRING: {this.state.cspring}</label>
+              <input className = "slider2"
+              type = "range"
+              min = "0.1"
+              max = "30"
+              step = "0.1"
+              defaultValue ="20"
+              name = "speed" disabled = {this.state.running}
+              onInput = {(event)=> this.setCSPRING(event.target.value)}
+              disabled = {this.state.running}>
+              </input>
+              <label> CREP : {this.state.crep}</label>
+              <input className = "slider2"
+              type = "range"
+              min = "0.1"
+              max = "30"
+              step = "0.1"
+              defaultValue ="20"
+              name = "speed" disabled = {this.state.running}
+              onInput = {(event)=> this.setCREP(event.target.value)}
+              disabled = {this.state.running}>
+              </input>
+              <label> EPSILON : {this.state.eps}</label>
+              <input className = "slider2"
+              type = "range"
+              min = "0.001"
+              max = "0.1"
+              defaultValue ="0.1"
+              step = "0.001"
+              name = "speed" disabled = {this.state.running}
+              onInput = {(event)=> this.setEpsilon(event.target.value)}
+              disabled = {this.state.running}>
+              </input>
+              <label> DELTA: {this.state.delta}</label>
+              <input className = "slider2"
+              type = "range"
+              min = "0.1"
+              max = "5"
+              step = "0.1"
+              defaultValue ="1.5"
+              name = "speed" disabled = {this.state.running}
+              onInput = {(event)=> this.setDelta(event.target.value)}
+              disabled = {this.state.running}>
+              </input>
+
             </div>
             <button onClick = {() => this.generateForceDirectedLayout()} disabled = {this.state.running || this.state.sorted}>
             Force Directed Layout
