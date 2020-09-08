@@ -72,19 +72,30 @@ export function forceDirectedLayout(vertices,edges,graph_distancex, graph_distan
     for(let i = 0; i < new_vertices.length; i++){
       const new_x = new_vertices[i][0] + delta*force_list[i][0];
       const new_y = new_vertices[i][1] + delta*force_list[i][1];
-      new_vertices[i][0] = (new_x > graph_distancex)? graph_distancex: (new_x < 0)? 0: new_x; // should be two dimensional
-      new_vertices[i][1] = (new_y > graph_distancey)? graph_distancey: new_y< 0? 0: new_y;
+      new_vertices[i][0] = new_x//(new_x > graph_distancex-3)? (graph_distancex-3): ((new_x-3) < 0)? 0: (new_x-3); // should be two dimensional
+      new_vertices[i][1] = new_y//(new_y > graph_distancey-3)? (graph_distancey-3): ((new_y -3)< 0)? 0: (new_y-3);
       const max_dist = distance(force_list[i], [0,0]);
       maxFvt = maxFvt > max_dist? maxFvt: max_dist;
     }
     t += 1
   }
   // animations.push(new_vertices.slice());
+  for(let i = 0; i < new_vertices.length; i ++){
+    if(new_vertices[i][0] < 0) new_vertices[i][0] = 0;
+    if(new_vertices[i][1] < 0)new_vertices[i][1] = 0;
+    if(new_vertices[i][0] > graph_distancex -6) new_vertices[i][0] = graph_distancex-6;
+    if(new_vertices[i][1] > graph_distancey - 6) new_vertices[i][1] = graph_distancey-6;
+  }
   return [new_vertices, animations];
 }
 
 function frepulse(x,y){
   const dist = distance(x,y);
+  if(dist === 0){
+     console.log("error");
+     console.log(x);
+     console.log(y);
+   }
   const unitV = unitVector(x,y);
   return [(unitV[0]*CREP)/dist, (unitV[1]*CREP)/dist];
 

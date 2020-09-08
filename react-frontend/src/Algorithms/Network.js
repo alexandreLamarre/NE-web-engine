@@ -15,7 +15,10 @@ class NetworkVisualizer extends React.Component{
       numE: 300,
       numV: 150,
       delta: 2,
+      animations: [],
     };
+
+    this.stateRef = React.createRef(this.state);
   }
 
   componentDidMount(){
@@ -52,40 +55,39 @@ class NetworkVisualizer extends React.Component{
     // console.log(new_vertices);
     // console.log(animations);
     this.setState({vertices: new_vertices});
-    // this.rAF = requestAnimationFrame(this.animateNetwork(animations))
-    // setTimeout(() => {
-    //   console.log("supposedly stopped")
-    //   cancelAnimationFrame(this.rAF);
-    // }, 1000);
-
+    // this.animateNetwork(animations);
   }
-
-  animateNetwork(animations){
-    if(animations !== undefined){
-      var af = animations.pop();
-      console.log(af);
-      const new_vertices = this.state.vertices;
-      if(af !== undefined){
-        for(let i = 0; i < af.length; i++){
-          new_vertices[i][0] = this.delta * af[i][0];
-          new_vertices[i][1] = this.delta * af[i][1];
-        }
-      }
-      else{
-        cancelAnimationFrame(this.rAF);
-      }
-      this.setState(prevState => ({new_vertices: new_vertices}));
-      if(animations !== undefined){
-        this.rAF = requestAnimationFrame(this.animateNetwork(animations))
-      }
-    }
-  }
+  // animateNetwork(animations){
+  //   for(let i = 0; i < animations.length; i++){
+  //     setTimeout(() => {
+  //       const vertices = this.stateRef.current.vertices;
+  //       for(let j = 0; j < vertices.length; j++){
+  //         vertices[j][0] += this.delta* animations[i][j][0];
+  //         vertices[j][1] += this.delta* animations[i][j][1];
+  //       }
+  //       this.setState({vertices: vertices})
+  //     }, i * 50);
+  //   }
+  // }
 
   resetNetwork(){
     const [vertices, edges] = createRandomNetwork(this.state.width, this.state.height, this.state.numV, this.state.numE);
 
     this.setState({vertices: vertices, edges: edges})
   }
+
+  // animateNetwork(animations){
+  //   for(let i = 0; i < animations.length; i++){
+  //     const vertices = this.state.vertices;
+  //     for(let j= 0; j < vertices; j++){
+  //       vertices[j][0] += this.delta * animations[i][j][0];
+  //       vertices[j][1] += this.delta * animations[i][j][1];
+  //     }
+  //     this.setTimeout(() => {
+  //       this.setState({vertices: vertices});
+  //     }, i* 100);
+  //   }
+  // }
 
   componentWillUnmount(){
     cancelAnimationFrame(this.rAF)
