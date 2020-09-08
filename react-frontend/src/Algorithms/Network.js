@@ -3,48 +3,6 @@ import {forceDirectedLayout} from "./forceDirectedAlgo";
 
 import "./Network.css";
 
-// function animateNetwork(animations, canvas, og_vertices, og_edges, delta, width,height){
-//   const ctx = canvas.getContext("2d");
-//   let vertices = [];
-//   let edges = [];
-//
-//   for(let i= 0; i < og_vertices.length; i++){
-//     vertices.push(og_vertices[i].slice());
-//   }
-//
-//   for(let i = 0; i < og_vertices.length; i++){
-//     for(let j = 0; j < og_vertices.length; j++){
-//       for(let k =0; k < og_edges.length; k++){
-//         if(og_vertices[i] === og_edges[k][0] && og_vertices[j] === og_edges[k][1]){
-//           edges.push(vertices[i],vertices[j]);
-//         }
-//       }
-//     }
-//   }
-//
-//   for(let k = 0; k < animations.length; k++){
-//     for(let i = 0; i < vertices.length; i++){
-//       vertices[i] = animations[k][i];
-//     }
-//     setTimeout(() => {
-//       // ctx.clearRect(0,0,width,height);
-//       for(let i =0; i < vertices.length; i++){
-//         ctx.fillStyle= "#FF0000"
-//         ctx.fillRect(vertices[i][0],vertices[i][1], 6, 6);
-//       }
-//
-//       for(let j = 0; j < edges.length; j++){
-//         ctx.beginPath();
-//         ctx.globalAlpha = 0.2;
-//         ctx.moveTo(edges[j][0][0]+3, edges[j][0][1]+3);
-//         ctx.lineTo(edges[j][1][0]+3, edges[j][1][1]+3);
-//         ctx.stroke();
-//         ctx.closePath();
-//       }
-//     }, k *50);
-//   }
-// }
-
 
 class NetworkVisualizer extends React.Component{
   constructor(props){
@@ -55,10 +13,12 @@ class NetworkVisualizer extends React.Component{
       height: 0,
       vertices: [],
       edges: [],
-      numE: 300,
-      numV: 150,
+      numE: 150,
+      numV: 50,
       delta: 2,
-      animations: [],
+      animationSpeed: 50,
+      running: false,
+      sorted: false,
     };
 
     this.stateRef = React.createRef(this.state);
@@ -106,34 +66,42 @@ class NetworkVisualizer extends React.Component{
   }
 
   animateNetwork(animations){
+    this.setState({running:true});
     for(let k = 0; k < animations.length; k++){
       setTimeout(() => {
         this.setState({vertices: animations[k]});
-      }, k*50)
+        if(k === animations.length-1){
+          this.setState({running:false, sorted:true});
+        }
+      }, k * this.state.animationSpeed)
     }
   }
 
   resetNetwork(){
     const [vertices, edges] = createRandomNetwork(this.state.width, this.state.height, this.state.numV, this.state.numE, this.state.width, this.state.height);
 
-    this.setState({vertices: vertices, edges: edges})
+    this.setState({vertices: vertices, edges: edges, sorted:false})
   }
 
-  // animateNetwork(animations){
-  //   for(let i = 0; i < animations.length; i++){
-  //     const vertices = this.state.vertices;
-  //     for(let j= 0; j < vertices; j++){
-  //       vertices[j][0] += this.delta * animations[i][j][0];
-  //       vertices[j][1] += this.delta * animations[i][j][1];
-  //     }
-  //     this.setTimeout(() => {
-  //       this.setState({vertices: vertices});
-  //     }, i* 100);
-  //   }
-  // }
+  setVertices(v){
+    this.setState({numV: v});
+    this.resetNetwork();
+  }
+
+  setEdges(e){
+    this.setState({numE: e});
+    this.resetNetwork();
+  }
 
   componentWillUnmount(){
     cancelAnimationFrame(this.rAF)
+  }
+
+  setAnimationSpeed(ms){
+    const value = Math.abs(50-ms);
+    console.log("setting to")
+    console.log(value)
+    this.setState({animationSpeed: value});
   }
 
   render(){
@@ -142,10 +110,47 @@ class NetworkVisualizer extends React.Component{
             <canvas
             className = "networkCanvas" ref = {this.canvas}>
             </canvas>
-            <button onClick = {() => this.generateForceDirectedLayout()}>
+            <div className = "sliders">
+              <input
+              type = "range"
+              min = "0"
+              max = "30"
+              defaultValue ="0"
+              className = "slider"
+              name = "speed" disabled = {this.state.running}
+              onInput = {(event)=> this.setAnimationSpeed(event.target.value)}
+              disabled = {this.state.running}>
+              </input>
+              <label for="speed"> AnimationSpeed : {this.state.animationSpeed}ms</label>
+              <input
+              type = "range"
+              min = "15"
+              max = "150"
+              defaultValue = "50"
+              step = "1"
+              className = "slider"
+              name = "weight"
+              disabled = {this.state.running}
+              onInput = {(event) => this.setVertices(event.target.value)}>
+              </input>
+              <label> Vertices: {this.state.numV}</label>
+              <input
+              type = "range"
+              min = "30"
+              max = "400"
+              defaultValue = "150"
+              step = "1"
+              className = "slider"
+              name = "weight"
+              disabled = {this.state.running}
+              onInput = {(event) => this.setEdges(event.target.value)}>
+              </input>
+              <label> Edges: {this.state.numE}</label>
+            </div>
+            <button onClick = {() => this.generateForceDirectedLayout()} disabled = {this.state.running || this.state.sorted}>
             Force Directed Layout
             </button>
-            <button onClick = {() => this.resetNetwork()}>
+            <button onClick = {() => this.resetNetwork()} disabled = {this.state.running}>
             Reset Network
             </button>
            </div>
