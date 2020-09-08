@@ -3,7 +3,9 @@ import {Tab,Tabs,TabList,TabPanel} from 'react-tabs';
 import React from "react";
 import "./algoVisualizer.css";
 import SearchVisualizer from "./SearchVisualizer";
-import SortVisualizer from "./SortVisualizer"
+import SortVisualizer from "./SortVisualizer";
+import NetworkVisualizer from "./Network";
+
 class AlgoVisualizer extends React.Component{
   constructor(props){
     super(props);
@@ -29,7 +31,7 @@ class AlgoVisualizer extends React.Component{
             <SortVisualizer/>
           </TabPanel>
           <TabPanel>
-            Nothing here atm!
+            <NetworkVisualizer/>
           </TabPanel>
           <TabPanel>
             Nothing here atm!

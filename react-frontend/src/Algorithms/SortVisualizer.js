@@ -179,8 +179,8 @@ class SortVisualizer extends React.Component{
 
   resetArray(){
     const array = [];
-    const w = Math.floor(window.innerWidth *0.45);
-    const h = Math.floor(window.innerHeight* 0.55);
+    const w = window.innerWidth * 0.6;
+    const h = window.innerHeight * 0.5;
     // console.log(w)
     // console.log(h)
     console.log("number of array elements")
