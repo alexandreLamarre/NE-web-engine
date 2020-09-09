@@ -66,7 +66,7 @@ class NetworkVisualizer extends React.Component{
     const values = forceDirectedLayout(this.state.vertices, this.state.edges,this.state.width, this.state.height, this.state.iterations, this.state.eps, this.state.delta, this.state.cspring, this.state.crep);
     const new_vertices = values[0];
     const animations = values[1];
-    console.log(animations);
+    // console.log(animations);
     // console.log(animations);
     // // animateNetwork(animations, this.canvas.current,this.state.vertices, this.state.edges, this.state.delta, this.state.width,this.state.height);
     this.animateNetwork(animations);
@@ -179,7 +179,7 @@ class NetworkVisualizer extends React.Component{
               <label> Edges: {this.state.numE}</label>
             </div>
             <div className = "sliders2">
-              <label> CSPRING: {this.state.cspring}</label>
+              <label> Force of Attraction: {this.state.cspring}</label>
               <input className = "slider2"
               type = "range"
               min = "0.1"
@@ -190,7 +190,7 @@ class NetworkVisualizer extends React.Component{
               onInput = {(event)=> this.setCSPRING(event.target.value)}
               disabled = {this.state.running}>
               </input>
-              <label> CREP : {this.state.crep}</label>
+              <label className = "label2"> Force of Repulsion : {this.state.crep}</label>
               <input className = "slider2"
               type = "range"
               min = "0.1"
@@ -201,7 +201,9 @@ class NetworkVisualizer extends React.Component{
               onInput = {(event)=> this.setCREP(event.target.value)}
               disabled = {this.state.running}>
               </input>
-              <label> EPSILON : {this.state.eps}</label>
+              </div>
+              <div className = "sliders2">
+              <label> Convergence Bound : {this.state.eps}</label>
               <input className = "slider2"
               type = "range"
               min = "0.001"
@@ -212,7 +214,7 @@ class NetworkVisualizer extends React.Component{
               onInput = {(event)=> this.setEpsilon(event.target.value)}
               disabled = {this.state.running}>
               </input>
-              <label> DELTA: {this.state.delta}</label>
+              <label className = "label2"> Rate of Convergence: {this.state.delta}</label>
               <input className = "slider2"
               type = "range"
               min = "0.1"
