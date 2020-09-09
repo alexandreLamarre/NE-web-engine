@@ -10,6 +10,11 @@ import {gravitySort} from "./gravitySort"
 import {timSort} from "./timSort";
 import {introSort} from "./introSort";
 
+async function waitForSetState(v,that){
+  await that.setState({barWidth: v});
+  that.resetArray();
+}
+
 class SortVisualizer extends React.Component{
   constructor(props){
     super(props);
@@ -22,17 +27,25 @@ class SortVisualizer extends React.Component{
       arrayAccesses: 0,
       running: false,
       sorted: false,
+      width: 0,
+      height: 0,
     }
+    this.canvas = React.createRef();
   }
 
   componentDidMount(){
+    const w = window.innerWidth * 0.9;
+    const h = window.innerHeight * 0.55;
+    this.canvas.current.width = w;
+    this.canvas.current.height = h;
+    this.setState({width: w, height: h});
     this.resetArray();
   }
 
   setBarWidth(value){
-    // const val = Math.abs(value - 11);
-    // this.hello(val);
-    // this.resetArray();
+    const val = Math.abs(value - 11);
+    console.log(val);
+    waitForSetState(val, this);
   }
 
   animateSort(animationArray){
@@ -178,22 +191,31 @@ class SortVisualizer extends React.Component{
   }
 
   resetArray(){
+    console.log("resetting")
     const array = [];
-    const w = window.innerWidth * 0.6;
-    const h = window.innerHeight * 0.5;
     // console.log(w)
     // console.log(h)
-    console.log("number of array elements")
-    console.log(w/(this.state.barWidth+1))
-    for(let i = 0; i < w/(this.state.barWidth+1); i++){
-      array.push(randomIntFromIntervals(5,h));
-    }
-    // let el = document.getElementById("array-bar");
-    // if(el){
-    //   el.width = `${this.state.barWidth}px`;
-    // }
-    this.setState({array:array, containerWidth: w, containerHeight: h, sorted:false});
+    const ctx = this.canvas.current.getContext("2d");
+    ctx.clearRect(0,0, this.canvas.current.width, this.canvas.current.height);
 
+    for(let i = 0; i < Math.floor(this.canvas.current.width/(1+this.state.barWidth))+1; i++){
+      array.push(randomIntFromIntervals(5, this.canvas.current.height));
+    }
+    const margin = 1;
+    for(let j = 0; j < Math.floor(this.canvas.current.width/(1+this.state.barWidth))+1; j ++){
+      ctx.beginPath()
+      ctx.strokeStyle = "green";
+      ctx.lineWidth = this.state.barWidth;
+      ctx.moveTo(j+this.state.barWidth*j, this.canvas.current.height);
+      ctx.lineTo(j+this.state.barWidth*j, this.canvas.current.height - array[j]);
+      ctx.stroke();
+    }
+    ctx.stroke();
+
+    this.setState({
+      array: array,
+      sorted: false,
+    });
   }
 
   render(){
@@ -201,25 +223,15 @@ class SortVisualizer extends React.Component{
     let barWidth = this.state.barWidth;
     const containerWidth = this.state.containerWidth*1.5;
 
-    return<div className ="sort">
-      <div className = "array-container">{array.map((value, idX) => (
-        <div
-        className = "array-bar"
-        key = {idX}
-        style = {{
-          backgroundColor: 'green',
-          height: `${value}px`,
-          width: `${barWidth}px`
-        }}></div>
-      ))}
+    return<div className ="array-container">
+      <canvas id = "sortCanvas" ref = {this.canvas} className = "sortCanvas"></canvas>
       <div className = "sliders">
         <input type = "range" min = "1" max = "10" default = "1" className = "slider"
         name = "arraysize"
         onInput = {(event)=> this.setBarWidth(event.target.value)} disabled = {this.state.running}/>
-        <label for="arraysize"> ArraySize </label>
+        <label> ArraySize {this.state.array.length}</label>
       </div>
-      </div>
-      <div className = "buttons" style = {{maxWidth: `${containerWidth}px`}}>
+      <div className = "buttons">
       <button onClick = {()=> this.getInsertionSorted()} className ="b"
       disabled = {this.state.running || this.state.sorted}>
       Insertion Sort

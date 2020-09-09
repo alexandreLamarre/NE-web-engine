@@ -1,23 +1,25 @@
 .array-container{
   margin-top : 5%;
-  align-items: center;
-  background-color: white;
-}
-
-.array-bar{
-  width: 1px;
-  display: inline-block;
-  margin: 0 1px;
 }
 
 .sliders{
+  margin-top: 0%;
   background: #787878;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width:100%;
+  height: 100%;
+
+  flex-basis: 33%;
+  text-align: center;
 }
 
 .slider{
   background: #d3d3d3;
-  width :10%;
+  align-items: center;
 }
+
 .buttons{
   margin-top: 0;
   display:flex;
@@ -31,13 +33,13 @@
 
 label {
   font-size: 20px;
+  align-items: center;
 }
 
 .b{
  margin-top: 0;
- flex-basis: 25%;
+ flex-basis: 5%;
  padding: 15px 32px;
- display:inline-block;
  font-family:'Roboto',sans-serif;
  font-weight:300;
  font-size: 20px;
@@ -50,7 +52,6 @@ label {
 .bbreak{
   margin-top: 0;
   padding: 15px 32px;
-  display:inline-block;
   font-family:'Roboto',sans-serif;
   font-weight:300;
   font-size: 20px;
@@ -67,4 +68,11 @@ label {
 
 .b:disabled{
   background-color: lightgrey;
+}
+
+.sortCanvas{
+  background-color: #FFFFFF;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
