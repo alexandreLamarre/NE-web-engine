@@ -1,39 +1,19 @@
 var lx =0;
 var ly = 0;
-const CGRAV = 0.5; // NEW PARAMETER
-export function fruchtermanReingold(vertices,edges,graph_distancex, graph_distancey, iterations, threshold, constant){
+var C= 20;
+var K = 0.01; //OPTIMAL DISTANCE
+var tol = 0.01; //TOLERANCE
 
+
+export function fruchtermanReingold(vertices,edges,graph_distancex, graph_distancey, iterations, forces, optimaldist, tolerance){
   lx = graph_distancex;
   ly = graph_distancey;
-  const K = iterations === undefined ? 300: iterations;
-  const epsilon = threshold === undefined? 0.1: threshold;
-  const delta = constant === undefined? 1.5: constant;
+  const kIter = iterations === undefined ? 300: iterations;
+  C = forces === undefined? 30: forces;
+  K = optimaldist === undefined?0.1: optimaldist;
+  tol = tolerance === undefined? 0.01: tolerance;
 
-  const initial_temperature = graph_distancex*(1/10)
-
-  const temperatureArray = [];
-  const degreeArray = [];
-  const centerConstant = 1/(vertices.length)
-  const pBarycenter = [0,0];
-
-  for(let i = 0; i < vertices.length; i++){
-    let count = 0;
-    for(let j = 0; j < edges.length; j++){
-      if(i === edges[j][0] && i!== edges[j][1]){
-        count ++;
-      }
-      if(i === edges[j][1] && i !== edges[j][0]){
-        count ++;
-      }
-    }
-    degreeArray.push(count);
-    temperatureArray.push(initial_temperature);
-    pBarycenter[0] += centerConstant*vertices[i][0]
-    pBarycenter[1] += centerConstant*vertices[i][1]
-  }
-
-
-
+  //make copies of input
   let new_vertices = [];
   for(let i= 0; i < vertices.length; i++){
     new_vertices.push(vertices[i].slice());
@@ -51,79 +31,111 @@ export function fruchtermanReingold(vertices,edges,graph_distancex, graph_distan
   }
 
   let t = 1;
-  let animations = [];
   let maxFvt = Infinity;
-  while(t<K && maxFvt > epsilon){
-    maxFvt = Infinity;
-    let force_list = [];
-    for(let i =0; i < new_vertices.length; i++){
-      let f = [0,0]; // should be two dimensional
-      for(let j = 0; j < new_edges.length; j++){
-        //vertices should attract
-        if(i === new_edges[j][0] && i !== new_edges[j][1]){
-          const calcs = fattract(new_vertices[new_edges[j][0]], new_vertices[new_edges[j][1]]) *1/(nodeMass(degreeArray[j]));
-          // console.log(calcs);
-          f[0] += calcs[0]; // should be two dimensional
-          f[1] += calcs[1];
-        }
-        //vertices should attract
-        if(i === new_edges[j][1] && i !== new_edges[j][0]){
-          const calcs = fattract(new_vertices[new_edges[j][0]], new_vertices[new_edges[j][1]]) *1/(nodeMass(degreeArray[j]));
-          f[0] += calcs[0]; // should be two dimensional
-          f[1] += calcs[1];
-        }
-      }
-      for(let j =0; j < new_vertices.length; j++){
-        if(i === j ) continue;
-        // vertices should repluse one another
-        const calcs = frepulse(new_vertices[i], new_vertices[j]);
-        f[0] += calcs[0];// should be two dimensional
-        f[1] += calcs[1];
+  let animations = [];
+  let previous = [];
+  let converged = false;
+  let step = iterations;
 
-      }
-      const fgrav = CGRAV * degreeArray[i]
-      const unitGravityVector = unitVector(vertices[i], pBarycenter);
-      f[0] += fgrav * unitGravityVector[0];
-      f[1] += fgrav * unitGravityVector[1];
-      f[0] *= 1/(Math.pow(10,8));
-      f[1] *= 1/(Math.pow(10,8));
-      if(t!== 1){
-        const previous = animations[t-2][i]
-        const current = f;
-        const cosAngle = (current[0]+previous[0] + current[1]+previous[1])/(distance(previous, [0,0]) + distance(current,[0,0]))
-        if(cosAngle -0.5 < 1 && cosAngle+ 0.5>1) {
-          temperatureArray[i] += graph_distancex/10;
-        }
-        if(cosAngle -0.5 <-1 && cosAngle+0.5 > -1) {
-          temperatureArray[i] -= graph_distancex/10;
-        }
-      }
-      // console.log(temperatureArray);
-      console.log(temperatureArray);
-      f[0] *= temperatureArray[i]*(1/100)
-      f[1] *= temperatureArray[i]*(1/100)
-      force_list.push(f)
-      // console.log(f);
-    }
-    const iteration_animation = [];
+  while(t<kIter && !converged){
+    let force_list = [];
     for(let i = 0; i < new_vertices.length; i++){
-      const new_x = new_vertices[i][0] + delta*force_list[i][0];
-      const new_y = new_vertices[i][1] + delta*force_list[i][1];
-      new_vertices[i][0] = new_x//(new_x > graph_distancex-3)? (graph_distancex-3): ((new_x-3) < 0)? 0: (new_x-3); // should be two dimensional
-      new_vertices[i][1] = new_y//(new_y > graph_distancey-3)? (graph_distancey-3): ((new_y -3)< 0)? 0: (new_y-3);
+        let f = [0,0];
+        for(let k = 0; k < edges.length; k++){
+          if(i === edges[k][0] && i !== edges[k][1]){
+            // Calculate fattract
+            const attractForce = fattract(new_vertices[i], new_vertices[edges[k][1]])
+            f[0] += attractForce[0];
+            f[1] += attractForce[1];
+          }
+          if(i === edges[k][1] && i !== edges[k][0]){
+            //calculate fattract
+            const attractForce = fattract(new_vertices[i], new_vertices[edges[k][0]])
+            f[0] += attractForce[0];
+            f[1] += attractForce[1];
+          }
+        }
+
+        for(let j = 0; j < new_vertices.length; j ++){
+          if(i !== j){
+            //calculate frepulse
+            const repulseForce = frepulse(new_vertices[i], new_vertices[j]);
+            f[0] += repulseForce[0];
+            f[1] += repulseForce[1];
+          }
+        }
+        force_list.push(f);
+        //if(distance(new, previous) < epsilon * tol) converged = true
+    }
+    // end for
+    const iteration_animation = [];
+    let max_dist = 0;
+    for(let i = 0; i < new_vertices.length; i++){
+      let new_x = vertices[i][0] + step* force_list[i][0]/distance([0,0], force_list[i]);
+      let new_y = vertices[i][1] + step* force_list[i][0]/ distance([0,0], force_list[i]);
+      const old_vertices = new_vertices[i].slice();
+      if(new_x < 0 && new_y < 0){
+        const overFlowDist = distance([new_x,new_y], old_vertices);
+        const wantedDistance = distance([0,0], old_vertices);
+        new_x = (wantedDistance/overFlowDist) * (new_x - old_vertices[0]);
+        new_y = (wantedDistance/overFlowDist) * (new_y - old_vertices[1]);
+      }
+      else if(new_x < 0 && new_y > graph_distancey-6){
+        const overFlowDist = distance([new_x,new_y], old_vertices);
+        const wantedDistance = distance([0,graph_distancey-6], old_vertices);
+        new_x = (wantedDistance/overFlowDist) * (new_x - old_vertices[0]);
+        new_y = (wantedDistance/overFlowDist) * (new_y - old_vertices[1]);
+      }
+      else if(new_x > graph_distancex-6 && new_y < 0){
+        const overFlowDist = distance([new_x,new_y], old_vertices);
+        const wantedDistance = distance([graph_distancex-6,0], old_vertices);
+        new_x = (wantedDistance/overFlowDist) * (new_x - old_vertices[0]);
+        new_y = (wantedDistance/overFlowDist) * (new_y - old_vertices[1]);
+      }
+      else if(new_x > graph_distancex-6 && new_y >graph_distancey -6){
+        const overFlowDist = distance([new_x,new_y], old_vertices);
+        const wantedDistance = distance([graph_distancex-6,graph_distancey-6], old_vertices);
+        new_x = (wantedDistance/overFlowDist) * (new_x - old_vertices[0]);
+        new_y = (wantedDistance/overFlowDist) * (new_y - old_vertices[1]);
+      }
+      else if(new_x < 0){
+        const overFlowDist = distance([new_x,new_y], old_vertices);
+        const wantedDistance = distance([0,new_y], old_vertices);
+        new_x = (wantedDistance/overFlowDist) * (new_x - old_vertices[0]);
+        new_y = (wantedDistance/overFlowDist) * (new_y - old_vertices[1]);
+      }
+      else if(new_y < 0){
+        const overFlowDist = distance([new_x,new_y], old_vertices);
+        const wantedDistance = distance([new_x,0], old_vertices);
+        new_x = (wantedDistance/overFlowDist) * (new_x - old_vertices[0]);
+        new_y = (wantedDistance/overFlowDist) * (new_y - old_vertices[1]);
+      }
+      else if(new_x +6 > graph_distancex){
+        const overFlowDist = distance([new_x,new_y], old_vertices);
+        const wantedDistance = distance([graph_distancex-6,new_y], old_vertices);
+        new_x = (wantedDistance/overFlowDist) * (new_x - old_vertices[0]);
+        new_y = (wantedDistance/overFlowDist) * (new_y - old_vertices[1]);
+      }
+      else if(new_y + 6 > graph_distancey){
+        const overFlowDist = distance([new_x,new_y], old_vertices);
+        const wantedDistance = distance([new_x,graph_distancey-6], old_vertices);
+        new_x = (wantedDistance/overFlowDist) * (new_x - old_vertices[0]);
+        new_y = (wantedDistance/overFlowDist) * (new_y - old_vertices[1]);
+      }
+      new_vertices[i][0] = new_x;
+      new_vertices[i][1] = new_y;
       iteration_animation.push(new_vertices[i].slice());
-      const max_dist = distance(force_list[i], [0,0]);
-      if(maxFvt === Infinity){
-        maxFvt = max_dist;
-      }
-      else{
-        maxFvt = maxFvt > max_dist? maxFvt: max_dist;
-      }
+      const changedist = distance(new_vertices[i], old_vertices);
+      max_dist = max_dist > changedist? max_dist: changedist;
+    }
+    step = step*0.95
+    if(max_dist< K*tol){
+      converged = true
     }
     animations.push(iteration_animation);
-    t += 1
+    t += 1;
   }
-// animations.push(new_vertices.slice());
+  //end while
   const iteration_animation = [];
   for(let i = 0; i < new_vertices.length; i ++){
     if(new_vertices[i][0] < 0) new_vertices[i][0] = 0;
@@ -138,21 +150,16 @@ export function fruchtermanReingold(vertices,edges,graph_distancex, graph_distan
 
 function frepulse(x,y){
   const dist = distance(x,y);
-  if(dist === 0){
-     console.log("error");
-     console.log(x);
-     console.log(y);
-   }
   const unitV = unitVector(x,y);
-  return [(unitV[0]*Math.pow(lx,2))/dist, (unitV[1]*Math.pow(lx,2))/dist];
+  return [((-C*Math.pow(K,2))/dist)*unitV[0], ((-C*Math.pow(K,2))/dist)*unitV[1]];
 }
 
 function fattract(x,y){
   const dist2 = Math.pow(distance(x,y),2);
-  const unitV = unitVector(y,x);
+  const unitV = unitVector(x,y);
 
-  return [(dist2/lx)*unitV[0],
-          (dist2/lx)*unitV[1]];
+  return [(dist2/K)*unitV[0],
+          (dist2/K)*unitV[1]];
 }
 
 function distance(x,y){

@@ -69,25 +69,26 @@ class NetworkVisualizer extends React.Component{
     // console.log(animations);
     // console.log(animations);
     // // animateNetwork(animations, this.canvas.current,this.state.vertices, this.state.edges, this.state.delta, this.state.width,this.state.height);
-    this.animateNetwork(animations);
+    this.animateNetwork(animations, new_vertices);
   }
 
   generateReingold(){
-    const values = fruchtermanReingold(this.state.vertices, this.state.edges, this.state.width, this.state.height, this.state.iterations, this.state.eps, this.state.delta);
+    const values = fruchtermanReingold(this.state.vertices, this.state.edges, this.state.width, this.state.height, this.state.iterations);
     const new_vertices = values[0];
     const animations = values[1];
-    console.log(animations)
+    // console.log(animations);
 
-    this.animateNetwork(animations);
+    this.animateNetwork(animations, new_vertices);
   }
 
-  animateNetwork(animations){
+  animateNetwork(animations, final_vertices){
     this.setState({running:true});
     for(let k = 0; k < animations.length; k++){
       setTimeout(() => {
         this.setState({vertices: animations[k]});
         if(k === animations.length-1){
-          this.setState({running:false, sorted:true});
+          this.setState({running:false, sorted:true, vertices:final_vertices});
+          console.log(final_vertices);
         }
       }, k * this.state.animationSpeed)
     }
@@ -114,9 +115,9 @@ class NetworkVisualizer extends React.Component{
   }
 
   setAnimationSpeed(ms){
-    const value = Math.abs(50-ms);
-    console.log("setting to")
-    console.log(value)
+    const value = Math.abs(150-ms);
+    // console.log("setting to")
+    // console.log(value)
     this.setState({animationSpeed: value});
   }
 
@@ -145,7 +146,7 @@ class NetworkVisualizer extends React.Component{
               <input
               type = "range"
               min = "0"
-              max = "30"
+              max = "130"
               defaultValue ="0"
               className = "slider"
               name = "speed" disabled = {this.state.running}
@@ -227,10 +228,10 @@ class NetworkVisualizer extends React.Component{
               </input>
 
             </div>
-            <button onClick = {() => this.generateForceDirectedLayout()} disabled = {this.state.running || this.state.sorted}>
+            <button onClick = {() => this.generateForceDirectedLayout()} disabled = {this.state.running}>
             Basic Spring Embedding
             </button>
-            <button onClick = {() => this.generateReingold()} disabled = {this.state.running || this.state.sorted}>
+            <button onClick = {() => this.generateReingold()} disabled = {this.state.running}>
             Fruchterman & Reingold
             </button>
             <button onClick = {() => this.resetNetwork()} disabled = {this.state.running}>

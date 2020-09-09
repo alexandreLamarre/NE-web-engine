@@ -82,7 +82,7 @@ export function forceDirectedLayout(vertices,edges,graph_distancex, graph_distan
       const old_vertices = new_vertices[i].slice();
       if(new_x < 0 && new_y < 0){
         const overFlowDist = distance([new_x,new_y], old_vertices);
-        const wantedDistance = distance([0,new_y], old_vertices);
+        const wantedDistance = distance([0,0], old_vertices);
         // console.log("overflow:",overFlowDist);
         // console.log("wanted", wantedDistance);
         // console.log("ratio:" , wantedDistance/overFlowDist);
@@ -91,7 +91,7 @@ export function forceDirectedLayout(vertices,edges,graph_distancex, graph_distan
       }
       else if(new_x < 0 && new_y > graph_distancey-6){
         const overFlowDist = distance([new_x,new_y], old_vertices);
-        const wantedDistance = distance([0,new_y], old_vertices);
+        const wantedDistance = distance([0,graph_distancey-6], old_vertices);
         // console.log("overflow:",overFlowDist);
         // console.log("wanted", wantedDistance);
         // console.log("ratio:" , wantedDistance/overFlowDist);
@@ -100,7 +100,7 @@ export function forceDirectedLayout(vertices,edges,graph_distancex, graph_distan
       }
       else if(new_x > graph_distancex-6 && new_y < 0){
         const overFlowDist = distance([new_x,new_y], old_vertices);
-        const wantedDistance = distance([0,new_y], old_vertices);
+        const wantedDistance = distance([graph_distancex-6,0], old_vertices);
         // console.log("overflow:",overFlowDist);
         // console.log("wanted", wantedDistance);
         // console.log("ratio:" , wantedDistance/overFlowDist);
@@ -109,7 +109,7 @@ export function forceDirectedLayout(vertices,edges,graph_distancex, graph_distan
       }
       else if(new_x > graph_distancex-6 && new_y >graph_distancey -6){
         const overFlowDist = distance([new_x,new_y], old_vertices);
-        const wantedDistance = distance([0,new_y], old_vertices);
+        const wantedDistance = distance([graph_distancex-6,graph_distancey-6], old_vertices);
         // console.log("overflow:",overFlowDist);
         // console.log("wanted", wantedDistance);
         // console.log("ratio:" , wantedDistance/overFlowDist);
