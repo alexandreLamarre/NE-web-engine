@@ -1,5 +1,6 @@
 import React from "react";
 import {forceDirectedLayout} from "./forceDirectedAlgo";
+import {fruchtermanReingold} from "./FruchtermanReingold";
 
 import "./Network.css";
 
@@ -23,6 +24,8 @@ class NetworkVisualizer extends React.Component{
       crep: 20,
       eps: 0.1,
       iterations: 100,
+      general: false,
+      reingold: false,
     };
 
     this.stateRef = React.createRef(this.state);
@@ -66,6 +69,15 @@ class NetworkVisualizer extends React.Component{
     console.log(animations);
     // console.log(animations);
     // // animateNetwork(animations, this.canvas.current,this.state.vertices, this.state.edges, this.state.delta, this.state.width,this.state.height);
+    this.animateNetwork(animations);
+  }
+
+  generateReingold(){
+    const values = fruchtermanReingold(this.state.vertices, this.state.edges, this.state.width, this.state.height, this.state.iterations, this.state.eps, this.state.delta);
+    const new_vertices = values[0];
+    const animations = values[1];
+    console.log(animations)
+
     this.animateNetwork(animations);
   }
 
@@ -214,7 +226,10 @@ class NetworkVisualizer extends React.Component{
 
             </div>
             <button onClick = {() => this.generateForceDirectedLayout()} disabled = {this.state.running || this.state.sorted}>
-            Force Directed Layout
+            Basic Spring Embedding
+            </button>
+            <button onClick = {() => this.generateReingold()} disabled = {this.state.running || this.state.sorted}>
+            Fruchterman & Reingold
             </button>
             <button onClick = {() => this.resetNetwork()} disabled = {this.state.running}>
             Reset Network
